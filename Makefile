@@ -5,8 +5,28 @@ data_dir = /Users/eber373/Desenvolvimento/metaB/data/
 version := $(shell cat .bumpversion.cfg | grep current_version | cut -d= -f2 | tr -d ' ')
 stage := $(shell cat .bumpversion.cfg | grep optional_value | cut -d= -f2 | tr -d ' ') 
 
+cpu: 
+	pyprof2calltree -k -i $(file)
+
+mem: 
+
+	mprof run --multiprocess $(script)
+	mprof plot
+
+major:
+	
+	@bumpversion major --allow-dirty
+
+minor:
+	
+	@bumpversion minor --allow-dirty
+
+patch:
+	
+	@bumpversion patch --allow-dirty
+
 install:
-	@ . venv/bin/activate
+	@source venv/bin/activate
 	@pip3 install --editable .
 	
 run:

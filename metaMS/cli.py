@@ -5,7 +5,7 @@ from pathlib import Path
 import click
 
 from metaMS.gcmsWorkflow import run_gcms_metabolomics_workflow, WorkflowParameters
-
+from corems.encapsulation.output.parameter_to_json import dump_gcms_settings_json
 @click.group()
 def cli():
     #saving for toplevel options 
@@ -36,7 +36,15 @@ def dump_json_template(json_file_name):
     
         json.dump(WorkflowParameters().__dict__, workflow_param, indent=4)
 
-
+@cli.command()
+@click.argument('json_file_name', required=True, type=str, )
+def dump_corems_json_template(json_file_name):
+    '''Dumps a CoreMS json file template
+        to be used as the workflow parameters input 
+    '''
+    path_obj = Path(json_file_name).with_suffix('.json')
+    dump_gcms_settings_json(file_path=path_obj)
+    
 
 
         
