@@ -1,5 +1,9 @@
 app_name = metabMS
-parameters_path = metabms.json
+parameters_path = data/coremb_params.json
+# change the path to your data path /Users/eber373/Desenvolvimento/metaB
+data_dir = /Users/eber373/Desenvolvimento/metaB/data/
+version := $(shell cat .bumpversion.cfg | grep current_version | cut -d= -f2 | tr -d ' ')
+stage := $(shell cat .bumpversion.cfg | grep optional_value | cut -d= -f2 | tr -d ' ') 
 
 install:
 	@ . venv/bin/activate
@@ -13,9 +17,18 @@ release:
 	@python3 setup.py sdist
 	@twine upload dist/*
 
+docker-push:
+	
+	@echo corilo/coremb:$(version).$(stage)
+	@docker build -t corilo/coremb:$(version).$(stage) .
+	@docker push corilo/coremb:$(version).$(stage)
+	@docker image tag corilo/coremb:$(version).$(stage) corilo/coremb:latest
+	@docker push corilo/coremb:latest
+
 docker-build:
+
 	docker build -t coremb:local .
 
-# change the path to your path /Users/eber373/Desenvolvimento/metaB
 docker-run:
-	docker run -v /Users/eber373/Desenvolvimento/metaB/data/:/metaB/data coremb:local run-workflow /metaB/data/metabms.json
+
+	docker run -v $(data_dir):/metaB/data coremb:local run-workflow /metaB/data/metabms.json
