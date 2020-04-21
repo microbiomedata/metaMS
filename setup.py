@@ -1,5 +1,4 @@
 import pathlib, os, sys
-
 import setuptools
 from setuptools import Command, setup
 
@@ -11,8 +10,8 @@ README = (HERE / "README.md").read_text()
 
 # This call to setup() does all the work
 setup(
-    name="coreMB",
-    version="1.0.b0",
+    name="metaMS",
+    version="1.0.0",
     description="Data processing, and annotation for metabolomics analysis by low-resolution GC-MS",
     long_description=README,
     long_description_content_type="text/markdown",
@@ -29,7 +28,7 @@ setup(
     install_requires=['Click', 'CoreMS'],
     entry_points= '''
             [console_scripts]
-            coreMB=coreMB.metabGCMS:cli
+            metaMS=metaMS.cli:cli
             ''',
 )
     

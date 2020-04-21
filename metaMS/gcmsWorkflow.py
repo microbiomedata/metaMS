@@ -1,15 +1,12 @@
+from dataclasses import dataclass
 from multiprocessing import Pool
 from pathlib import Path
 import json
-
-import click
-from dataclasses import dataclass,field
 
 from corems.mass_spectra.input.andiNetCDF import ReadAndiNetCDF
 from corems.encapsulation.input import parameter_from_json
 from corems.mass_spectra.calc.GC_RI_Calibration import get_rt_ri_pairs
 from corems.molecular_id.search.compoundSearch import LowResMassSpectralMatch
-from corems.molecular_id.input.nistMSI import ReadNistMSI
 
 @dataclass
 class WorkflowParameters:
@@ -21,25 +18,7 @@ class WorkflowParameters:
     output_type: str = 'csv'
     corems_json_path: str = 'data/corems.json'
 
-@click.group()
-def cli():
-    pass   
-
-@cli.command()
-@click.argument('gcms_workflow_paramaters_file', required=True, type=str)
-@click.option('--jobs','-j', default=4, help='CPUs')
-def run_workflow(gcms_workflow_paramaters_file, jobs):
-    '''Run the GCMS workflow\n
-       gcms_workflow_paramaters_json_file = json file with workflow parameters\n
-       output_types = csv, excel, pandas, json\n
-       corems_json_path = json file with corems parameters\n
-       --jobs = number of processes to run in parallel\n 
-    '''
-    click.echo('Running gcms workflow')
-    
-    run_metabolomics_workflow(gcms_workflow_paramaters_file, jobs)
-
-def run_metabolomics_workflow(workflow_params_file, jobs):
+def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
     
     workflow_params = read_workflow_parameter(workflow_params_file)
 
@@ -105,21 +84,11 @@ def get_gcms(file_path, corems_params):
 
     return gcms       
 
+
 def start_sql_from_file():
     
+    from corems.molecular_id.input.nistMSI import ReadNistMSI
     ref_lib_path = Path("path_to/your_compound_ref_file.MSL")
     if ref_lib_path.exists:
         sql_obj = ReadNistMSI(ref_lib_path).get_sqlLite_obj()
         return sql_obj
-
-@cli.command()
-@click.argument('json_file_name', required=True, type=str, )
-def dump_template(json_file_name):
-    '''Dumps a json file template
-        to be used as the workflow parameters input 
-    '''
-    ref_lib_path = Path(json_file_name).with_suffix('.json')
-    with open(ref_lib_path, 'w') as workflow_param:
-    
-        json.dump(WorkflowParameters().__dict__, workflow_param, indent=4)
-        
