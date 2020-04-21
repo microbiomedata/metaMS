@@ -1,0 +1,12 @@
+{
+    "file_paths": [
+        "test_data/GCMS_FAMES_01_GCMS-01_20191023.cdf",
+        "test_data/GCMS_FAMES_01_GCMS-01_20191023.cdf"
+    ],
+    
+    "calibration_file_path": "test_data/GCMS_FAMES_01_GCMS-01_20191023.cdf",
+    "output_directory": "right_here",
+    "output_filename": "dataset1",
+    "output_type": "csv",
+    "corems_json_path": "test_data/corems.json"
+}
