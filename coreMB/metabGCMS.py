@@ -14,19 +14,21 @@ from corems.molecular_id.input.nistMSI import ReadNistMSI
 @dataclass
 class WorkflowParameters:
     
-    file_paths: tuple = ()
-    calibration_file_path: str = ''
-    output_directory: str = ''
-    output_filename: str = ''
+    file_paths: tuple = ('data/...', 'data/...')
+    calibration_file_path: str = 'data/...'
+    output_directory: str = 'data/...'
+    output_filename: str = 'data/...'
     output_type: str = 'csv'
-    corems_json_path: str = 'corems.json'
+    corems_json_path: str = 'data/corems.json'
 
-@click.command()
-@click.argument('gcms_workflow_paramaters_file', required=True, type=str, )
+@click.group()
+def cli():
+    pass   
+
+@cli.command()
+@click.argument('gcms_workflow_paramaters_file', required=True, type=str)
 @click.option('--jobs','-j', default=4, help='CPUs')
-    
-def cli( gcms_workflow_paramaters_file, jobs):
-    
+def run_workflow(gcms_workflow_paramaters_file, jobs):
     '''Run the GCMS workflow\n
        gcms_workflow_paramaters_json_file = json file with workflow parameters\n
        output_types = csv, excel, pandas, json\n
@@ -110,5 +112,14 @@ def start_sql_from_file():
         sql_obj = ReadNistMSI(ref_lib_path).get_sqlLite_obj()
         return sql_obj
 
-
+@cli.command()
+@click.argument('json_file_name', required=True, type=str, )
+def dump_template(json_file_name):
+    '''Dumps a json file template
+        to be used as the workflow parameters input 
+    '''
+    ref_lib_path = Path(json_file_name).with_suffix('.json')
+    with open(ref_lib_path, 'w') as workflow_param:
     
+        json.dump(WorkflowParameters().__dict__, workflow_param, indent=4)
+        
