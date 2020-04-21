@@ -76,7 +76,7 @@ metaMS dump_json_template MetamsFile.json
 metaMS dump_corems_json_template CoremsFile.json
 ```
 
-Modify the MetamsFile.json and CoremsFile.json accordingly to your dataset and workflow parameters
+ Modify the MetamsFile.json and CoremsFile.json accordingly to your dataset and workflow parameters
 make sure to include CoremsFile.json path inside the MetamsFile.json: "corems_json_path": "path_to_CoremsFile.json" 
 
 ```bash
@@ -92,18 +92,18 @@ If you don't have docker installed, the easiest way is to [install docker for de
 - Pull from Docker Registry:
 
     ```bash
-    $(data_dir) = dir_containing the gcms data, MetamsFile.json and CoremsFile.json
     docker pull corilo/metams:latest
-    docker run -v $(data_dir):/metaB/data corilo/metams:latest run-gcms-workflow /metaB/data/MetamsFile.json
+    
     ```
 
 - Build the image from source:
 
     ```bash
-    $(data_dir) = dir_containing the gcms data, MetamsFile.json and CoremsFile.json
     docker build -t metams:latest .
     ```
 - Run Workflow from Container:
+
+    $(data_dir) = dir_containing the gcms data, MetamsFile.json and CoremsFile.json
     
     ```bash
     docker run -v $(data_dir):/metaB/data corilo/metams:latest run-gcms-workflow /metaB/data/MetamsFile.json    
