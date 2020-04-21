@@ -67,6 +67,22 @@ To be able to open chemstation files a installation of pythonnet is needed:
     pip3 install pythonnet   
     ```
 
+## Usage
+
+```bash
+metaMS dump_json_template MetamsFile.json
+```
+```bash
+metaMS dump_corems_json_template CoremsFile.json
+```
+
+Modify the MetamsFile.json and CoremsFile.json accordingly to your dataset and workflow parameters
+make sure to include CoremsFile.json path inside the MetamsFile.json: "corems_json_path": "path_to_CoremsFile.json" 
+
+```bash
+metaMS run-gcms-workflow path_to_MetamsFile.json
+```
+
 ## MetaMS Docker 
 
 A docker image containing the MetaMS command line as the entry point
@@ -85,21 +101,21 @@ If you don't have docker installed, the easiest way is to [install docker for de
 
     ```bash
     $(data_dir) = dir_containing the gcms data, MetamsFile.json and CoremsFile.json
-    docker build -t metams:local .
-    docker run -v $(data_dir):/metaB/data corilo/metams:latest run-gcms-workflow /metaB/data/MetamsFile.json
+    docker build -t metams:latest .
     ```
-## Usage
+- Run Workflow from Container:
+    
+    ```bash
+    docker run -v $(data_dir):/metaB/data corilo/metams:latest run-gcms-workflow /metaB/data/MetamsFile.json    
+    ```
 
-```bash
-metaMS dump_json_template MetamsFile.json
-```
-```bash
-metaMS dump_corems_json_template CoremsFile.json
-```
-
-Modify the MetamsFile.json and CoremsFile.json accordingly to your dataset and workflow parameters
-make sure to include CoremsFile.json path inside the MetamsFile.json: "corems_json_path": "path_to_CoremsFile.json" 
-
-```bash
-metaMS run-gcms-workflow path_to_MetamsFile.json
-```
+- Getting the parameters templates:
+    
+    ```bash
+    docker run -v $(data_dir):/metaB/data corilo/metams:latest dump_json_template /metaB/data/MetamsFile.json    
+    ```
+    
+    ```bash
+    docker run -v $(data_dir):/metaB/data corilo/metams:latest dump_corems_json_template /metaB/data/CoremsFile.json
+    ```
+    
