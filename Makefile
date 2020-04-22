@@ -33,7 +33,7 @@ run:
 	@ . venv/bin/activate
 	@metaMS run-gcms-workflow $(parameters_path)
 
-release:
+pypi:
 	@python3 setup.py sdist
 	@twine upload dist/*
 
