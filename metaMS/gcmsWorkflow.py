@@ -7,6 +7,7 @@ from corems.mass_spectra.input.andiNetCDF import ReadAndiNetCDF
 from corems.encapsulation.input import parameter_from_json
 from corems.mass_spectra.calc.GC_RI_Calibration import get_rt_ri_pairs
 from corems.molecular_id.search.compoundSearch import LowResMassSpectralMatch
+import cProfile
 
 @dataclass
 class WorkflowParameters:
@@ -18,33 +19,42 @@ class WorkflowParameters:
     output_type: str = 'csv'
     corems_json_path: str = 'data/corems.json'
 
+def worker(args):
+
+    cProfile.runctx('workflow_worker(args)', globals(), locals(), 'gc-ms.prof')
+
 def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
     
     workflow_params = read_workflow_parameter(workflow_params_file)
 
     rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_json_path)   
 
-    pool = Pool(jobs)
     worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path) for file_path in workflow_params.file_paths]
-    gcms_list = pool.map(workflow_worker, worker_args)
+    #gcms_list = pool.map(workflow_worker, worker_args)
+    pool = Pool(jobs)
+    
+    gcms_list = []
+    for i, gcms in enumerate(pool.imap_unordered(worker, worker_args), 1):
+        gcms_list.append(gcms)
+
     pool.close()
     pool.join()
     
-    output_path = '{DIR}/{NAME}'.format(DIR=workflow_params.output_directory, NAME=workflow_params.output_filename)
+    #output_path = '{DIR}/{NAME}'.format(DIR=workflow_params.output_directory, NAME=workflow_params.output_filename)
     
     dirloc = Path(workflow_params.output_directory)
     dirloc.mkdir(exist_ok=True)
     
-    for gcms in gcms_list:
+    #for gcms in gcms_list:
         
-        eval('gcms.to_'+ workflow_params.output_type + '(output_path, highest_score=False)')
+    #    eval('gcms.to_'+ workflow_params.output_type + '(output_path, highest_score=False)')
 
 def read_workflow_parameter(gcms_workflow_paramaters_json_file):
     with open(gcms_workflow_paramaters_json_file, 'r') as infile:
         return WorkflowParameters(**json.load(infile))    
 
 def get_calibration_rtri_pairs(ref_file_path, corems_paramaters_json_file):
-
+    
     gcms_ref_obj = get_gcms(ref_file_path, corems_paramaters_json_file)
     #sql_obj = start_sql_from_file()
     #rt_ri_pairs = get_rt_ri_pairs(gcms_ref_obj,sql_obj=sql_obj)
@@ -52,6 +62,7 @@ def get_calibration_rtri_pairs(ref_file_path, corems_paramaters_json_file):
     # and comment the next line
     rt_ri_pairs = get_rt_ri_pairs(gcms_ref_obj)
     return rt_ri_pairs
+
 
 def workflow_worker(args):
     
