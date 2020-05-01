@@ -25,8 +25,13 @@ def worker(args):
 
 def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
     
+    click.echo('Loading Searching Settings from %s' % workflow_params_file)
+
     workflow_params = read_workflow_parameter(workflow_params_file)
 
+    dirloc = Path(workflow_params.output_directory)
+    dirloc.mkdir(exist_ok=True)
+    
     rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_json_path)   
 
     worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path) for file_path in workflow_params.file_paths]
@@ -34,21 +39,13 @@ def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
     pool = Pool(jobs)
     
     gcms_list = []
-    for i, gcms in enumerate(pool.imap_unordered(worker, worker_args), 1):
-        gcms_list.append(gcms)
+    for i, gcms in enumerate(pool.imap_unordered(workflow_worker, worker_args), 1):
+        eval('gcms.to_'+ workflow_params.output_type + '(output_path, highest_score=False)')
 
     pool.close()
     pool.join()
     
-    #output_path = '{DIR}/{NAME}'.format(DIR=workflow_params.output_directory, NAME=workflow_params.output_filename)
     
-    dirloc = Path(workflow_params.output_directory)
-    dirloc.mkdir(exist_ok=True)
-    
-    #for gcms in gcms_list:
-        
-    #    eval('gcms.to_'+ workflow_params.output_type + '(output_path, highest_score=False)')
-
 def read_workflow_parameter(gcms_workflow_paramaters_json_file):
     with open(gcms_workflow_paramaters_json_file, 'r') as infile:
         return WorkflowParameters(**json.load(infile))    
@@ -89,7 +86,7 @@ def get_gcms(file_path, corems_params):
     
     gcms = reader_gcms.get_gcms_obj()
 
-    parameter_from_json.load_and_set_parameters_gcms(gcms, settings_path=corems_params)
+    parameter_from_json.load_and_set_parameters_gcms(gcms, parameters_path=corems_params)
     
     gcms.process_chromatogram()
 

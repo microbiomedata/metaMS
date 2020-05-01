@@ -6,14 +6,15 @@ import click
 
 from metaMS.gcmsWorkflow import run_gcms_metabolomics_workflow, WorkflowParameters
 from corems.encapsulation.output.parameter_to_json import dump_gcms_settings_json
+
 @click.group()
 def cli():
     #saving for toplevel options 
-    pass   
+    pass
 
 @cli.command()
 @click.argument('gcms_workflow_paramaters_file', required=True, type=str)
-@click.option('--jobs','-j', default=4, help='CPUs')
+@click.option('--jobs','-j', default=4, help="'cpu's'")
 def run_gcms_workflow(gcms_workflow_paramaters_file, jobs):
     '''Run the GCMS workflow\n
        gcms_workflow_paramaters_json_file = json file with workflow parameters\n
@@ -26,7 +27,7 @@ def run_gcms_workflow(gcms_workflow_paramaters_file, jobs):
     run_gcms_metabolomics_workflow(gcms_workflow_paramaters_file, jobs)
 
 @cli.command()
-@click.argument('json_file_name', required=True, type=str, )
+@click.argument('json_file_name', required=True, type=str)
 def dump_json_template(json_file_name):
     '''Dumps a json file template
         to be used as the workflow parameters input 
@@ -37,7 +38,7 @@ def dump_json_template(json_file_name):
         json.dump(WorkflowParameters().__dict__, workflow_param, indent=4)
 
 @cli.command()
-@click.argument('json_file_name', required=True, type=str, )
+@click.argument('json_file_name', required=True, type=str)
 def dump_corems_json_template(json_file_name):
     '''Dumps a CoreMS json file template
         to be used as the workflow parameters input 
