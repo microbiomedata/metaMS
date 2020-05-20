@@ -11,7 +11,7 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setup(
     name="metaMS",
-    version="1.0.0",
+    version="1.1.0",
     description="Data processing, and annotation for metabolomics analysis by low-resolution GC-MS",
     long_description=README,
     long_description_content_type="text/markdown",
