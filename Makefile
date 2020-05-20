@@ -45,6 +45,14 @@ docker-push:
 	@docker image tag corilo/metams:$(version).$(stage) corilo/metams:latest
 	@docker push corilo/metams:latest
 
+docker-nmdc:
+	
+	@echo microbiomedata/metams:$(version).$(stage)
+	@docker build -t microbiomedata/metams:$(version).$(stage) .
+	@docker push microbiomedata/metams:$(version).$(stage)
+	@docker image tag microbiomedata/metams:$(version).$(stage) microbiomedata/metams:latest
+	@docker push microbiomedata/metams:latest
+
 docker-build:
 
 	docker build -t metams:local .

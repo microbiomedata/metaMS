@@ -38,7 +38,6 @@ def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
     #gcms_list = pool.map(workflow_worker, worker_args)
     pool = Pool(jobs)
     
-    gcms_list = []
     for i, gcms in enumerate(pool.imap_unordered(workflow_worker, worker_args), 1):
         eval('gcms.to_'+ workflow_params.output_type + '(output_path, highest_score=False)')
 
@@ -100,3 +99,22 @@ def start_sql_from_file():
     if ref_lib_path.exists:
         sql_obj = ReadNistMSI(ref_lib_path).get_sqlLite_obj()
         return sql_obj
+
+
+def run_gcms_mpi(workflow_params_file, replicas, rt_ri_pairs):
+    
+    import os, sys
+    sys.path.append(os.getcwd()) 
+    from mpi4py import MPI
+    
+    rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_json_path) 
+    workflow_params = read_workflow_parameter(workflow_params_file)
+    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path, True) for file_path in workflow_params.file_paths]
+
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size()
+    
+    # will only run tasks up to the number of files paths selected in the EnviroMS File
+    if rank < len(worker_args):
+        workflow_worker(worker_args[rank])

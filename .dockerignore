@@ -9,6 +9,7 @@ __pycache__/
 coreMB.egg-info/
 venv/
 res/  
+data/
 .vscode/
 .pytest_cache/
 .vs/
