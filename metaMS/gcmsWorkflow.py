@@ -24,7 +24,7 @@ def worker(args):
     cProfile.runctx('workflow_worker(args)', globals(), locals(), 'gc-ms.prof')
 
 def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
-    
+    import click
     click.echo('Loading Searching Settings from %s' % workflow_params_file)
 
     workflow_params = read_workflow_parameter(workflow_params_file)
@@ -45,7 +45,6 @@ def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
     pool.close()
     pool.join()
     
-    
 def read_workflow_parameter(gcms_workflow_paramaters_json_file):
     with open(gcms_workflow_paramaters_json_file, 'r') as infile:
         return WorkflowParameters(**json.load(infile))    
@@ -59,7 +58,6 @@ def get_calibration_rtri_pairs(ref_file_path, corems_paramaters_json_file):
     # and comment the next line
     rt_ri_pairs = get_rt_ri_pairs(gcms_ref_obj)
     return rt_ri_pairs
-
 
 def workflow_worker(args):
     
@@ -95,8 +93,10 @@ def get_gcms(file_path, corems_params):
 
 def start_sql_from_file():
     
+    from pathlib import Path
     from corems.molecular_id.input.nistMSI import ReadNistMSI
-    ref_lib_path = Path("path_to/your_compound_ref_file.MSL")
+
+    ref_lib_path = Path("data/PNNLMetV20191015.MSL")
     if ref_lib_path.exists:
         sql_obj = ReadNistMSI(ref_lib_path).get_sqlLite_obj()
         return sql_obj
