@@ -4,7 +4,7 @@
 
 ## Current Version
 
-### `1.1.1`
+### `1.1.2`
 
 ### Data input formats
 

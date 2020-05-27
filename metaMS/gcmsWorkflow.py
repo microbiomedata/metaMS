@@ -31,6 +31,7 @@ def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
 
     dirloc = Path(workflow_params.output_directory)
     dirloc.mkdir(exist_ok=True)
+    output_path = Path(workflow_params.output_directory)/workflow_params.output_filename
     
     rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_json_path)   
 
@@ -107,7 +108,6 @@ def run_gcms_mpi(workflow_params_file, replicas, rt_ri_pairs):
     sys.path.append(os.getcwd()) 
     from mpi4py import MPI
     
-   
     workflow_params = read_workflow_parameter(workflow_params_file)
     rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_json_path) 
     worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path, True) for file_path in workflow_params.file_paths]
