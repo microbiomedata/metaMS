@@ -9,12 +9,13 @@
         "max_peak_width": 0.1,
         "min_peak_datapoints": 3,
         "noise_threshold_method": "manual_relative_abundance", "peak_height_max_percent": 10,
-        "peak_height_min_abun": 0.2,
+        "peak_height_min_abun": 1,
         "peak_max_prominence_percent": 1,
         "peak_min_prominence_percent": 1,
         "savgol_pol_order": 2,
         "smooth_method": "savgol", "smooth_window": 5,
-        "std_noise_threshold": 3
+        "std_noise_threshold": 3,
+        "use_deconvolution": true
     },
     "MolecularSearch": {
         "correlation_threshold": 0.5,
