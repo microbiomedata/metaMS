@@ -27,7 +27,7 @@ def run_gcms_metabolomics_workflow_wdl(file_paths, calibration_file_path, output
     import click
     
     workflow_params = WorkflowParameters()
-    workflow_params.file_paths = file_paths
+    workflow_params.file_paths = file_paths.split(",")
     workflow_params.calibration_file_path = calibration_file_path
     workflow_params.output_directory = output_directory
     workflow_params.output_filename = output_filename
@@ -42,7 +42,7 @@ def run_gcms_metabolomics_workflow_wdl(file_paths, calibration_file_path, output
 
     worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path) for file_path in workflow_params.file_paths]
     #gcms_list = pool.map(workflow_worker, worker_args)
-    pool = Pool(jobs)
+    pool = Pool(int(jobs))
     
     for i, gcms in enumerate(pool.imap_unordered(workflow_worker, worker_args), 1):
         eval('gcms.to_'+ workflow_params.output_type + '(output_path, highest_score=False)')

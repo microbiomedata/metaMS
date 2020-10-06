@@ -12,15 +12,16 @@ workflow gcmsMetabolomics {
 
     File corems_json_path
 
-    Int jobs_count=4
+    Int jobs_count
 
     call runMetaMS {
-         input: data_dir=data_dir,
-                calibration_file_path, calibration_file_path,
-                output_directory, output_directory,
-                output_filename, output_filename,
-                output_type, output_type,
-                corems_json_path, corems_json_path
+         input: file_paths= file_paths,
+                calibration_file_path=calibration_file_path,
+                output_directory=output_directory,
+                output_filename=output_filename,
+                output_type=output_type,
+                corems_json_path=corems_json_path,
+                jobs_count=jobs_count
     }
 }
 
@@ -41,8 +42,14 @@ task runMetaMS {
     Int jobs_count
     
     command {
-
-        run-gcms-wdl-workflow file_paths calibration_file_path output_directory output_filename output_type corems_json_path --jobs jobs_count
+        
+        metaMS run-gcms-wdl-workflow ${sep=',' file_paths} \
+                                     ${calibration_file_path} \
+                                     ${output_directory} \
+                                     ${output_filename} \
+                                     ${output_type} \
+                                     ${corems_json_path} \
+                                     --jobs ${jobs_count} 
     }
     
     output {
@@ -56,5 +63,6 @@ task runMetaMS {
         docker: "microbiomedata/metams:latest"
     
     }
+
 }
 

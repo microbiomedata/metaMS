@@ -60,3 +60,7 @@ docker-build:
 docker-run:
 
 	docker run -v $(data_dir):/metaB/data metams:local run-gcms-workflow /metaB/data/MetamsFile.json
+
+wdl-run :
+ 	 
+	 miniwdl run wdl/metaMS.wdl -i wdl/metams_input.json --verbose	
