@@ -4,7 +4,7 @@
 
 ## Current Version
 
-### `1.3.0`
+### `2.0.0`
 
 ### Data input formats
 
@@ -82,7 +82,13 @@ make sure to include CoremsFile.json path inside the MetamsFile.json: "corems_js
 ```bash
 metaMS run-gcms-workflow path_to_MetamsFile.json
 ```
+## MINIWDL 
 
+```bash
+pip3 install miniwdl
+
+miniwdl run wdl/metaMS.wdl -i wdl/metams_input.json --verbose --no-cache --copy-input-files
+```
 ## MetaMS Docker 
 
 A docker image containing the MetaMS command line as the entry point

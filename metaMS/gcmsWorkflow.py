@@ -23,9 +23,8 @@ def worker(args):
 
     cProfile.runctx('workflow_worker(args)', globals(), locals(), 'gc-ms.prof')
 
-def run_gcms_metabolomics_workflow_wdl(file_paths, calibration_file_path, output_directory,output_filename, output_type, corems_json_path, jobs):
+def run_gcms_metabolomics_workflow_wdl(file_paths, calibration_file_path, output_directory,output_filename, output_type, corems_json_path, jobs, db_path=None):
     import click
-    
     workflow_params = WorkflowParameters()
     workflow_params.file_paths = file_paths.split(",")
     workflow_params.calibration_file_path = calibration_file_path
@@ -40,7 +39,7 @@ def run_gcms_metabolomics_workflow_wdl(file_paths, calibration_file_path, output
     
     rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_json_path)   
 
-    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path) for file_path in workflow_params.file_paths]
+    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path, workflow_params.calibration_file_path ) for file_path in workflow_params.file_paths]
     #gcms_list = pool.map(workflow_worker, worker_args)
     pool = Pool(int(jobs))
     
@@ -62,7 +61,7 @@ def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
     
     rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_json_path)   
 
-    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path) for file_path in workflow_params.file_paths]
+    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path, workflow_params.calibration_file_path) for file_path in workflow_params.file_paths]
     #gcms_list = pool.map(workflow_worker, worker_args)
     pool = Pool(jobs)
     
@@ -88,11 +87,11 @@ def get_calibration_rtri_pairs(ref_file_path, corems_paramaters_json_file):
 
 def workflow_worker(args):
     
-    file_path, ref_dict, corems_params = args
+    file_path, ref_dict, corems_params, cal_file_path = args
     
     gcms = get_gcms(file_path, corems_params)
     
-    gcms.calibrate_ri(ref_dict)
+    gcms.calibrate_ri(ref_dict, cal_file_path)
     
     # sql_obj = start_sql_from_file()
     # lowResSearch = LowResMassSpectralMatch(gcms, sql_obj=sql_obj)
@@ -115,8 +114,7 @@ def get_gcms(file_path, corems_params):
     
     gcms.process_chromatogram()
 
-    return gcms       
-
+    return gcms
 
 def start_sql_from_file():
     
@@ -137,7 +135,7 @@ def run_gcms_mpi(workflow_params_file, replicas, rt_ri_pairs):
     
     workflow_params = read_workflow_parameter(workflow_params_file)
     rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_json_path) 
-    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path, True) for file_path in workflow_params.file_paths]
+    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path, workflow_params.calibration_file_path) for file_path in workflow_params.file_paths]
 
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()

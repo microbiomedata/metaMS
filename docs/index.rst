@@ -84,7 +84,7 @@ Requirements for Execution
 Version History
 ---------------
 
-- 1.3.0
+- 2.0.0
 
 Point of contact
 ----------------

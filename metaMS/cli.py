@@ -13,7 +13,7 @@ def cli():
     pass
 
 @cli.command()
-@click.argument('file_paths', required=True, type=list)
+@click.argument('file_paths', required=True, type=str)
 @click.argument('calibration_file_path', required=True, type=str)
 @click.argument('output_directory', required=True, type=str)
 @click.argument('output_filename', required=True, type=str)

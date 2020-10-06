@@ -56,7 +56,7 @@ task runMetaMS {
         
         String out = read_string(stdout())
         File output_file = "${output_directory}/${output_filename}.${output_type}"
-         
+        File output_metafile = "${output_directory}/${output_filename}.json" 
     }
 
     runtime {

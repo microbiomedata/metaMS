@@ -63,4 +63,4 @@ docker-run:
 
 wdl-run :
  	 
-	 miniwdl run wdl/metaMS.wdl -i wdl/metams_input.json --verbose	
+	 miniwdl run wdl/metaMS.wdl -i wdl/metams_input.json --verbose --no-cache --copy-input-files
