@@ -82,6 +82,7 @@ make sure to include CoremsFile.json path inside the MetamsFile.json: "corems_js
 ```bash
 metaMS run-gcms-workflow path_to_MetamsFile.json
 ```
+
 ## MiniWDL 
 - Change wdl/metams_input.json to specify the data location
 
@@ -109,7 +110,7 @@ If you don't have docker installed, the easiest way is to [install docker for de
     
     ```
 
-- Build the image from source:
+- or Build the image from source:
 
     ```bash
     docker build -t metams:latest .
