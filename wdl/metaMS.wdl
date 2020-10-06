@@ -12,6 +12,8 @@ workflow gcmsMetabolomics {
 
     File corems_json_path
 
+    Int jobs_count=4
+
     call runMetaMS {
          input: data_dir=data_dir,
                 calibration_file_path, calibration_file_path,
