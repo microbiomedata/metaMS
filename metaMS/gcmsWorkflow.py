@@ -23,6 +23,33 @@ def worker(args):
 
     cProfile.runctx('workflow_worker(args)', globals(), locals(), 'gc-ms.prof')
 
+def run_gcms_metabolomics_workflow_wdl(file_paths, calibration_file_path, output_directory,output_filename, output_type, corems_json_path, jobs):
+    import click
+    
+    workflow_params = WorkflowParameters()
+    workflow_params.file_paths = file_paths
+    workflow_params.calibration_file_path = calibration_file_path
+    workflow_params.output_directory = output_directory
+    workflow_params.output_filename = output_filename
+    workflow_params.output_type = output_type
+    workflow_params.corems_json_path = corems_json_path
+    
+    dirloc = Path(workflow_params.output_directory)
+    dirloc.mkdir(exist_ok=True)
+    output_path = Path(workflow_params.output_directory)/workflow_params.output_filename
+    
+    rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_json_path)   
+
+    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path) for file_path in workflow_params.file_paths]
+    #gcms_list = pool.map(workflow_worker, worker_args)
+    pool = Pool(jobs)
+    
+    for i, gcms in enumerate(pool.imap_unordered(workflow_worker, worker_args), 1):
+        eval('gcms.to_'+ workflow_params.output_type + '(output_path, highest_score=False)')
+
+    pool.close()
+    pool.join()
+
 def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
     import click
     click.echo('Loading Searching Settings from %s' % workflow_params_file)

@@ -4,13 +4,32 @@ from pathlib import Path
 
 import click
 
-from metaMS.gcmsWorkflow import run_gcms_metabolomics_workflow, WorkflowParameters
+from metaMS.gcmsWorkflow import WorkflowParameters, run_gcms_metabolomics_workflow, run_gcms_metabolomics_workflow_wdl
 from corems.encapsulation.output.parameter_to_json import dump_gcms_settings_json
 
 @click.group()
 def cli():
     #saving for toplevel options 
     pass
+
+@cli.command()
+@click.argument('file_paths', required=True, type=list)
+@click.argument('calibration_file_path', required=True, type=str)
+@click.argument('output_directory', required=True, type=str)
+@click.argument('output_filename', required=True, type=str)
+@click.argument('output_type', required=True, type=str)
+@click.argument('corems_json_path', required=True, type=str)
+@click.option('--jobs','-j', default=4, help="'cpu's'")
+def run_gcms_wdl_workflow(file_paths, calibration_file_path, output_directory,output_filename, output_type, corems_json_path, jobs):
+    '''Run the GCMS workflow\n
+       gcms_workflow_paramaters_json_file = json file with workflow parameters\n
+       output_types = csv, excel, pandas, json set on the parameter file\n
+       corems_json_path = json file with corems parameters\n
+       --jobs = number of processes to run in parallel\n 
+    '''
+    click.echo('Running gcms workflow')
+    
+    run_gcms_metabolomics_workflow_wdl(file_paths, calibration_file_path, output_directory,output_filename, output_type, corems_json_path, jobs)
 
 @cli.command()
 @click.argument('gcms_workflow_paramaters_file', required=True, type=str)
