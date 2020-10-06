@@ -82,11 +82,18 @@ make sure to include CoremsFile.json path inside the MetamsFile.json: "corems_js
 ```bash
 metaMS run-gcms-workflow path_to_MetamsFile.json
 ```
-## MINIWDL 
+## MiniWDL 
+- Change wdl/metams_input.json to specify the data location
 
+- Change data/CoremsFile.json to specify the workflow parameters
+
+Install miniWDL:
 ```bash
 pip3 install miniwdl
+```
 
+Call:
+```bash
 miniwdl run wdl/metaMS.wdl -i wdl/metams_input.json --verbose --no-cache --copy-input-files
 ```
 ## MetaMS Docker 
