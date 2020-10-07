@@ -32,7 +32,7 @@
 - Manual and automatic noise threshold calculation
 - First and second derivatives peak picking methods
 - Peak Area Calculation
-- EIC Chromatogram deconvolution(TODO)
+- EIC-based Chromatogram deconvolution
 
 ### Calibration
 
