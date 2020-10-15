@@ -120,17 +120,17 @@ If you don't have docker installed, the easiest way is to [install docker for de
     $(data_dir) = dir_containing the gcms data, MetamsFile.json and CoremsFile.json
     
     ```bash
-    docker run -v $(data_dir):/metaB/data corilo/metams:latest run-gcms-workflow /metaB/data/MetamsFile.json    
+    docker run -v $(data_dir):/metaB/data corilo/metams:latest metaMS run-gcms-workflow /metaB/data/MetamsFile.json    
     ```
 
 - Getting the parameters templates:
     
     ```bash
-    docker run -v $(data_dir):/metaB/data corilo/metams:latest dump_json_template /metaB/data/MetamsFile.json    
+    docker run -v $(data_dir):/metaB/data corilo/metams:latest metaMS dump_json_template /metaB/data/MetamsFile.json    
     ```
     
     ```bash
-    docker run -v $(data_dir):/metaB/data corilo/metams:latest dump_corems_json_template /metaB/data/CoremsFile.json
+    docker run -v $(data_dir):/metaB/data corilo/metams:latest metaMS dump_corems_json_template /metaB/data/CoremsFile.json
     ```
 
 ## Disclaimer
