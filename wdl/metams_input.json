@@ -1,15 +1,14 @@
 {
-        "gcmsMetabolomics.file_paths": [
+        "gcmsMetabolomics.runMetaMS.file_paths": [
         "./data/GCMS_FAMES_01_GCMS-01_20191023.cdf",
         "./data/GCMS_FAMES_01_GCMS-01_20191023.cdf"
     ],
 
-    "gcmsMetabolomics.calibration_file_path": "./data/GCMS_FAMES_01_GCMS-01_20191023.cdf",
-    "gcmsMetabolomics.output_directory": "output_goes_here",
-    "gcmsMetabolomics.output_filename": "your_dataset_name",
-    "gcmsMetabolomics.output_type": "csv",
-    "gcmsMetabolomics.corems_json_path": "./data/CoremsFile.json",
-    "gcmsMetabolomics.jobs_count": 4
+    "gcmsMetabolomics.runMetaMS.calibration_file_path": "./data/GCMS_FAMES_01_GCMS-01_20191023.cdf",
+    "gcmsMetabolomics.runMetaMS.output_directory": "output_goes_here",
+    "gcmsMetabolomics.runMetaMS.output_filename": "your_dataset_name",
+    "gcmsMetabolomics.runMetaMS.output_type": "csv",
+    "gcmsMetabolomics.runMetaMS.corems_json_path": "./data/CoremsFile.json",
+    "gcmsMetabolomics.runMetaMS.jobs_count": 4
 
-    
 }
