@@ -1,17 +1,17 @@
 # Table of Contents  
 - Introduction
   - [MetaMS](#MetaMS)  
-  - [Version](##current-version)  
-  - [Data Input](##data-input-formats)  
-  - [Data Output](##data-output-formats)  
-  - [Data Structure](##data-structure-types)  
-  - [Features](##available-features)  
+  - [Version](#current-version)  
+  - [Data Input](#data-input-formats)  
+  - [Data Output](#data-output-formats)  
+  - [Data Structure](#data-structure-types)  
+  - [Features](#available-features)  
 - Installation
-  - [PyPi](##metams-installation)  
+  - [PyPi](#metams-installation)  
 - Execution:  
-  - [CLI](##execution)  
-  - [MiniWDL](##MiniWDL)  
-  - [Docker Container](##metams-docker-container)  
+  - [CLI](#execution)  
+  - [MiniWDL](#MiniWDL)  
+  - [Docker Container](#metams-docker-container)  
 # MetaMS
 
 **MetaMS** is a workflow for metabolomics data processing and annotation
