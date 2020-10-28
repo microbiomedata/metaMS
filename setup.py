@@ -11,11 +11,11 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setup(
     name="metaMS",
-    version="2.0.1",
+    version="2.0.2",
     description="Data processing, and annotation for metabolomics analysis by low-resolution GC-MS",
     long_description=README,
     long_description_content_type="text/markdown",
-    url="https://gitlab.pnnl.gov/mass-spectrometry/metaMS",
+    url="https://github.com/EMSL-Computing/MetaMS",
     author="Corilo, Yuri",
     author_email="corilo@pnnl.gov",
     license="BSD",
