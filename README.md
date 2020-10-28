@@ -1,3 +1,17 @@
+# Table of Contents  
+- Introduction
+  - [MetaMS](#MetaMS)  
+  - [Version](##current-version)  
+  - [Data Input](##data-input-formats)  
+  - [Data Output](##data-output-formats)  
+  - [Data Structure](##data-structure-types)  
+  - [Features](##available-features)  
+- Installation
+  - [PyPi](##metams-installation)  
+- Execution:  
+  - [CLI](##execution)  
+  - [MiniWDL](##MiniWDL)  
+  - [Docker Container](##metams-docker-container)  
 # MetaMS
 
 **MetaMS** is a workflow for metabolomics data processing and annotation
@@ -67,7 +81,7 @@ To be able to open chemstation files a installation of pythonnet is needed:
     pip3 install pythonnet   
     ```
 
-## Usage
+## Execution
 
 ```bash
 metaMS dump_json_template MetamsFile.json
@@ -97,7 +111,7 @@ Call:
 ```bash
 miniwdl run wdl/metaMS.wdl -i wdl/metams_input.json --verbose --no-cache --copy-input-files
 ```
-## MetaMS Docker 
+## MetaMS Docker Container
 
 A docker image containing the MetaMS command line as the entry point
 
