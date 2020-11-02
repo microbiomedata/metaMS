@@ -43,6 +43,7 @@
 ### Signal Processing
 
 - Baseline detection, subtraction, smoothing 
+- m/z based Chromatogram Peak Deconvolution,
 - Manual and automatic noise threshold calculation
 - First and second derivatives peak picking methods
 - Peak Area Calculation

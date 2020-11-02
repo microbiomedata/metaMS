@@ -5,7 +5,7 @@ Summary
 -------
 
 The gas chromatography-mass spectrometry (GC-MS) based metabolomics workflow (metaMS) has been developed by leveraging PNNL's CoreMS software framework.
-The current software design allows for the orchestration of the metabolite characterization pipeline, i.e., signal noise reduction, 
+The current software design allows for the orchestration of the metabolite characterization pipeline, i.e., signal noise reduction, m/z based Chromatogram Peak Deconvolution,
 abundance threshold calculation, peak picking, spectral similarity calculation and molecular search, similarity score calculation, and confidence filtering, all in a single step.
 
 
