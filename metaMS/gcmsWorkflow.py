@@ -67,7 +67,7 @@ def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
     pool = Pool(jobs)
     
     for i, gcms in enumerate(pool.imap_unordered(workflow_worker, worker_args), 1):
-        eval('gcms.to_'+ workflow_params.output_type + '(output_path, highest_score=False)')
+        eval('gcms.to_'+ workflow_params.output_type + '(output_path)')
 
     pool.close()
     pool.join()
