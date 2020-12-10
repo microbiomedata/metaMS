@@ -40,7 +40,7 @@ pypi:
 docker-push:
 	
 	@echo corilo/metams:$(version).$(stage)
-	@docker build -t corilo/metams:$(version).$(stage) .
+	@docker build --no-cache -t corilo/metams:$(version).$(stage) .
 	@docker push corilo/metams:$(version).$(stage)
 	@docker image tag corilo/metams:$(version).$(stage) corilo/metams:latest
 	@docker push corilo/metams:latest
