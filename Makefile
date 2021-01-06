@@ -48,7 +48,7 @@ docker-push:
 docker-nmdc:
 	
 	@echo microbiomedata/metams:$(version).$(stage)
-	@docker build -t microbiomedata/metams:$(version).$(stage) .
+	@docker build --no-cache -t microbiomedata/metams:$(version).$(stage) .
 	@docker push microbiomedata/metams:$(version).$(stage)
 	@docker image tag microbiomedata/metams:$(version).$(stage) microbiomedata/metams:latest
 	@docker push microbiomedata/metams:latest

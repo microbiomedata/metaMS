@@ -4,7 +4,7 @@ from pathlib import Path
 
 import click
 
-from metaMS.gcmsWorkflow import WorkflowParameters, run_gcms_metabolomics_workflow, run_gcms_metabolomics_workflow_wdl
+from metaMS.gcmsWorkflow import WorkflowParameters, run_gcms_metabolomics_workflow, run_gcms_metabolomics_workflow_wdl, run_nmdc_metabolomics_workflow
 from corems.encapsulation.output.parameter_to_json import dump_gcms_settings_json
 
 @click.group()
@@ -28,13 +28,13 @@ def run_gcms_wdl_workflow(file_paths, calibration_file_path, output_directory,ou
        --jobs = number of processes to run in parallel\n 
     '''
     click.echo('Running gcms workflow')
-    
     run_gcms_metabolomics_workflow_wdl(file_paths, calibration_file_path, output_directory,output_filename, output_type, corems_json_path, jobs)
 
 @cli.command()
 @click.argument('gcms_workflow_paramaters_file', required=True, type=str)
 @click.option('--jobs','-j', default=4, help="'cpu's'")
-def run_gcms_workflow(gcms_workflow_paramaters_file, jobs):
+@click.option('--nmdc', '-n', is_flag=True, help="Creates NMDC metadata mapping and save each result individually")
+def run_gcms_workflow(gcms_workflow_paramaters_file, jobs, nmdc):
     '''Run the GCMS workflow\n
        gcms_workflow_paramaters_json_file = json file with workflow parameters\n
        output_types = csv, excel, pandas, json set on the parameter file\n
@@ -42,8 +42,10 @@ def run_gcms_workflow(gcms_workflow_paramaters_file, jobs):
        --jobs = number of processes to run in parallel\n 
     '''
     click.echo('Running gcms workflow')
-    
-    run_gcms_metabolomics_workflow(gcms_workflow_paramaters_file, jobs)
+    if nmdc:
+        run_nmdc_metabolomics_workflow(gcms_workflow_paramaters_file, jobs)
+    else:
+        run_gcms_metabolomics_workflow(gcms_workflow_paramaters_file, jobs)
 
 @cli.command()
 @click.argument('json_file_name', required=True, type=str)

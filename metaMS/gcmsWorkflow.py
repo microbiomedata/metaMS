@@ -3,10 +3,12 @@ from multiprocessing import Pool
 from pathlib import Path
 import json
 
+from metaMS.metadata_factory import NMDC_Metadata
 from corems.mass_spectra.input.andiNetCDF import ReadAndiNetCDF
 from corems.encapsulation.input import parameter_from_json
 from corems.mass_spectra.calc.GC_RI_Calibration import get_rt_ri_pairs
 from corems.molecular_id.search.compoundSearch import LowResMassSpectralMatch
+
 import cProfile
 
 @dataclass
@@ -49,6 +51,37 @@ def run_gcms_metabolomics_workflow_wdl(file_paths, calibration_file_path, output
 
     pool.close()
     pool.join()
+
+def run_nmdc_metabolomics_workflow(workflow_params_file, jobs):
+    
+    import click
+    dms_file_path = 'db/GC-MS Metabolomics Experiments to Process Final.xlsx'
+    
+    click.echo('Loading Searching Settings from %s' % workflow_params_file)
+    workflow_params = read_workflow_parameter(workflow_params_file)
+    
+    dirloc = Path(workflow_params.output_directory)
+    dirloc.mkdir(exist_ok=True)
+    
+    rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_json_path)   
+
+    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path, workflow_params.calibration_file_path) for file_path in workflow_params.file_paths]
+    #gcms_list = pool.map(workflow_worker, worker_args)
+    pool = Pool(jobs)
+    
+    for i, gcms in enumerate(pool.imap_unordered(workflow_worker, worker_args), 1):
+        
+        in_file_path = Path(workflow_params.file_paths[i])
+        output_path = Path(workflow_params.output_directory)/in_file_path.name
+
+        eval('gcms.to_'+ workflow_params.output_type + '(output_path, write_metadata=False)')
+        
+        nmdc = NMDC_Metadata(in_file_path, workflow_params.calibration_file_path, output_path, dms_file_path)
+        nmdc.create_nmdc_metadata(gcms)
+
+    pool.close()
+    pool.join()
+    
 
 def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
     import click
