@@ -5,6 +5,8 @@ import uuid
 import json
 
 from openpyxl import load_workbook
+import requests
+import os
 
 class DMS_Mapping():
 
@@ -25,8 +27,20 @@ class DMS_Mapping():
         return emsl_jgi_dict
 
     @staticmethod
+    def get_mds_metadata(dataset_name):
+        username = os.environ.get('USER_NAME') or 'pnnl'
+        password = os.environ.get('USER_PASSWORD') or 'pnnl_password'
+
+        url_request = "https://dms2.pnl.gov/data/ax/json/list_report/dataset/{}".format(dataset_name) 
+        r = requests.get(url_request, auth=(username, password))
+        data = r.json()
+
+        return data
+    @staticmethod
     def get_data_mapping(wb, emsl_jgi_dict):
 
+        url = "https://dms2.pnl.gov/data/ax/json/list_report/dataset/"    
+        
         first_sheet = wb.sheetnames[0]
 
         full_list_worksheet = wb[first_sheet]
