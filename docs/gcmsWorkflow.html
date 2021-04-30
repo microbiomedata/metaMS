@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>metaMS.gcmsWorkflow API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>metaMS.gcmsWorkflow</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from dataclasses import dataclass
+from multiprocessing import Pool
+from pathlib import Path
+import json
+
+from metaMS.metadata_factory import NMDC_Metadata
+from corems.mass_spectra.input.andiNetCDF import ReadAndiNetCDF
+from corems.encapsulation.input import parameter_from_json
+from corems.mass_spectra.calc.GC_RI_Calibration import get_rt_ri_pairs
+from corems.molecular_id.search.compoundSearch import LowResMassSpectralMatch
+
+import cProfile
+
+@dataclass
+class WorkflowParameters:
+    
+    file_paths: tuple = (&#39;data/...&#39;, &#39;data/...&#39;)
+    calibration_file_path: str = &#39;data/...&#39;
+    output_directory: str = &#39;data/...&#39;
+    output_filename: str = &#39;data/...&#39;
+    output_type: str = &#39;csv&#39;
+    corems_json_path: str = &#39;data/corems.json&#39;
+
+def worker(args):
+
+    cProfile.runctx(&#39;workflow_worker(args)&#39;, globals(), locals(), &#39;gc-ms.prof&#39;)
+
+def run_gcms_metabolomics_workflow_wdl(file_paths, calibration_file_path, output_directory,output_filename, output_type, corems_json_path, jobs, db_path=None):
+    
+    import click
+    workflow_params = WorkflowParameters()
+    workflow_params.file_paths = file_paths.split(&#34;,&#34;)
+    workflow_params.calibration_file_path = calibration_file_path
+    workflow_params.output_directory = output_directory
+    workflow_params.output_filename = output_filename
+    workflow_params.output_type = output_type
+    workflow_params.corems_json_path = corems_json_path
+    
+    dirloc = Path(workflow_params.output_directory)
+    dirloc.mkdir(exist_ok=True)
+    output_path = Path(workflow_params.output_directory)/workflow_params.output_filename
+    
+    rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_json_path)   
+
+    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path, workflow_params.calibration_file_path ) for file_path in workflow_params.file_paths]
+    #gcms_list = pool.map(workflow_worker, worker_args)
+    pool = Pool(int(jobs))
+    
+    for i, gcms in enumerate(pool.imap_unordered(workflow_worker, worker_args), 1):
+        eval(&#39;gcms.to_&#39;+ workflow_params.output_type + &#39;(output_path, highest_score=False)&#39;)
+
+    pool.close()
+    pool.join()
+
+def run_nmdc_metabolomics_workflow(workflow_params_file, jobs):
+    
+    import click
+    dms_file_path = &#39;db/GC-MS Metabolomics Experiments to Process Final.xlsx&#39;
+    
+    click.echo(&#39;Loading Searching Settings from %s&#39; % workflow_params_file)
+    workflow_params = read_workflow_parameter(workflow_params_file)
+    
+    dirloc = Path(workflow_params.output_directory)
+    dirloc.mkdir(exist_ok=True)
+    
+    rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_json_path)   
+
+    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path, workflow_params.calibration_file_path) for file_path in workflow_params.file_paths]
+    #gcms_list = pool.map(workflow_worker, worker_args)
+    pool = Pool(jobs)
+    
+    for i, gcms in enumerate(pool.imap_unordered(workflow_worker, worker_args), 1):
+        
+        in_file_path = Path(workflow_params.file_paths[i])
+        output_path = Path(workflow_params.output_directory)/in_file_path.name
+
+        eval(&#39;gcms.to_&#39;+ workflow_params.output_type + &#39;(output_path, write_metadata=False)&#39;)
+        
+        nmdc = NMDC_Metadata(in_file_path, workflow_params.calibration_file_path, output_path, dms_file_path)
+        nmdc.create_nmdc_metadata(gcms)
+
+    pool.close()
+    pool.join()
+    
+
+def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
+    import click
+    click.echo(&#39;Loading Searching Settings from %s&#39; % workflow_params_file)
+
+    workflow_params = read_workflow_parameter(workflow_params_file)
+
+    dirloc = Path(workflow_params.output_directory)
+    dirloc.mkdir(exist_ok=True)
+    output_path = Path(workflow_params.output_directory)/workflow_params.output_filename
+    
+    rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_json_path)   
+
+    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path, workflow_params.calibration_file_path) for file_path in workflow_params.file_paths]
+    #gcms_list = pool.map(workflow_worker, worker_args)
+    pool = Pool(jobs)
+    
+    for i, gcms in enumerate(pool.imap_unordered(workflow_worker, worker_args), 1):
+        eval(&#39;gcms.to_&#39;+ workflow_params.output_type + &#39;(output_path)&#39;)
+
+    pool.close()
+    pool.join()
+    
+def read_workflow_parameter(gcms_workflow_paramaters_json_file):
+    with open(gcms_workflow_paramaters_json_file, &#39;r&#39;) as infile:
+        return WorkflowParameters(**json.load(infile))    
+
+def get_calibration_rtri_pairs(ref_file_path, corems_paramaters_json_file):
+    
+    gcms_ref_obj = get_gcms(ref_file_path, corems_paramaters_json_file)
+    #sql_obj = start_sql_from_file()
+    #rt_ri_pairs = get_rt_ri_pairs(gcms_ref_obj,sql_obj=sql_obj)
+    # !!!!!! READ !!!!! use the previous two lines if db/pnnl_lowres_gcms_compounds.sqlite does not exist
+    # and comment the next line
+    rt_ri_pairs = get_rt_ri_pairs(gcms_ref_obj)
+    return rt_ri_pairs
+
+def workflow_worker(args):
+    
+    file_path, ref_dict, corems_params, cal_file_path = args
+    
+    gcms = get_gcms(file_path, corems_params)
+    
+    gcms.calibrate_ri(ref_dict, cal_file_path)
+    
+    # sql_obj = start_sql_from_file()
+    # lowResSearch = LowResMassSpectralMatch(gcms, sql_obj=sql_obj)
+    # !!!!!! READ !!!!! use the previous two lines if db/pnnl_lowres_gcms_compounds.sqlite does not exist
+    # and comment the next line
+    lowResSearch = LowResMassSpectralMatch(gcms)
+    lowResSearch.run()
+
+    return gcms
+
+def get_gcms(file_path, corems_params):
+    
+    reader_gcms = ReadAndiNetCDF(file_path)
+        
+    reader_gcms.run()
+    
+    gcms = reader_gcms.get_gcms_obj()
+
+    parameter_from_json.load_and_set_parameters_gcms(gcms, parameters_path=corems_params)
+    
+    gcms.process_chromatogram()
+
+    return gcms
+
+def start_sql_from_file():
+    
+    from pathlib import Path
+    from corems.molecular_id.input.nistMSI import ReadNistMSI
+
+    ref_lib_path = Path(&#34;data/PNNLMetV20191015.MSL&#34;)
+    if ref_lib_path.exists:
+        sql_obj = ReadNistMSI(ref_lib_path).get_sqlLite_obj()
+        return sql_obj
+
+
+def run_gcms_mpi(workflow_params_file, replicas, rt_ri_pairs):
+    
+    import os, sys
+    sys.path.append(os.getcwd()) 
+    from mpi4py import MPI
+    
+    workflow_params = read_workflow_parameter(workflow_params_file)
+    rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_json_path) 
+    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path, workflow_params.calibration_file_path) for file_path in workflow_params.file_paths]
+
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size()
+    
+    # will only run tasks up to the number of files paths selected in the EnviroMS File
+    if rank &lt; len(worker_args):
+        workflow_worker(worker_args[rank])</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="metaMS.gcmsWorkflow.get_calibration_rtri_pairs"><code class="name flex">
+<span>def <span class="ident">get_calibration_rtri_pairs</span></span>(<span>ref_file_path, corems_paramaters_json_file)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_calibration_rtri_pairs(ref_file_path, corems_paramaters_json_file):
+    
+    gcms_ref_obj = get_gcms(ref_file_path, corems_paramaters_json_file)
+    #sql_obj = start_sql_from_file()
+    #rt_ri_pairs = get_rt_ri_pairs(gcms_ref_obj,sql_obj=sql_obj)
+    # !!!!!! READ !!!!! use the previous two lines if db/pnnl_lowres_gcms_compounds.sqlite does not exist
+    # and comment the next line
+    rt_ri_pairs = get_rt_ri_pairs(gcms_ref_obj)
+    return rt_ri_pairs</code></pre>
+</details>
+</dd>
+<dt id="metaMS.gcmsWorkflow.get_gcms"><code class="name flex">
+<span>def <span class="ident">get_gcms</span></span>(<span>file_path, corems_params)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_gcms(file_path, corems_params):
+    
+    reader_gcms = ReadAndiNetCDF(file_path)
+        
+    reader_gcms.run()
+    
+    gcms = reader_gcms.get_gcms_obj()
+
+    parameter_from_json.load_and_set_parameters_gcms(gcms, parameters_path=corems_params)
+    
+    gcms.process_chromatogram()
+
+    return gcms</code></pre>
+</details>
+</dd>
+<dt id="metaMS.gcmsWorkflow.read_workflow_parameter"><code class="name flex">
+<span>def <span class="ident">read_workflow_parameter</span></span>(<span>gcms_workflow_paramaters_json_file)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def read_workflow_parameter(gcms_workflow_paramaters_json_file):
+    with open(gcms_workflow_paramaters_json_file, &#39;r&#39;) as infile:
+        return WorkflowParameters(**json.load(infile))    </code></pre>
+</details>
+</dd>
+<dt id="metaMS.gcmsWorkflow.run_gcms_metabolomics_workflow"><code class="name flex">
+<span>def <span class="ident">run_gcms_metabolomics_workflow</span></span>(<span>workflow_params_file, jobs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
+    import click
+    click.echo(&#39;Loading Searching Settings from %s&#39; % workflow_params_file)
+
+    workflow_params = read_workflow_parameter(workflow_params_file)
+
+    dirloc = Path(workflow_params.output_directory)
+    dirloc.mkdir(exist_ok=True)
+    output_path = Path(workflow_params.output_directory)/workflow_params.output_filename
+    
+    rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_json_path)   
+
+    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path, workflow_params.calibration_file_path) for file_path in workflow_params.file_paths]
+    #gcms_list = pool.map(workflow_worker, worker_args)
+    pool = Pool(jobs)
+    
+    for i, gcms in enumerate(pool.imap_unordered(workflow_worker, worker_args), 1):
+        eval(&#39;gcms.to_&#39;+ workflow_params.output_type + &#39;(output_path)&#39;)
+
+    pool.close()
+    pool.join()</code></pre>
+</details>
+</dd>
+<dt id="metaMS.gcmsWorkflow.run_gcms_metabolomics_workflow_wdl"><code class="name flex">
+<span>def <span class="ident">run_gcms_metabolomics_workflow_wdl</span></span>(<span>file_paths, calibration_file_path, output_directory, output_filename, output_type, corems_json_path, jobs, db_path=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def run_gcms_metabolomics_workflow_wdl(file_paths, calibration_file_path, output_directory,output_filename, output_type, corems_json_path, jobs, db_path=None):
+    
+    import click
+    workflow_params = WorkflowParameters()
+    workflow_params.file_paths = file_paths.split(&#34;,&#34;)
+    workflow_params.calibration_file_path = calibration_file_path
+    workflow_params.output_directory = output_directory
+    workflow_params.output_filename = output_filename
+    workflow_params.output_type = output_type
+    workflow_params.corems_json_path = corems_json_path
+    
+    dirloc = Path(workflow_params.output_directory)
+    dirloc.mkdir(exist_ok=True)
+    output_path = Path(workflow_params.output_directory)/workflow_params.output_filename
+    
+    rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_json_path)   
+
+    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path, workflow_params.calibration_file_path ) for file_path in workflow_params.file_paths]
+    #gcms_list = pool.map(workflow_worker, worker_args)
+    pool = Pool(int(jobs))
+    
+    for i, gcms in enumerate(pool.imap_unordered(workflow_worker, worker_args), 1):
+        eval(&#39;gcms.to_&#39;+ workflow_params.output_type + &#39;(output_path, highest_score=False)&#39;)
+
+    pool.close()
+    pool.join()</code></pre>
+</details>
+</dd>
+<dt id="metaMS.gcmsWorkflow.run_gcms_mpi"><code class="name flex">
+<span>def <span class="ident">run_gcms_mpi</span></span>(<span>workflow_params_file, replicas, rt_ri_pairs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def run_gcms_mpi(workflow_params_file, replicas, rt_ri_pairs):
+    
+    import os, sys
+    sys.path.append(os.getcwd()) 
+    from mpi4py import MPI
+    
+    workflow_params = read_workflow_parameter(workflow_params_file)
+    rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_json_path) 
+    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path, workflow_params.calibration_file_path) for file_path in workflow_params.file_paths]
+
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size()
+    
+    # will only run tasks up to the number of files paths selected in the EnviroMS File
+    if rank &lt; len(worker_args):
+        workflow_worker(worker_args[rank])</code></pre>
+</details>
+</dd>
+<dt id="metaMS.gcmsWorkflow.run_nmdc_metabolomics_workflow"><code class="name flex">
+<span>def <span class="ident">run_nmdc_metabolomics_workflow</span></span>(<span>workflow_params_file, jobs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def run_nmdc_metabolomics_workflow(workflow_params_file, jobs):
+    
+    import click
+    dms_file_path = &#39;db/GC-MS Metabolomics Experiments to Process Final.xlsx&#39;
+    
+    click.echo(&#39;Loading Searching Settings from %s&#39; % workflow_params_file)
+    workflow_params = read_workflow_parameter(workflow_params_file)
+    
+    dirloc = Path(workflow_params.output_directory)
+    dirloc.mkdir(exist_ok=True)
+    
+    rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_json_path)   
+
+    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path, workflow_params.calibration_file_path) for file_path in workflow_params.file_paths]
+    #gcms_list = pool.map(workflow_worker, worker_args)
+    pool = Pool(jobs)
+    
+    for i, gcms in enumerate(pool.imap_unordered(workflow_worker, worker_args), 1):
+        
+        in_file_path = Path(workflow_params.file_paths[i])
+        output_path = Path(workflow_params.output_directory)/in_file_path.name
+
+        eval(&#39;gcms.to_&#39;+ workflow_params.output_type + &#39;(output_path, write_metadata=False)&#39;)
+        
+        nmdc = NMDC_Metadata(in_file_path, workflow_params.calibration_file_path, output_path, dms_file_path)
+        nmdc.create_nmdc_metadata(gcms)
+
+    pool.close()
+    pool.join()</code></pre>
+</details>
+</dd>
+<dt id="metaMS.gcmsWorkflow.start_sql_from_file"><code class="name flex">
+<span>def <span class="ident">start_sql_from_file</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def start_sql_from_file():
+    
+    from pathlib import Path
+    from corems.molecular_id.input.nistMSI import ReadNistMSI
+
+    ref_lib_path = Path(&#34;data/PNNLMetV20191015.MSL&#34;)
+    if ref_lib_path.exists:
+        sql_obj = ReadNistMSI(ref_lib_path).get_sqlLite_obj()
+        return sql_obj</code></pre>
+</details>
+</dd>
+<dt id="metaMS.gcmsWorkflow.worker"><code class="name flex">
+<span>def <span class="ident">worker</span></span>(<span>args)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def worker(args):
+
+    cProfile.runctx(&#39;workflow_worker(args)&#39;, globals(), locals(), &#39;gc-ms.prof&#39;)</code></pre>
+</details>
+</dd>
+<dt id="metaMS.gcmsWorkflow.workflow_worker"><code class="name flex">
+<span>def <span class="ident">workflow_worker</span></span>(<span>args)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def workflow_worker(args):
+    
+    file_path, ref_dict, corems_params, cal_file_path = args
+    
+    gcms = get_gcms(file_path, corems_params)
+    
+    gcms.calibrate_ri(ref_dict, cal_file_path)
+    
+    # sql_obj = start_sql_from_file()
+    # lowResSearch = LowResMassSpectralMatch(gcms, sql_obj=sql_obj)
+    # !!!!!! READ !!!!! use the previous two lines if db/pnnl_lowres_gcms_compounds.sqlite does not exist
+    # and comment the next line
+    lowResSearch = LowResMassSpectralMatch(gcms)
+    lowResSearch.run()
+
+    return gcms</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="metaMS.gcmsWorkflow.WorkflowParameters"><code class="flex name class">
+<span>class <span class="ident">WorkflowParameters</span></span>
+<span>(</span><span>file_paths: tuple = ('data/...', 'data/...'), calibration_file_path: str = 'data/...', output_directory: str = 'data/...', output_filename: str = 'data/...', output_type: str = 'csv', corems_json_path: str = 'data/corems.json')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>WorkflowParameters(file_paths: tuple = ('data/&hellip;', 'data/&hellip;'), calibration_file_path: str = 'data/&hellip;', output_directory: str = 'data/&hellip;', output_filename: str = 'data/&hellip;', output_type: str = 'csv', corems_json_path: str = 'data/corems.json')</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class WorkflowParameters:
+    
+    file_paths: tuple = (&#39;data/...&#39;, &#39;data/...&#39;)
+    calibration_file_path: str = &#39;data/...&#39;
+    output_directory: str = &#39;data/...&#39;
+    output_filename: str = &#39;data/...&#39;
+    output_type: str = &#39;csv&#39;
+    corems_json_path: str = &#39;data/corems.json&#39;</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="metaMS.gcmsWorkflow.WorkflowParameters.calibration_file_path"><code class="name">var <span class="ident">calibration_file_path</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="metaMS.gcmsWorkflow.WorkflowParameters.corems_json_path"><code class="name">var <span class="ident">corems_json_path</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="metaMS.gcmsWorkflow.WorkflowParameters.file_paths"><code class="name">var <span class="ident">file_paths</span> : tuple</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="metaMS.gcmsWorkflow.WorkflowParameters.output_directory"><code class="name">var <span class="ident">output_directory</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="metaMS.gcmsWorkflow.WorkflowParameters.output_filename"><code class="name">var <span class="ident">output_filename</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="metaMS.gcmsWorkflow.WorkflowParameters.output_type"><code class="name">var <span class="ident">output_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="metaMS" href="index.html">metaMS</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="metaMS.gcmsWorkflow.get_calibration_rtri_pairs" href="#metaMS.gcmsWorkflow.get_calibration_rtri_pairs">get_calibration_rtri_pairs</a></code></li>
+<li><code><a title="metaMS.gcmsWorkflow.get_gcms" href="#metaMS.gcmsWorkflow.get_gcms">get_gcms</a></code></li>
+<li><code><a title="metaMS.gcmsWorkflow.read_workflow_parameter" href="#metaMS.gcmsWorkflow.read_workflow_parameter">read_workflow_parameter</a></code></li>
+<li><code><a title="metaMS.gcmsWorkflow.run_gcms_metabolomics_workflow" href="#metaMS.gcmsWorkflow.run_gcms_metabolomics_workflow">run_gcms_metabolomics_workflow</a></code></li>
+<li><code><a title="metaMS.gcmsWorkflow.run_gcms_metabolomics_workflow_wdl" href="#metaMS.gcmsWorkflow.run_gcms_metabolomics_workflow_wdl">run_gcms_metabolomics_workflow_wdl</a></code></li>
+<li><code><a title="metaMS.gcmsWorkflow.run_gcms_mpi" href="#metaMS.gcmsWorkflow.run_gcms_mpi">run_gcms_mpi</a></code></li>
+<li><code><a title="metaMS.gcmsWorkflow.run_nmdc_metabolomics_workflow" href="#metaMS.gcmsWorkflow.run_nmdc_metabolomics_workflow">run_nmdc_metabolomics_workflow</a></code></li>
+<li><code><a title="metaMS.gcmsWorkflow.start_sql_from_file" href="#metaMS.gcmsWorkflow.start_sql_from_file">start_sql_from_file</a></code></li>
+<li><code><a title="metaMS.gcmsWorkflow.worker" href="#metaMS.gcmsWorkflow.worker">worker</a></code></li>
+<li><code><a title="metaMS.gcmsWorkflow.workflow_worker" href="#metaMS.gcmsWorkflow.workflow_worker">workflow_worker</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="metaMS.gcmsWorkflow.WorkflowParameters" href="#metaMS.gcmsWorkflow.WorkflowParameters">WorkflowParameters</a></code></h4>
+<ul class="">
+<li><code><a title="metaMS.gcmsWorkflow.WorkflowParameters.calibration_file_path" href="#metaMS.gcmsWorkflow.WorkflowParameters.calibration_file_path">calibration_file_path</a></code></li>
+<li><code><a title="metaMS.gcmsWorkflow.WorkflowParameters.corems_json_path" href="#metaMS.gcmsWorkflow.WorkflowParameters.corems_json_path">corems_json_path</a></code></li>
+<li><code><a title="metaMS.gcmsWorkflow.WorkflowParameters.file_paths" href="#metaMS.gcmsWorkflow.WorkflowParameters.file_paths">file_paths</a></code></li>
+<li><code><a title="metaMS.gcmsWorkflow.WorkflowParameters.output_directory" href="#metaMS.gcmsWorkflow.WorkflowParameters.output_directory">output_directory</a></code></li>
+<li><code><a title="metaMS.gcmsWorkflow.WorkflowParameters.output_filename" href="#metaMS.gcmsWorkflow.WorkflowParameters.output_filename">output_filename</a></code></li>
+<li><code><a title="metaMS.gcmsWorkflow.WorkflowParameters.output_type" href="#metaMS.gcmsWorkflow.WorkflowParameters.output_type">output_type</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

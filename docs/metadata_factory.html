@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>metaMS.metadata_factory API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>metaMS.metadata_factory</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from datetime import datetime
+from pathlib import Path
+import hashlib
+import uuid
+import json
+
+from openpyxl import load_workbook
+import requests
+import os
+
+class DMS_Mapping():
+
+    def __init__(self, dms_file_path) -&gt; None:
+
+        self.dms_file_path = Path(dms_file_path)
+
+    @staticmethod
+    def get_emsl_jgi_mapping(wb):
+
+        last_sheet = wb.sheetnames[-1]
+        emsl_jgi_mapping = wb[last_sheet]
+        emsl_proposals = emsl_jgi_mapping[&#39;B&#39;]
+        jgi_proposals = emsl_jgi_mapping[&#39;A&#39;]
+        emsl_jgi_dict = {}
+        for x in range(len(emsl_proposals)):
+            emsl_jgi_dict[emsl_proposals[x].value] = jgi_proposals[x].value
+        return emsl_jgi_dict
+
+    @staticmethod
+    def get_mds_metadata(dataset_name):
+        username = os.environ.get(&#39;USER_NAME&#39;) or &#39;pnnl&#39;
+        password = os.environ.get(&#39;USER_PASSWORD&#39;) or &#39;pnnl_password&#39;
+
+        url_request = &#34;https://dms2.pnl.gov/data/ax/json/list_report/dataset/{}&#34;.format(dataset_name) 
+        r = requests.get(url_request, auth=(username, password))
+        data = r.json()
+
+        return data
+        
+    @staticmethod
+    def get_data_mapping(wb, emsl_jgi_dict):
+
+        url = &#34;https://dms2.pnl.gov/data/ax/json/list_report/dataset/&#34;    
+        
+        first_sheet = wb.sheetnames[0]
+
+        full_list_worksheet = wb[first_sheet]
+
+        emsl_proposal = full_list_worksheet[&#39;A&#39;]
+        dataset_id = full_list_worksheet[&#39;B&#39;]
+        dataset_name = full_list_worksheet[&#39;C&#39;]
+        experiment_id = full_list_worksheet[&#39;S&#39;]
+        data_dict = {}
+
+        for x in range(len(dataset_id)):
+
+            data = {
+                &#39;data_id&#39;: dataset_id[x].value,
+                &#39;experiment_id&#39;: experiment_id[x].value,
+                &#39;emsl_proposal_id&#39;: emsl_proposal[x].value,
+                &#39;jgi_proposal_id&#39;: emsl_jgi_dict.get(emsl_proposal[x].value)
+            }
+
+            # nt = namedtuple(&#39;data&#39;, data.keys())(*data.values())
+
+            # print(nt.data_id, nt.emsl_proposal_id, nt.jgi_proposal_id, dataset_name[x].value)
+
+            data_dict[dataset_name[x].value] = data
+
+        return data_dict
+
+    def get_mapping(self):
+
+        wb = load_workbook(filename=self.dms_file_path)
+        emsl_jgi_dict = self.get_emsl_jgi_mapping(wb)
+        dataset_mapping = self.get_data_mapping(wb, emsl_jgi_dict)
+
+        return dataset_mapping
+
+class NMDC_Metadata:
+
+    def __init__(self, in_file_path, calibration_file_path, out_file_path, dms_file_path) -&gt; None:
+
+        self.dataset_mapping = DMS_Mapping(dms_file_path).get_mapping()
+        self.in_file_path = Path(in_file_path)
+        self.calibration_file_path = Path(calibration_file_path)
+        self.out_file_path = Path(out_file_path)
+
+    def save_nmdc_metadata(self, gcms_obj):
+
+        now = datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S&#34;)
+        data_id = self.get_dataid(self.in_file_path, self.dataset_mapping)
+        output_id = self.get_md5(self.out_file_path)
+        was_informed_by = self.get_was_informed_by(self.in_file_path, self.dataset_mapping)
+        activity_id = &#34;{}:{}&#34;.format(&#34;nmdc&#34;, uuid.uuid4().hex)
+        has_calibration = self.get_dataid(self.calibration_file_path, self.dataset_mapping)
+        metabolomics_analysis_activity = {
+
+            &#34;activity_id&#34;: activity_id,
+            &#34;ended_at_time&#34;: now,
+            &#34;execution_resource&#34;: &#34;EMSL-RZR&#34;,
+            &#34;git_url&#34;: &#34;https://github.com/microbiomedata/metaMS&#34;,
+            &#34;has_input&#34;: data_id,
+            &#34;has_calibration&#34;: has_calibration,
+            &#34;has_output&#34;: output_id,
+            &#34;started_at_time&#34;: now,
+            &#34;used&#34;: &#34;Agilent_GC_MS&#34;,
+            &#34;was_informed_by&#34;: was_informed_by,
+            &#34;has_metabolite_quantifications&#34;: self.get_metabolites_objs(gcms_obj)
+        }
+
+        with open(self.out_file_path.with_suffix(&#39;.json&#39;), &#39;w&#39;) as metadata_output:
+            metadata_output.write(json.dumps(metabolomics_analysis_activity, indent=1))    
+
+        self.add_metabolomics_data_product(output_id, activity_id)
+
+    def add_metabolomics_data_product(self, output_id, activity_id):
+
+        data_obj = [{
+                    &#34;id&#34;: output_id,
+                    &#34;name&#34;: self.out_file_path.name,
+                    &#34;description&#34;: &#34;MetaMS GC-MS metabolomics output detail CSV file&#34;,
+                    &#34;file_size_bytes&#34;: self.out_file_path.stat().st_size,
+                    &#34;md5_checksum&#34;: hashlib.md5(self.out_file_path.open(&#39;rb&#39;).read()).hexdigest(),
+                    &#34;url&#34;: &#34;https://data.corems.emsl.pnnl.gov&#34;,
+                    &#34;was_generated_by&#34;: activity_id
+                    }]
+
+        metabolomics_data_path = Path(&#34;gcms_metabolomics_data_products.json&#34;)
+
+        if metabolomics_data_path.exists():
+
+            with metabolomics_data_path.open(&#39;r&#39;) as metabolomics_data_products:
+                products = json.load(metabolomics_data_products)
+                products.extend(data_obj)
+
+        else:
+            products = data_obj
+
+        with metabolomics_data_path.open(&#39;w&#39;) as metabolomics_data_products:
+            metabolomics_data_products.write(json.dumps(products, indent=1))  
+
+    @staticmethod
+    def get_dataid(in_file_path, dataset_mapping):
+
+        print(in_file_path.stem)
+        data_id = dataset_mapping.get(in_file_path.stem).get(&#34;data_id&#34;)
+        return &#34;{}:{}_{}&#34;.format(&#34;emsl&#34;, &#34;output&#34;, data_id)
+
+    @staticmethod
+    def get_was_informed_by(in_file_path, dataset_mapping):
+
+        data_id = dataset_mapping.get(in_file_path.stem).get(&#34;data_id&#34;)
+        return &#34;{}:{}&#34;.format(&#34;emsl&#34;, data_id)
+
+    @staticmethod
+    def get_md5(out_file_path):
+        bytes_io = out_file_path.open(&#39;rb&#39;).read()
+
+        return &#34;{}:{}&#34;.format(&#34;nmdc&#34;, hashlib.md5(bytes_io).hexdigest())
+
+    @staticmethod
+    def get_metabolites_objs(gcms_obj):
+
+        all_metabolites = []
+
+        for metabolite in gcms_obj.metabolites_data:
+
+            metabolite_quantification = {}
+            metabolite_quantification[&#34;highest_similarity_score&#34;] = metabolite.get(&#34;highest_similarity_score&#34;)
+            metabolite_quantification[&#34;metabolite_quantified&#34;] = &#34;{}:{}&#34;.format(&#34;chebi&#34;, metabolite.get(&#34;chebi&#34;))
+            metabolite_quantification[&#34;alternate_identifiers&#34;] = [&#34;{}:{}&#34;.format(&#34;kegg&#34;, metabolite.get(&#34;kegg&#34;)), 
+                                                                  &#34;{}:{}&#34;.format(&#34;cas&#34;, metabolite.get(&#34;casno&#34;))]
+
+            all_metabolites.append(metabolite_quantification)
+
+        return all_metabolites
+
+    def create_nmdc_metadata(self, gcms_obj):
+
+        # print(dataset_mapping.get(&#39;GCMS_Blank_08_GC-01_20150622&#39;))
+        self.save_nmdc_metadata(gcms_obj)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="metaMS.metadata_factory.DMS_Mapping"><code class="flex name class">
+<span>class <span class="ident">DMS_Mapping</span></span>
+<span>(</span><span>dms_file_path)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DMS_Mapping():
+
+    def __init__(self, dms_file_path) -&gt; None:
+
+        self.dms_file_path = Path(dms_file_path)
+
+    @staticmethod
+    def get_emsl_jgi_mapping(wb):
+
+        last_sheet = wb.sheetnames[-1]
+        emsl_jgi_mapping = wb[last_sheet]
+        emsl_proposals = emsl_jgi_mapping[&#39;B&#39;]
+        jgi_proposals = emsl_jgi_mapping[&#39;A&#39;]
+        emsl_jgi_dict = {}
+        for x in range(len(emsl_proposals)):
+            emsl_jgi_dict[emsl_proposals[x].value] = jgi_proposals[x].value
+        return emsl_jgi_dict
+
+    @staticmethod
+    def get_mds_metadata(dataset_name):
+        username = os.environ.get(&#39;USER_NAME&#39;) or &#39;pnnl&#39;
+        password = os.environ.get(&#39;USER_PASSWORD&#39;) or &#39;pnnl_password&#39;
+
+        url_request = &#34;https://dms2.pnl.gov/data/ax/json/list_report/dataset/{}&#34;.format(dataset_name) 
+        r = requests.get(url_request, auth=(username, password))
+        data = r.json()
+
+        return data
+        
+    @staticmethod
+    def get_data_mapping(wb, emsl_jgi_dict):
+
+        url = &#34;https://dms2.pnl.gov/data/ax/json/list_report/dataset/&#34;    
+        
+        first_sheet = wb.sheetnames[0]
+
+        full_list_worksheet = wb[first_sheet]
+
+        emsl_proposal = full_list_worksheet[&#39;A&#39;]
+        dataset_id = full_list_worksheet[&#39;B&#39;]
+        dataset_name = full_list_worksheet[&#39;C&#39;]
+        experiment_id = full_list_worksheet[&#39;S&#39;]
+        data_dict = {}
+
+        for x in range(len(dataset_id)):
+
+            data = {
+                &#39;data_id&#39;: dataset_id[x].value,
+                &#39;experiment_id&#39;: experiment_id[x].value,
+                &#39;emsl_proposal_id&#39;: emsl_proposal[x].value,
+                &#39;jgi_proposal_id&#39;: emsl_jgi_dict.get(emsl_proposal[x].value)
+            }
+
+            # nt = namedtuple(&#39;data&#39;, data.keys())(*data.values())
+
+            # print(nt.data_id, nt.emsl_proposal_id, nt.jgi_proposal_id, dataset_name[x].value)
+
+            data_dict[dataset_name[x].value] = data
+
+        return data_dict
+
+    def get_mapping(self):
+
+        wb = load_workbook(filename=self.dms_file_path)
+        emsl_jgi_dict = self.get_emsl_jgi_mapping(wb)
+        dataset_mapping = self.get_data_mapping(wb, emsl_jgi_dict)
+
+        return dataset_mapping</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="metaMS.metadata_factory.DMS_Mapping.get_data_mapping"><code class="name flex">
+<span>def <span class="ident">get_data_mapping</span></span>(<span>wb, emsl_jgi_dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_data_mapping(wb, emsl_jgi_dict):
+
+    url = &#34;https://dms2.pnl.gov/data/ax/json/list_report/dataset/&#34;    
+    
+    first_sheet = wb.sheetnames[0]
+
+    full_list_worksheet = wb[first_sheet]
+
+    emsl_proposal = full_list_worksheet[&#39;A&#39;]
+    dataset_id = full_list_worksheet[&#39;B&#39;]
+    dataset_name = full_list_worksheet[&#39;C&#39;]
+    experiment_id = full_list_worksheet[&#39;S&#39;]
+    data_dict = {}
+
+    for x in range(len(dataset_id)):
+
+        data = {
+            &#39;data_id&#39;: dataset_id[x].value,
+            &#39;experiment_id&#39;: experiment_id[x].value,
+            &#39;emsl_proposal_id&#39;: emsl_proposal[x].value,
+            &#39;jgi_proposal_id&#39;: emsl_jgi_dict.get(emsl_proposal[x].value)
+        }
+
+        # nt = namedtuple(&#39;data&#39;, data.keys())(*data.values())
+
+        # print(nt.data_id, nt.emsl_proposal_id, nt.jgi_proposal_id, dataset_name[x].value)
+
+        data_dict[dataset_name[x].value] = data
+
+    return data_dict</code></pre>
+</details>
+</dd>
+<dt id="metaMS.metadata_factory.DMS_Mapping.get_emsl_jgi_mapping"><code class="name flex">
+<span>def <span class="ident">get_emsl_jgi_mapping</span></span>(<span>wb)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_emsl_jgi_mapping(wb):
+
+    last_sheet = wb.sheetnames[-1]
+    emsl_jgi_mapping = wb[last_sheet]
+    emsl_proposals = emsl_jgi_mapping[&#39;B&#39;]
+    jgi_proposals = emsl_jgi_mapping[&#39;A&#39;]
+    emsl_jgi_dict = {}
+    for x in range(len(emsl_proposals)):
+        emsl_jgi_dict[emsl_proposals[x].value] = jgi_proposals[x].value
+    return emsl_jgi_dict</code></pre>
+</details>
+</dd>
+<dt id="metaMS.metadata_factory.DMS_Mapping.get_mds_metadata"><code class="name flex">
+<span>def <span class="ident">get_mds_metadata</span></span>(<span>dataset_name)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_mds_metadata(dataset_name):
+    username = os.environ.get(&#39;USER_NAME&#39;) or &#39;pnnl&#39;
+    password = os.environ.get(&#39;USER_PASSWORD&#39;) or &#39;pnnl_password&#39;
+
+    url_request = &#34;https://dms2.pnl.gov/data/ax/json/list_report/dataset/{}&#34;.format(dataset_name) 
+    r = requests.get(url_request, auth=(username, password))
+    data = r.json()
+
+    return data</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="metaMS.metadata_factory.DMS_Mapping.get_mapping"><code class="name flex">
+<span>def <span class="ident">get_mapping</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_mapping(self):
+
+    wb = load_workbook(filename=self.dms_file_path)
+    emsl_jgi_dict = self.get_emsl_jgi_mapping(wb)
+    dataset_mapping = self.get_data_mapping(wb, emsl_jgi_dict)
+
+    return dataset_mapping</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="metaMS.metadata_factory.NMDC_Metadata"><code class="flex name class">
+<span>class <span class="ident">NMDC_Metadata</span></span>
+<span>(</span><span>in_file_path, calibration_file_path, out_file_path, dms_file_path)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NMDC_Metadata:
+
+    def __init__(self, in_file_path, calibration_file_path, out_file_path, dms_file_path) -&gt; None:
+
+        self.dataset_mapping = DMS_Mapping(dms_file_path).get_mapping()
+        self.in_file_path = Path(in_file_path)
+        self.calibration_file_path = Path(calibration_file_path)
+        self.out_file_path = Path(out_file_path)
+
+    def save_nmdc_metadata(self, gcms_obj):
+
+        now = datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S&#34;)
+        data_id = self.get_dataid(self.in_file_path, self.dataset_mapping)
+        output_id = self.get_md5(self.out_file_path)
+        was_informed_by = self.get_was_informed_by(self.in_file_path, self.dataset_mapping)
+        activity_id = &#34;{}:{}&#34;.format(&#34;nmdc&#34;, uuid.uuid4().hex)
+        has_calibration = self.get_dataid(self.calibration_file_path, self.dataset_mapping)
+        metabolomics_analysis_activity = {
+
+            &#34;activity_id&#34;: activity_id,
+            &#34;ended_at_time&#34;: now,
+            &#34;execution_resource&#34;: &#34;EMSL-RZR&#34;,
+            &#34;git_url&#34;: &#34;https://github.com/microbiomedata/metaMS&#34;,
+            &#34;has_input&#34;: data_id,
+            &#34;has_calibration&#34;: has_calibration,
+            &#34;has_output&#34;: output_id,
+            &#34;started_at_time&#34;: now,
+            &#34;used&#34;: &#34;Agilent_GC_MS&#34;,
+            &#34;was_informed_by&#34;: was_informed_by,
+            &#34;has_metabolite_quantifications&#34;: self.get_metabolites_objs(gcms_obj)
+        }
+
+        with open(self.out_file_path.with_suffix(&#39;.json&#39;), &#39;w&#39;) as metadata_output:
+            metadata_output.write(json.dumps(metabolomics_analysis_activity, indent=1))    
+
+        self.add_metabolomics_data_product(output_id, activity_id)
+
+    def add_metabolomics_data_product(self, output_id, activity_id):
+
+        data_obj = [{
+                    &#34;id&#34;: output_id,
+                    &#34;name&#34;: self.out_file_path.name,
+                    &#34;description&#34;: &#34;MetaMS GC-MS metabolomics output detail CSV file&#34;,
+                    &#34;file_size_bytes&#34;: self.out_file_path.stat().st_size,
+                    &#34;md5_checksum&#34;: hashlib.md5(self.out_file_path.open(&#39;rb&#39;).read()).hexdigest(),
+                    &#34;url&#34;: &#34;https://data.corems.emsl.pnnl.gov&#34;,
+                    &#34;was_generated_by&#34;: activity_id
+                    }]
+
+        metabolomics_data_path = Path(&#34;gcms_metabolomics_data_products.json&#34;)
+
+        if metabolomics_data_path.exists():
+
+            with metabolomics_data_path.open(&#39;r&#39;) as metabolomics_data_products:
+                products = json.load(metabolomics_data_products)
+                products.extend(data_obj)
+
+        else:
+            products = data_obj
+
+        with metabolomics_data_path.open(&#39;w&#39;) as metabolomics_data_products:
+            metabolomics_data_products.write(json.dumps(products, indent=1))  
+
+    @staticmethod
+    def get_dataid(in_file_path, dataset_mapping):
+
+        print(in_file_path.stem)
+        data_id = dataset_mapping.get(in_file_path.stem).get(&#34;data_id&#34;)
+        return &#34;{}:{}_{}&#34;.format(&#34;emsl&#34;, &#34;output&#34;, data_id)
+
+    @staticmethod
+    def get_was_informed_by(in_file_path, dataset_mapping):
+
+        data_id = dataset_mapping.get(in_file_path.stem).get(&#34;data_id&#34;)
+        return &#34;{}:{}&#34;.format(&#34;emsl&#34;, data_id)
+
+    @staticmethod
+    def get_md5(out_file_path):
+        bytes_io = out_file_path.open(&#39;rb&#39;).read()
+
+        return &#34;{}:{}&#34;.format(&#34;nmdc&#34;, hashlib.md5(bytes_io).hexdigest())
+
+    @staticmethod
+    def get_metabolites_objs(gcms_obj):
+
+        all_metabolites = []
+
+        for metabolite in gcms_obj.metabolites_data:
+
+            metabolite_quantification = {}
+            metabolite_quantification[&#34;highest_similarity_score&#34;] = metabolite.get(&#34;highest_similarity_score&#34;)
+            metabolite_quantification[&#34;metabolite_quantified&#34;] = &#34;{}:{}&#34;.format(&#34;chebi&#34;, metabolite.get(&#34;chebi&#34;))
+            metabolite_quantification[&#34;alternate_identifiers&#34;] = [&#34;{}:{}&#34;.format(&#34;kegg&#34;, metabolite.get(&#34;kegg&#34;)), 
+                                                                  &#34;{}:{}&#34;.format(&#34;cas&#34;, metabolite.get(&#34;casno&#34;))]
+
+            all_metabolites.append(metabolite_quantification)
+
+        return all_metabolites
+
+    def create_nmdc_metadata(self, gcms_obj):
+
+        # print(dataset_mapping.get(&#39;GCMS_Blank_08_GC-01_20150622&#39;))
+        self.save_nmdc_metadata(gcms_obj)</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="metaMS.metadata_factory.NMDC_Metadata.get_dataid"><code class="name flex">
+<span>def <span class="ident">get_dataid</span></span>(<span>in_file_path, dataset_mapping)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_dataid(in_file_path, dataset_mapping):
+
+    print(in_file_path.stem)
+    data_id = dataset_mapping.get(in_file_path.stem).get(&#34;data_id&#34;)
+    return &#34;{}:{}_{}&#34;.format(&#34;emsl&#34;, &#34;output&#34;, data_id)</code></pre>
+</details>
+</dd>
+<dt id="metaMS.metadata_factory.NMDC_Metadata.get_md5"><code class="name flex">
+<span>def <span class="ident">get_md5</span></span>(<span>out_file_path)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_md5(out_file_path):
+    bytes_io = out_file_path.open(&#39;rb&#39;).read()
+
+    return &#34;{}:{}&#34;.format(&#34;nmdc&#34;, hashlib.md5(bytes_io).hexdigest())</code></pre>
+</details>
+</dd>
+<dt id="metaMS.metadata_factory.NMDC_Metadata.get_metabolites_objs"><code class="name flex">
+<span>def <span class="ident">get_metabolites_objs</span></span>(<span>gcms_obj)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_metabolites_objs(gcms_obj):
+
+    all_metabolites = []
+
+    for metabolite in gcms_obj.metabolites_data:
+
+        metabolite_quantification = {}
+        metabolite_quantification[&#34;highest_similarity_score&#34;] = metabolite.get(&#34;highest_similarity_score&#34;)
+        metabolite_quantification[&#34;metabolite_quantified&#34;] = &#34;{}:{}&#34;.format(&#34;chebi&#34;, metabolite.get(&#34;chebi&#34;))
+        metabolite_quantification[&#34;alternate_identifiers&#34;] = [&#34;{}:{}&#34;.format(&#34;kegg&#34;, metabolite.get(&#34;kegg&#34;)), 
+                                                              &#34;{}:{}&#34;.format(&#34;cas&#34;, metabolite.get(&#34;casno&#34;))]
+
+        all_metabolites.append(metabolite_quantification)
+
+    return all_metabolites</code></pre>
+</details>
+</dd>
+<dt id="metaMS.metadata_factory.NMDC_Metadata.get_was_informed_by"><code class="name flex">
+<span>def <span class="ident">get_was_informed_by</span></span>(<span>in_file_path, dataset_mapping)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_was_informed_by(in_file_path, dataset_mapping):
+
+    data_id = dataset_mapping.get(in_file_path.stem).get(&#34;data_id&#34;)
+    return &#34;{}:{}&#34;.format(&#34;emsl&#34;, data_id)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="metaMS.metadata_factory.NMDC_Metadata.add_metabolomics_data_product"><code class="name flex">
+<span>def <span class="ident">add_metabolomics_data_product</span></span>(<span>self, output_id, activity_id)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_metabolomics_data_product(self, output_id, activity_id):
+
+    data_obj = [{
+                &#34;id&#34;: output_id,
+                &#34;name&#34;: self.out_file_path.name,
+                &#34;description&#34;: &#34;MetaMS GC-MS metabolomics output detail CSV file&#34;,
+                &#34;file_size_bytes&#34;: self.out_file_path.stat().st_size,
+                &#34;md5_checksum&#34;: hashlib.md5(self.out_file_path.open(&#39;rb&#39;).read()).hexdigest(),
+                &#34;url&#34;: &#34;https://data.corems.emsl.pnnl.gov&#34;,
+                &#34;was_generated_by&#34;: activity_id
+                }]
+
+    metabolomics_data_path = Path(&#34;gcms_metabolomics_data_products.json&#34;)
+
+    if metabolomics_data_path.exists():
+
+        with metabolomics_data_path.open(&#39;r&#39;) as metabolomics_data_products:
+            products = json.load(metabolomics_data_products)
+            products.extend(data_obj)
+
+    else:
+        products = data_obj
+
+    with metabolomics_data_path.open(&#39;w&#39;) as metabolomics_data_products:
+        metabolomics_data_products.write(json.dumps(products, indent=1))  </code></pre>
+</details>
+</dd>
+<dt id="metaMS.metadata_factory.NMDC_Metadata.create_nmdc_metadata"><code class="name flex">
+<span>def <span class="ident">create_nmdc_metadata</span></span>(<span>self, gcms_obj)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_nmdc_metadata(self, gcms_obj):
+
+    # print(dataset_mapping.get(&#39;GCMS_Blank_08_GC-01_20150622&#39;))
+    self.save_nmdc_metadata(gcms_obj)</code></pre>
+</details>
+</dd>
+<dt id="metaMS.metadata_factory.NMDC_Metadata.save_nmdc_metadata"><code class="name flex">
+<span>def <span class="ident">save_nmdc_metadata</span></span>(<span>self, gcms_obj)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save_nmdc_metadata(self, gcms_obj):
+
+    now = datetime.now().strftime(&#34;%Y-%m-%d %H:%M:%S&#34;)
+    data_id = self.get_dataid(self.in_file_path, self.dataset_mapping)
+    output_id = self.get_md5(self.out_file_path)
+    was_informed_by = self.get_was_informed_by(self.in_file_path, self.dataset_mapping)
+    activity_id = &#34;{}:{}&#34;.format(&#34;nmdc&#34;, uuid.uuid4().hex)
+    has_calibration = self.get_dataid(self.calibration_file_path, self.dataset_mapping)
+    metabolomics_analysis_activity = {
+
+        &#34;activity_id&#34;: activity_id,
+        &#34;ended_at_time&#34;: now,
+        &#34;execution_resource&#34;: &#34;EMSL-RZR&#34;,
+        &#34;git_url&#34;: &#34;https://github.com/microbiomedata/metaMS&#34;,
+        &#34;has_input&#34;: data_id,
+        &#34;has_calibration&#34;: has_calibration,
+        &#34;has_output&#34;: output_id,
+        &#34;started_at_time&#34;: now,
+        &#34;used&#34;: &#34;Agilent_GC_MS&#34;,
+        &#34;was_informed_by&#34;: was_informed_by,
+        &#34;has_metabolite_quantifications&#34;: self.get_metabolites_objs(gcms_obj)
+    }
+
+    with open(self.out_file_path.with_suffix(&#39;.json&#39;), &#39;w&#39;) as metadata_output:
+        metadata_output.write(json.dumps(metabolomics_analysis_activity, indent=1))    
+
+    self.add_metabolomics_data_product(output_id, activity_id)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="metaMS" href="index.html">metaMS</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="metaMS.metadata_factory.DMS_Mapping" href="#metaMS.metadata_factory.DMS_Mapping">DMS_Mapping</a></code></h4>
+<ul class="">
+<li><code><a title="metaMS.metadata_factory.DMS_Mapping.get_data_mapping" href="#metaMS.metadata_factory.DMS_Mapping.get_data_mapping">get_data_mapping</a></code></li>
+<li><code><a title="metaMS.metadata_factory.DMS_Mapping.get_emsl_jgi_mapping" href="#metaMS.metadata_factory.DMS_Mapping.get_emsl_jgi_mapping">get_emsl_jgi_mapping</a></code></li>
+<li><code><a title="metaMS.metadata_factory.DMS_Mapping.get_mapping" href="#metaMS.metadata_factory.DMS_Mapping.get_mapping">get_mapping</a></code></li>
+<li><code><a title="metaMS.metadata_factory.DMS_Mapping.get_mds_metadata" href="#metaMS.metadata_factory.DMS_Mapping.get_mds_metadata">get_mds_metadata</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="metaMS.metadata_factory.NMDC_Metadata" href="#metaMS.metadata_factory.NMDC_Metadata">NMDC_Metadata</a></code></h4>
+<ul class="">
+<li><code><a title="metaMS.metadata_factory.NMDC_Metadata.add_metabolomics_data_product" href="#metaMS.metadata_factory.NMDC_Metadata.add_metabolomics_data_product">add_metabolomics_data_product</a></code></li>
+<li><code><a title="metaMS.metadata_factory.NMDC_Metadata.create_nmdc_metadata" href="#metaMS.metadata_factory.NMDC_Metadata.create_nmdc_metadata">create_nmdc_metadata</a></code></li>
+<li><code><a title="metaMS.metadata_factory.NMDC_Metadata.get_dataid" href="#metaMS.metadata_factory.NMDC_Metadata.get_dataid">get_dataid</a></code></li>
+<li><code><a title="metaMS.metadata_factory.NMDC_Metadata.get_md5" href="#metaMS.metadata_factory.NMDC_Metadata.get_md5">get_md5</a></code></li>
+<li><code><a title="metaMS.metadata_factory.NMDC_Metadata.get_metabolites_objs" href="#metaMS.metadata_factory.NMDC_Metadata.get_metabolites_objs">get_metabolites_objs</a></code></li>
+<li><code><a title="metaMS.metadata_factory.NMDC_Metadata.get_was_informed_by" href="#metaMS.metadata_factory.NMDC_Metadata.get_was_informed_by">get_was_informed_by</a></code></li>
+<li><code><a title="metaMS.metadata_factory.NMDC_Metadata.save_nmdc_metadata" href="#metaMS.metadata_factory.NMDC_Metadata.save_nmdc_metadata">save_nmdc_metadata</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>
