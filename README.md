@@ -6,8 +6,11 @@
   - [Data Output](#data-output-formats)  
   - [Data Structure](#data-structure-types)  
   - [Features](#available-features)  
+  - [Code Documentation](https://emsl-computing.github.io/MetaMS/)  
+
 - Installation
   - [PyPi](#metams-installation)  
+
 - Execution:  
   - [CLI](#execution)  
   - [MiniWDL](#MiniWDL)  
