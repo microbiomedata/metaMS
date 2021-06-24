@@ -1,6 +1,6 @@
 import pathlib, os, sys
 import setuptools
-from setuptools import Command, setup
+from setuptools import Command, setup, find_packages
 
 # The directory containing this file
 HERE = pathlib.Path(__file__).parent
@@ -11,13 +11,15 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setup(
     name="metaMS",
-    version="2.1.1",
+    version="2.1.3",
     description="Data processing, and annotation for metabolomics analysis by low-resolution GC-MS",
     long_description=README,
     long_description_content_type="text/markdown",
     url="https://github.com/EMSL-Computing/MetaMS",
     author="Corilo, Yuri",
     author_email="corilo@pnnl.gov",
+    py_modules = ['metaMS'],
+    packages = find_packages(),
     license="BSD",
     classifiers=[
         "License :: OSI Approved :: BSD License",
@@ -25,10 +27,10 @@ setup(
         "Programming Language :: Python :: 3.7",
     ],
 
-    install_requires=['Click', 'CoreMS'],
-    entry_points= '''
-            [console_scripts]
-            metaMS=metaMS.cli:cli
-            ''',
+    install_requires=['Click', 'CoreMS', 'requests'],
+    
+    entry_points={"console_scripts": ["metaMS = metaMS.cli:cli"]},
+
+
 )
     
