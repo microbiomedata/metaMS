@@ -1,6 +1,6 @@
 {
     "MolecularSearch": {
-        "url_database": "sqlite:///db/pnnl_lowres_gcms_compounds.sqlite", "ri_search_range": 20.0,
+        "url_database": "sqlite:///db/EMSL_lowres_gcms_test_database.sqlite", "ri_search_range": 20.0,
         "rt_search_range": 1.0,
         "correlation_threshold": 0.5,
         "score_threshold": 0.0,

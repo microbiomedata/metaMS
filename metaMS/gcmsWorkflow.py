@@ -114,7 +114,7 @@ def get_calibration_rtri_pairs(ref_file_path, corems_paramaters_json_file):
     gcms_ref_obj = get_gcms(ref_file_path, corems_paramaters_json_file)
     #sql_obj = start_sql_from_file()
     #rt_ri_pairs = get_rt_ri_pairs(gcms_ref_obj,sql_obj=sql_obj)
-    # !!!!!! READ !!!!! use the previous two lines if db/pnnl_lowres_gcms_compounds.sqlite does not exist
+    # !!!!!! READ !!!!! use the previous two lines if db/EMSL_lowres_gcms_test_database.sqlite does not exist
     # and comment the next line
     rt_ri_pairs = get_rt_ri_pairs(gcms_ref_obj)
     return rt_ri_pairs
@@ -148,6 +148,7 @@ def get_gcms(file_path, corems_params):
     
     gcms.process_chromatogram()
 
+    
     return gcms
 
 def start_sql_from_file():
