@@ -26,7 +26,7 @@ Third party software
 
 Database 
 ~~~~~~~~~~~~~~~~
-- PNNL GC-MS Spectral Database
+- PNNL Metabolomics GC-MS Spectral Database
 
 Workflow Availability
 ---------------------
@@ -53,15 +53,18 @@ Execution Details
 
 Please refer to: 
 
-https://github.com/microbiomedata/metaMS/blob/master/README.md#usage
+https://github.com/microbiomedata/metaMS#metams-installation
 
 Inputs
 ~~~~~~~~
 
-- ANDI NetCDF for GC-MS (.cdf)
-- CoreMS Hierarchical Data Format (.hdf5)
-- CoreMS Parameter File (.JSON)
-- MetaMS Parameter File (.JSON)
+- Supported format for low resolution GC-MS data:  
+   - ANDI NetCDF for GC-MS (.cdf)
+- Fatty Acid Methyl Esters Calibration File:
+   - ANDI NetCDF for GC-MS (.cdf) - C8 to C30
+- Parameters:
+    - CoreMS Parameter File (.json)
+    - MetaMS Parameter File (.json)
 
 Outputs
 ~~~~~~~~
@@ -77,6 +80,8 @@ Requirements for Execution
 --------------------------
 
 - Docker Container Runtime
+  
+  or  
 - Python Environment >= 3.6
 - Python Dependencies are listed on requirements.txt
 
