@@ -1,8 +1,8 @@
 app_name = metaMS
 parameters_path = data/MetamsFile.json
-# change the path to your data path /Users/eber373/Desenvolvimento/metaB
-data_dir = /Users/eber373/Desenvolvimento/metaB/data/
-config_dir = /Users/eber373/Desenvolvimento/metaB/configuration/
+# change the path to your data path and configuration
+data_dir = /Users/eber373/Development/metams/data
+config_dir = /Users/eber373/Development/metams/configuration
 version := $(shell cat .bumpversion.cfg | grep current_version | cut -d= -f2 | tr -d ' ')
 stage := $(shell cat .bumpversion.cfg | grep optional_value | cut -d= -f2 | tr -d ' ') 
 
@@ -59,8 +59,9 @@ docker-build:
 	docker build -t microbiomedata/metams:latest .
 
 docker-run:
-
-	docker run -v $(data_dir):/metaB/data -v $(config_dir):/metaB/configuration microbiomedata/metams:latest metaMS run-gcms-workflow /metaB/configuration/metams.toml
+	@echo $(data_dir)
+	@echo $(config_dir)
+	@docker run -v $(data_dir):/metams/data -v $(config_dir):/metams/configuration microbiomedata/metams:latest metaMS run-gcms-workflow /metams/configuration/metams.toml
 
 wdl-run :
  	 

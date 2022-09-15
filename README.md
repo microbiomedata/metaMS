@@ -63,6 +63,8 @@
 
 ## MetaMS Installation
 
+Make sure you have python 3.9.13 installed before continue
+
 - PyPi:     
 ```bash
 pip3 install metams
@@ -102,9 +104,14 @@ metaMS run-gcms-workflow path_to_metams.toml
 ```
 
 ## MiniWDL 
+
+Make sure you have python 3.9.13 installed before continue
+
+MiniWDL uses the microbiome/metaMS image so there is not need to install metaMS
+
 - Change wdl/metams_input.json to specify the data location
 
-- Change data/CoremsFile.json to specify the workflow parameters
+- Change data/corems.toml to specify the workflow parameters
 
 Install miniWDL:
 ```bash
@@ -117,9 +124,9 @@ miniwdl run wdl/metaMS.wdl -i wdl/metams_input.json --verbose --no-cache --copy-
 ```
 ## MetaMS Docker Container
 
-A docker image containing the MetaMS command line as the entry point
+You will need docker and docker compose: 
 
-If you don't have docker installed, the easiest way is to [install docker for desktop](https://hub.docker.com/?overlay=onboarding)
+If you don't have it installed, the easiest way is to [install docker for desktop](https://www.docker.com/products/docker-desktop/)
 
 - Pull from Docker Registry:
 

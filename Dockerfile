@@ -1,9 +1,9 @@
 FROM corilo/corems:base-mono-pythonnet
-WORKDIR /metaB
+WORKDIR /metams
 
-COPY metaMS/ /metaB/metaMS/
-COPY README.md disclaimer.txt Makefile requirements.txt setup.py /metaB/
-COPY db/ /metaB/db/
+COPY metaMS/ /metams/metaMS/
+COPY README.md disclaimer.txt Makefile requirements.txt setup.py /metams/
+COPY db/ /metams/db/
 RUN pip3 install --editable .
 
 
