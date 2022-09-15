@@ -1,0 +1,7 @@
+file_paths = [  "data/raw_data/GCMS_FAMES_01_GCMS-01_20191023.cdf", "data/raw_data/GCMS_FAMES_01_GCMS-01_20191023.cdf"]
+calibration_file_path = "data/raw_data/GCMS_FAMES_01_GCMS-01_20191023.cdf"
+corems_toml_path = "configuration/corems.toml"
+nmdc_metadata_path = "configuration/nmdc_metadata.json"
+output_directory = "output"
+output_filename = "output"
+output_type = "csv"

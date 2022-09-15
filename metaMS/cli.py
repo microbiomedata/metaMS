@@ -1,11 +1,13 @@
-import json
 from multiprocessing import Pool
 from pathlib import Path
 
 import click
+import toml
+
+from corems.encapsulation.output.parameter_to_json import dump_gcms_settings_toml
 
 from metaMS.gcmsWorkflow import WorkflowParameters, run_gcms_metabolomics_workflow, run_gcms_metabolomics_workflow_wdl, run_nmdc_metabolomics_workflow
-from corems.encapsulation.output.parameter_to_json import dump_gcms_settings_json
+
 
 @click.group()
 def cli():
@@ -18,17 +20,17 @@ def cli():
 @click.argument('output_directory', required=True, type=str)
 @click.argument('output_filename', required=True, type=str)
 @click.argument('output_type', required=True, type=str)
-@click.argument('corems_json_path', required=True, type=str)
+@click.argument('corems_toml_path', required=True, type=str)
 @click.option('--jobs','-j', default=4, help="'cpu's'")
-def run_gcms_wdl_workflow(file_paths, calibration_file_path, output_directory,output_filename, output_type, corems_json_path, jobs):
+def run_gcms_wdl_workflow(file_paths, calibration_file_path, output_directory,output_filename, output_type, corems_toml_path, jobs):
     '''Run the GCMS workflow\n
-       gcms_workflow_paramaters_json_file = json file with workflow parameters\n
+       gcms_workflow_paramaters_toml_file = toml file with workflow parameters\n
        output_types = csv, excel, pandas, json set on the parameter file\n
-       corems_json_path = json file with corems parameters\n
+       corems_toml_path = toml file with corems parameters\n
        --jobs = number of processes to run in parallel\n 
     '''
     click.echo('Running gcms workflow')
-    run_gcms_metabolomics_workflow_wdl(file_paths, calibration_file_path, output_directory,output_filename, output_type, corems_json_path, jobs)
+    run_gcms_metabolomics_workflow_wdl(file_paths, calibration_file_path, output_directory,output_filename, output_type, corems_toml_path, jobs)
 
 @cli.command()
 @click.argument('gcms_workflow_paramaters_file', required=True, type=str)
@@ -36,9 +38,9 @@ def run_gcms_wdl_workflow(file_paths, calibration_file_path, output_directory,ou
 @click.option('--nmdc', '-n', is_flag=True, help="Creates NMDC metadata mapping and save each result individually")
 def run_gcms_workflow(gcms_workflow_paramaters_file, jobs, nmdc):
     '''Run the GCMS workflow\n
-       gcms_workflow_paramaters_json_file = json file with workflow parameters\n
-       output_types = csv, excel, pandas, json set on the parameter file\n
-       corems_json_path = json file with corems parameters\n
+       gcms_workflow_paramaters_toml_file = toml file with workflow parameters\n
+       output_types = csv, excel, pandas, toml set on the parameter file\n
+       corems_toml_path = toml file with corems parameters\n
        --jobs = number of processes to run in parallel\n 
     '''
     click.echo('Running gcms workflow')
@@ -48,24 +50,24 @@ def run_gcms_workflow(gcms_workflow_paramaters_file, jobs, nmdc):
         run_gcms_metabolomics_workflow(gcms_workflow_paramaters_file, jobs)
 
 @cli.command()
-@click.argument('json_file_name', required=True, type=str)
-def dump_json_template(json_file_name):
-    '''Dumps a json file template
+@click.argument('toml_file_name', required=True, type=str)
+def dump_toml_template(toml_file_name):
+    '''Dumps a toml file template
         to be used as the workflow parameters input 
     '''
-    ref_lib_path = Path(json_file_name).with_suffix('.json')
+    ref_lib_path = Path(toml_file_name).with_suffix('.toml')
     with open(ref_lib_path, 'w') as workflow_param:
     
-        json.dump(WorkflowParameters().__dict__, workflow_param, indent=4)
+        toml.dump(WorkflowParameters().__dict__, workflow_param)
 
 @cli.command()
-@click.argument('json_file_name', required=True, type=str)
-def dump_corems_json_template(json_file_name):
-    '''Dumps a CoreMS json file template
+@click.argument('toml_file_name', required=True, type=str)
+def dump_corems_toml_template(toml_file_name):
+    '''Dumps a CoreMS toml file template
         to be used as the workflow parameters input 
     '''
-    path_obj = Path(json_file_name).with_suffix('.json')
-    dump_gcms_settings_json(file_path=path_obj)
+    path_obj = Path(toml_file_name).with_suffix('.toml')
+    dump_gcms_settings_toml(file_path=path_obj)
     
 
 

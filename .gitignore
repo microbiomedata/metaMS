@@ -7,9 +7,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.pyc
-
+.DS_Store
+.python-version
+*.db
 # C extensions
 *.so
+
 
 # Distribution / packaging
 .Python

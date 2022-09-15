@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from multiprocessing import Pool
 from pathlib import Path
-import json
 
-from metaMS.metadata_factory import NMDC_Metadata
+import toml
+
 from corems.mass_spectra.input.andiNetCDF import ReadAndiNetCDF
 from corems.encapsulation.input import parameter_from_json
 from corems.mass_spectra.calc.GC_RI_Calibration import get_rt_ri_pairs
@@ -15,17 +15,21 @@ import cProfile
 class WorkflowParameters:
     
     file_paths: tuple = ('data/...', 'data/...')
+    #RI FAMES Calibration File
     calibration_file_path: str = 'data/...'
+    #Sample/Process Metadata
+    nmdc_metadata_path: str = 'configuration/nmdc_metadata.json' 
+    #configuration file for corems
+    corems_toml_path: str = 'configuration/corems.toml'
     output_directory: str = 'data/...'
     output_filename: str = 'data/...'
     output_type: str = 'csv'
-    corems_json_path: str = 'data/corems.json'
-
+    
 def worker(args):
 
     cProfile.runctx('workflow_worker(args)', globals(), locals(), 'gc-ms.prof')
 
-def run_gcms_metabolomics_workflow_wdl(file_paths, calibration_file_path, output_directory,output_filename, output_type, corems_json_path, jobs, db_path=None):
+def run_gcms_metabolomics_workflow_wdl(file_paths, calibration_file_path, output_directory,output_filename, output_type, corems_toml_path, jobs, db_path=None):
     
     import click
     workflow_params = WorkflowParameters()
@@ -34,15 +38,15 @@ def run_gcms_metabolomics_workflow_wdl(file_paths, calibration_file_path, output
     workflow_params.output_directory = output_directory
     workflow_params.output_filename = output_filename
     workflow_params.output_type = output_type
-    workflow_params.corems_json_path = corems_json_path
+    workflow_params.corems_toml_path = corems_toml_path
     
     dirloc = Path(workflow_params.output_directory)
     dirloc.mkdir(exist_ok=True)
     output_path = Path(workflow_params.output_directory)/workflow_params.output_filename
     
-    rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_json_path)   
+    rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_toml_path)   
 
-    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path, workflow_params.calibration_file_path ) for file_path in workflow_params.file_paths]
+    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_toml_path, workflow_params.calibration_file_path ) for file_path in workflow_params.file_paths]
     #gcms_list = pool.map(workflow_worker, worker_args)
     pool = Pool(int(jobs))
     
@@ -63,9 +67,9 @@ def run_nmdc_metabolomics_workflow(workflow_params_file, jobs):
     dirloc = Path(workflow_params.output_directory)
     dirloc.mkdir(exist_ok=True)
     
-    rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_json_path)   
+    rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_toml_path)   
 
-    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path, workflow_params.calibration_file_path) for file_path in workflow_params.file_paths]
+    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_toml_path, workflow_params.calibration_file_path) for file_path in workflow_params.file_paths]
     #gcms_list = pool.map(workflow_worker, worker_args)
     pool = Pool(jobs)
     
@@ -93,9 +97,9 @@ def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
     dirloc.mkdir(exist_ok=True)
     output_path = Path(workflow_params.output_directory)/workflow_params.output_filename
     
-    rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_json_path)   
+    rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_toml_path)   
 
-    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path, workflow_params.calibration_file_path) for file_path in workflow_params.file_paths]
+    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_toml_path, workflow_params.calibration_file_path) for file_path in workflow_params.file_paths]
     #gcms_list = pool.map(workflow_worker, worker_args)
     pool = Pool(jobs)
     
@@ -105,13 +109,13 @@ def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
     pool.close()
     pool.join()
     
-def read_workflow_parameter(gcms_workflow_paramaters_json_file):
-    with open(gcms_workflow_paramaters_json_file, 'r') as infile:
-        return WorkflowParameters(**json.load(infile))    
+def read_workflow_parameter(gcms_workflow_paramaters_toml_file):
+    with open(gcms_workflow_paramaters_toml_file, 'r') as infile:
+        return WorkflowParameters(**toml.load(infile))    
 
-def get_calibration_rtri_pairs(ref_file_path, corems_paramaters_json_file):
+def get_calibration_rtri_pairs(ref_file_path, corems_paramaters_toml_file):
     
-    gcms_ref_obj = get_gcms(ref_file_path, corems_paramaters_json_file)
+    gcms_ref_obj = get_gcms(ref_file_path, corems_paramaters_toml_file)
     #sql_obj = start_sql_from_file()
     #rt_ri_pairs = get_rt_ri_pairs(gcms_ref_obj,sql_obj=sql_obj)
     # !!!!!! READ !!!!! use the previous two lines if db/EMSL_lowres_gcms_test_database.sqlite does not exist
@@ -144,7 +148,7 @@ def get_gcms(file_path, corems_params):
     
     gcms = reader_gcms.get_gcms_obj()
 
-    parameter_from_json.load_and_set_parameters_gcms(gcms, parameters_path=corems_params)
+    parameter_from_json.load_and_set_toml_parameters_gcms(gcms, parameters_path=corems_params)
     
     gcms.process_chromatogram()
 
@@ -169,8 +173,8 @@ def run_gcms_mpi(workflow_params_file, replicas, rt_ri_pairs):
     from mpi4py import MPI
     
     workflow_params = read_workflow_parameter(workflow_params_file)
-    rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_json_path) 
-    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_json_path, workflow_params.calibration_file_path) for file_path in workflow_params.file_paths]
+    rt_ri_pairs = get_calibration_rtri_pairs(workflow_params.calibration_file_path, workflow_params.corems_toml_path) 
+    worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_toml_path, workflow_params.calibration_file_path) for file_path in workflow_params.file_paths]
 
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()

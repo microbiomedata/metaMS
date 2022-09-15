@@ -14,7 +14,9 @@ task runMetaMS {
 
     String output_type
 
-    File corems_json_path
+    File corems_toml_path
+
+    File nmdc_metadata_path
 
     Int jobs_count
     
@@ -25,7 +27,8 @@ task runMetaMS {
                                      ${output_directory} \
                                      ${output_filename} \
                                      ${output_type} \
-                                     ${corems_json_path} \
+                                     ${corems_toml_path} \
+                                     ${nmdc_metadata_path} \
                                      --jobs ${jobs_count} 
     }
     

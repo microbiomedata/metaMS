@@ -21,7 +21,7 @@
 
 ## Current Version
 
-### `2.1.3`
+### `2.2.0`
 
 ### Data input formats
 
@@ -88,17 +88,17 @@ To be able to open chemstation files a installation of pythonnet is needed:
 ## Execution
 
 ```bash
-metaMS dump_json_template MetamsFile.json
+metaMS dump_toml_template metams.toml
 ```
 ```bash
-metaMS dump_corems_json_template CoremsFile.json
+metaMS dump_corems_toml_template corems.toml
 ```
 
- Modify the MetamsFile.json and CoremsFile.json accordingly to your dataset and workflow parameters
-make sure to include CoremsFile.json path inside the MetamsFile.json: "corems_json_path": "path_to_CoremsFile.json" 
+ Modify the metams.toml and corems.toml accordingly to your dataset and workflow parameters
+make sure to include corems.json path inside the metams.toml: "corems_toml_path": "path_to_corems.toml" 
 
 ```bash
-metaMS run-gcms-workflow path_to_MetamsFile.json
+metaMS run-gcms-workflow path_to_metams.toml
 ```
 
 ## MiniWDL 
@@ -124,30 +124,30 @@ If you don't have docker installed, the easiest way is to [install docker for de
 - Pull from Docker Registry:
 
     ```bash
-    docker pull corilo/metams:latest
+    docker pull microbiomedata/metams:latest
     
     ```
 - or Build the image from source:
 
     ```bash
-    docker build -t metams:latest .
+    docker build -t microbiomedata/metams:latest .
     ```
 - Run Workflow from Container:
 
-    $(data_dir) = full path of directory containing the gcms data, MetamsFile.json and CoremsFile.json
-    
+    $(data_dir) = full path of directory containing the gcms data
+    $(config_dir) = full path of directory containing configuration and parameters metams.toml and corems.toml
     ```bash
-    docker run -v $(data_dir):/metaB/data corilo/metams:latest metaMS run-gcms-workflow /metaB/data/MetamsFile.json
+    docker run -v $(data_dir):/metaB/data -v $(config_dir):/metaB/configuration microbiomedata/metams:latest metaMS run-gcms-workflow /metaB/configuration/metams.toml
     ```
 
 - Getting the parameters templates:
     
     ```bash
-    docker run -v $(data_dir):/metaB/data corilo/metams:latest metaMS dump_json_template /metaB/data/MetamsFile.json
+    docker run -v $(config_dir):/metaB/configuration microbiomedata/metams:latest metaMS dump-json-template /metaB/configuration/metams.toml
     ```
     
     ```bash
-    docker run -v $(data_dir):/metaB/data corilo/metams:latest metaMS dump_corems_json_template /metaB/data/CoremsFile.json
+    docker run -v $(config_dir):/metaB/configuration microbiomedata/metams:latest metaMS dump-corems-json-template /metaB/configuration/corems.toml
     ```
 
 ## Disclaimer

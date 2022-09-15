@@ -2,6 +2,7 @@ app_name = metaMS
 parameters_path = data/MetamsFile.json
 # change the path to your data path /Users/eber373/Desenvolvimento/metaB
 data_dir = /Users/eber373/Desenvolvimento/metaB/data/
+config_dir = /Users/eber373/Desenvolvimento/metaB/configuration/
 version := $(shell cat .bumpversion.cfg | grep current_version | cut -d= -f2 | tr -d ' ')
 stage := $(shell cat .bumpversion.cfg | grep optional_value | cut -d= -f2 | tr -d ' ') 
 
@@ -39,28 +40,31 @@ pypi:
 
 docker-push:
 	
-	@echo corilo/metams:$(version).$(stage)
-	@docker build --no-cache -t corilo/metams:$(version).$(stage) .
-	@docker push corilo/metams:$(version).$(stage)
-	@docker image tag corilo/metams:$(version).$(stage) corilo/metams:latest
+	@echo corilo/metams:$(version)
+	@docker build --no-cache -t corilo/metams:$(version) .
+	@docker push corilo/metams:$(version)
+	@docker image tag corilo/metams:$(version) corilo/metams:latest
 	@docker push corilo/metams:latest
 
 docker-nmdc:
 	
-	@echo microbiomedata/metams:$(version).$(stage)
-	@docker build --no-cache -t microbiomedata/metams:$(version).$(stage) .
-	@docker push microbiomedata/metams:$(version).$(stage)
-	@docker image tag microbiomedata/metams:$(version).$(stage) microbiomedata/metams:latest
+	@echo microbiomedata/metams:$(version)
+	@docker build --no-cache -t microbiomedata/metams:$(version) .
+	@docker push microbiomedata/metams:$(version)
+	@docker image tag microbiomedata/metams:$(version) microbiomedata/metams:latest
 	@docker push microbiomedata/metams:latest
 
 docker-build:
 
-	docker build -t metams:local .
+	docker build -t microbiomedata/metams:latest .
 
 docker-run:
 
-	docker run -v $(data_dir):/metaB/data metams:local run-gcms-workflow /metaB/data/MetamsFile.json
+	docker run -v $(data_dir):/metaB/data -v $(config_dir):/metaB/configuration microbiomedata/metams:latest metaMS run-gcms-workflow /metaB/configuration/metams.toml
 
 wdl-run :
  	 
 	 miniwdl run wdl/metaMS.wdl -i wdl/metams_input.json --verbose --no-cache --copy-input-files
+
+
+	
