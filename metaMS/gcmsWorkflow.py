@@ -51,7 +51,7 @@ def run_gcms_metabolomics_workflow_wdl(file_paths, calibration_file_path, output
     pool = Pool(int(jobs))
     
     for i, gcms in enumerate(pool.imap_unordered(workflow_worker, worker_args), 1):
-        eval('gcms.to_'+ workflow_params.output_type + '(output_path, highest_score=False)')
+        eval('gcms.to_'+ workflow_params.output_type + '(output_path)')
 
     pool.close()
     pool.join()
@@ -80,8 +80,8 @@ def run_nmdc_metabolomics_workflow(workflow_params_file, jobs):
 
         eval('gcms.to_'+ workflow_params.output_type + '(output_path, write_metadata=False)')
         
-        nmdc = NMDC_Metadata(in_file_path, workflow_params.calibration_file_path, output_path, dms_file_path)
-        nmdc.create_nmdc_metadata(gcms)
+        #nmdc = NMDC_Metadata(in_file_path, workflow_params.calibration_file_path, output_path, dms_file_path)
+        #nmdc.create_nmdc_metadata(gcms)
 
     pool.close()
     pool.join()

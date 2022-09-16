@@ -21,7 +21,7 @@
 
 ## Current Version
 
-### `2.2.0`
+### `2.2.2`
 
 ### Data input formats
 

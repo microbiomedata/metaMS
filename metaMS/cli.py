@@ -21,8 +21,9 @@ def cli():
 @click.argument('output_filename', required=True, type=str)
 @click.argument('output_type', required=True, type=str)
 @click.argument('corems_toml_path', required=True, type=str)
+@click.argument('nmdc_metadata_path', required=True, type=str)
 @click.option('--jobs','-j', default=4, help="'cpu's'")
-def run_gcms_wdl_workflow(file_paths, calibration_file_path, output_directory,output_filename, output_type, corems_toml_path, jobs):
+def run_gcms_wdl_workflow(file_paths, calibration_file_path, output_directory,output_filename, output_type, corems_toml_path, nmdc_metadata_path, jobs):
     '''Run the GCMS workflow\n
        gcms_workflow_paramaters_toml_file = toml file with workflow parameters\n
        output_types = csv, excel, pandas, json set on the parameter file\n

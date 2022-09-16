@@ -40,7 +40,7 @@ task runMetaMS {
     }
 
     runtime {
-        docker: "microbiomedata/metams:latest"
+        docker: "microbiomedata/metams:2.2.2"
     
     }
 
