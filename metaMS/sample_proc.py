@@ -1,4 +1,3 @@
-import yaml
 import nmdc_schema.nmdc as nmdc
 from linkml_runtime.dumpers import yaml_dumper, json_dumper
 
