@@ -89,7 +89,7 @@ Requirements for Execution
 Version History
 ---------------
 
-- 2.2.2
+- 2.2.3
 
 Point of contact
 ----------------
