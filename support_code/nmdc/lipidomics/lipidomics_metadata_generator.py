@@ -2,7 +2,7 @@ from metadata_generator import MetadataGenerator
 from pathlib import Path
 import pandas as pd
 
-#TODO: Update workflow version when known
+#TODO: Check the config version bump works for workflow_version
 #TODO: update has_input for MassSpectrometry to not be biosample id but an analyte id when Material Processing is in place
 
 class LipidomicsMetadataGenerator(MetadataGenerator):
@@ -53,7 +53,7 @@ class LipidomicsMetadataGenerator(MetadataGenerator):
                          workflow_analysis_name = "Lipidomics analysis",
                          workflow_description = "Analysis of raw mass spectrometry data for the annotation of lipids.",
                          workflow_git_url = "https://github.com/microbiomedata/metaMS",
-                         workflow_version = "",
+                         workflow_version = "2.2.3",
                          wf_config_process_data_category = "workflow_parameter_data",
                          wf_config_process_data_obj_type = "Configuration toml",
                          wf_config_process_data_description = "CoreMS parameters used for Lipidomics workflow.")
