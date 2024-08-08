@@ -11,12 +11,12 @@ import requests_oauthlib
 
 from linkml_runtime.dumpers import json_dumper
 
-#TODO: Update script to for Sample Processing - has_input for MassSpectrometry will have to be changed to be a processed sample id - not biosample id
-#TODO: Update api_base_url in minter to regular url once Berkeley is integrated
-#TODO: og_url in ApiInfoGetter in metadata_gen_supplement.py to be regular url once Berkeley is integrated
-#TODO: Add directions to add a .config file in same folder as scripts with client_id and client_secret so can mint ids.
-#TODO: Update workflow_version in the lipidomics_metadata_generator.py when known.
-        
+# TODO: Update script to for Sample Processing - has_input for MassSpectrometry will have to be changed to be a processed sample id - not biosample id
+# TODO: Update api_base_url in minter to regular url once Berkeley is integrated
+# TODO: og_url in ApiInfoGetter in metadata_gen_supplement.py to be regular url once Berkeley is integrated
+# TODO: Add directions to add a .config file in same folder as scripts with client_id and client_secret so can mint ids.
+
+
 class MetadataGenerator:
     """
     A generic class for generating NMDC metadata objects using provided metadata files and configuration.
@@ -58,10 +58,10 @@ class MetadataGenerator:
     wf_config_process_data_description : str
         Description of the workflow configuration process data.
     """
-    def __init__(self, metadata_file, database_dump_json_path: str, minting_client_config_path: str, grouped_columns: list, mass_spec_desc: str, mass_spec_eluent_intro: str, 
-                 analyte_category: str, raw_data_category, raw_data_obj_type: str, raw_data_obj_desc: str, workflow_analysis_name: str, workflow_description: str, workflow_git_url: str, 
-                 workflow_version:str, wf_config_process_data_category:str, wf_config_process_data_obj_type:str, wf_config_process_data_description: str):
-        
+
+    def __init__(self, metadata_file, database_dump_json_path: str, minting_client_config_path: str, grouped_columns: list, mass_spec_desc: str, mass_spec_eluent_intro: str,
+                 analyte_category: str, raw_data_category, raw_data_obj_type: str, raw_data_obj_desc: str, workflow_analysis_name: str, workflow_description: str, workflow_git_url: str,
+                 workflow_version: str, wf_config_process_data_category: str, wf_config_process_data_obj_type: str, wf_config_process_data_description: str):
         """
         Initializes the MetadataGenerator with required file paths and configuration details.
         """
@@ -86,7 +86,7 @@ class MetadataGenerator:
         self.wf_config_process_data_description = wf_config_process_data_description
 
     def load_metadata(self) -> pd.DataFrame:
-        #TODO: Update docstring since adding the grouping functionality and splitting other methods out
+        # TODO: Update docstring since adding the grouping functionality and splitting other methods out
         """
         Loads and groups workflow metadata from a CSV file into a pandas DataFrame. See example CSV: 
         https://docs.google.com/spreadsheets/d/1Uqf7Qb-0aOzJrjTe1LXhwNhG7e24i5WM2_qoFNUR1zY/edit?gid=746941834#gid=746941834
@@ -95,20 +95,20 @@ class MetadataGenerator:
         -------
         pandas.DataFrame
             DataFrame grouped by biosample ID.
-        
+
         Raises:
         -------
         FileNotFoundError
             If the `metadata_file` does not exist.
         """
-        
+
         metadata_df = pd.read_csv(self.metadata_file)
 
         # Group by Biosample
         grouped = metadata_df.groupby('Biosample Id')
 
         return grouped
-    
+
     def create_grouped_metadata(self, row) -> GroupedMetadata:
         """
         Constructs a GroupedMetadata object from a DataFrame row.
@@ -123,7 +123,7 @@ class MetadataGenerator:
         GroupedMetadata
             A GroupedMetadata object with data from the row.
         """
-        
+
         return GroupedMetadata(
             biosample_id=row[self.grouped_columns[0]],
             nmdc_study=row[self.grouped_columns[1]],
@@ -131,8 +131,8 @@ class MetadataGenerator:
             raw_data_file=row[self.grouped_columns[3]],
             raw_data_object_alt_id=row[self.grouped_columns[4]],
             processing_institution=row[self.grouped_columns[5]]
-            )
-    
+        )
+
     def create_workflow_metadata(self, row: dict[str, str]) -> WorkflowMetadata:
         """
         Creates a WorkflowMetadata object from a dictionary of workflow metadata.
@@ -157,9 +157,8 @@ class MetadataGenerator:
             instrument_analysis_start_date=row['instrument analysis start date'],
             instrument_analysis_end_date=row['instrument analysis end date'],
             execution_resource=row['execution resource']
-        )  
-    
-    
+        )
+
     def mint_nmdc_id(self, nmdc_type: str) -> list[str]:
         """
         Mints new NMDC IDs of the specified type using the NMDC ID minting API.
@@ -173,41 +172,41 @@ class MetadataGenerator:
         -------
         list
             A list of one newly minted NMDC ID.
-        
+
         Raises:
         -------
         requests.exceptions.RequestException
             If there is an error during the API request.
         """
-        #TODO: Update api_base_url to regular url once Berkeley is integrated
-        
+        # TODO: Update api_base_url to regular url once Berkeley is integrated
+
         config = yaml.safe_load(open(self.minting_client_config_path))
-        client = oauthlib.oauth2.BackendApplicationClient(client_id=config['client_id'])
+        client = oauthlib.oauth2.BackendApplicationClient(
+            client_id=config['client_id'])
         oauth = requests_oauthlib.OAuth2Session(client=client)
 
         api_base_url = 'https://api-berkeley.microbiomedata.org'
 
         token = oauth.fetch_token(token_url=f'{api_base_url}/token',
-                              client_id=config['client_id'], 
-                              client_secret=config['client_secret'])
-        
+                                  client_id=config['client_id'],
+                                  client_secret=config['client_secret'])
+
         nmdc_mint_url = f'{api_base_url}/pids/mint'
 
         payload = {
             "schema_class": {"id": nmdc_type
                              },
-                             "how_many": 1
-                             }
+            "how_many": 1
+        }
 
         response = oauth.post(nmdc_mint_url, data=json.dumps(payload))
         list_ids = response.json()
 
         return list_ids
-    
 
-    def generate_mass_spectrometry(self, file_path:Path, instrument_name:str, sample_id:str, 
-                                 raw_data_id:str, study_id:str, processing_institution:str,
-                                 mass_spec_config_name:str, lc_config_name: str, start_date:str, end_date:str) -> nmdc.DataGeneration: 
+    def generate_mass_spectrometry(self, file_path: Path, instrument_name: str, sample_id: str,
+                                   raw_data_id: str, study_id: str, processing_institution: str,
+                                   mass_spec_config_name: str, lc_config_name: str, start_date: str, end_date: str) -> nmdc.DataGeneration:
         """
         Creates an NMDC DataGeneration object for mass spectrometry and mints an NMDC ID.
 
@@ -239,43 +238,48 @@ class MetadataGenerator:
         nmdc.DataGeneration
             An NMDC DataGeneration object with the provided metadata.
         """
-        
-        #TODO: update docstring with new variables (e.g. analyte_category)
-        nmdc_id = self.mint_nmdc_id(nmdc_type = NmdcTypes.MassSpectrometry)[0]
+
+        # TODO: update docstring with new variables (e.g. analyte_category)
+        nmdc_id = self.mint_nmdc_id(nmdc_type=NmdcTypes.MassSpectrometry)[0]
 
         # Look up instrument, lc_config, and mass_spec_config id by name slot using API
-        api_instrument_getter = ApiInfoRetriever(collection_name="instrument_set")
-        instrument_id = api_instrument_getter.get_id_by_name_from_collection(name_field_value=instrument_name)
+        api_instrument_getter = ApiInfoRetriever(
+            collection_name="instrument_set")
+        instrument_id = api_instrument_getter.get_id_by_name_from_collection(
+            name_field_value=instrument_name)
 
-        api_config_getter = ApiInfoRetriever(collection_name="configuration_set")
-        lc_config_id = api_config_getter.get_id_by_name_from_collection(name_field_value=lc_config_name)
-        mass_spec_id =  api_config_getter.get_id_by_name_from_collection(name_field_value=mass_spec_config_name)
-    
+        api_config_getter = ApiInfoRetriever(
+            collection_name="configuration_set")
+        lc_config_id = api_config_getter.get_id_by_name_from_collection(
+            name_field_value=lc_config_name)
+        mass_spec_id = api_config_getter.get_id_by_name_from_collection(
+            name_field_value=mass_spec_config_name)
+
         data_dict = {
-                    "id": nmdc_id,
-                    "name": file_path.stem,
-                    "description": self.mass_spec_desc,
-                    "add_date": datetime.now().strftime('%Y-%m-%d'),
-                    "eluent_introduction_category": self.mass_spec_eluent_intro,
-                    "has_mass_spectrometry_configuration": mass_spec_id, 
-                    "has_chromatography_configuration": lc_config_id, 
-                    "analyte_category": self.analyte_category,
-                    "instrument_used": instrument_id, 
-                    "has_input": [sample_id],
-                    "has_output": [raw_data_id],
-                    "associated_studies": study_id,
-                    "processing_institution": processing_institution,
-                    "start_date": start_date,
-                    "end_date": end_date,
-                    "type": NmdcTypes.MassSpectrometry
-                    } 
+            "id": nmdc_id,
+            "name": file_path.stem,
+            "description": self.mass_spec_desc,
+            "add_date": datetime.now().strftime('%Y-%m-%d'),
+            "eluent_introduction_category": self.mass_spec_eluent_intro,
+            "has_mass_spectrometry_configuration": mass_spec_id,
+            "has_chromatography_configuration": lc_config_id,
+            "analyte_category": self.analyte_category,
+            "instrument_used": instrument_id,
+            "has_input": [sample_id],
+            "has_output": [raw_data_id],
+            "associated_studies": study_id,
+            "processing_institution": processing_institution,
+            "start_date": start_date,
+            "end_date": end_date,
+            "type": NmdcTypes.MassSpectrometry
+        }
 
         massSpectrometry = nmdc.DataGeneration(**data_dict)
-       
+
         return massSpectrometry
 
-    def generate_data_object(self, file_path:Path, data_category:str, data_object_type:str, 
-                             description:str, base_url:str, was_generated_by:str, alternative_id:str = None) -> nmdc.DataObject:
+    def generate_data_object(self, file_path: Path, data_category: str, data_object_type: str,
+                             description: str, base_url: str, was_generated_by: str, alternative_id: str = None) -> nmdc.DataObject:
         """
         Creates an NMDC DataObject with metadata from the specified file and details.
 
@@ -306,24 +310,24 @@ class MetadataGenerator:
             An NMDC DataObject instance with the specified metadata.
         """
 
-        nmdc_id = self.mint_nmdc_id(nmdc_type = NmdcTypes.DataObject)[0]
+        nmdc_id = self.mint_nmdc_id(nmdc_type=NmdcTypes.DataObject)[0]
 
         data_dict = {
-                    'id': nmdc_id,
-                    "data_category": data_category,
-                    "data_object_type": data_object_type,
-                    "name": file_path.name,
-                    "description": description,
-                    "file_size_bytes": file_path.stat().st_size,
-                    "md5_checksum": hashlib.md5(file_path.open('rb').read()).hexdigest(),
-                    "url": base_url + str(file_path.name),
-                    "was_generated_by": was_generated_by,
-                    "type": NmdcTypes.DataObject
-                    } 
-        
+            'id': nmdc_id,
+            "data_category": data_category,
+            "data_object_type": data_object_type,
+            "name": file_path.name,
+            "description": description,
+            "file_size_bytes": file_path.stat().st_size,
+            "md5_checksum": hashlib.md5(file_path.open('rb').read()).hexdigest(),
+            "url": base_url + str(file_path.name),
+            "was_generated_by": was_generated_by,
+            "type": NmdcTypes.DataObject
+        }
+
         if alternative_id is not None and isinstance(alternative_id, str):
             data_dict["alternative_identifiers"] = [alternative_id]
-        
+
         dataObject = nmdc.DataObject(**data_dict)
 
         return dataObject
@@ -354,31 +358,32 @@ class MetadataGenerator:
         nmdc.MetabolomicsAnalysis
             An NMDC MetabolomicsAnalysis instance with the provided metadata.
         """
-    
-        nmdc_id = self.mint_nmdc_id(nmdc_type = NmdcTypes.MetabolomicsAnalysis)[0]
-        
+
+        nmdc_id = self.mint_nmdc_id(
+            nmdc_type=NmdcTypes.MetabolomicsAnalysis)[0]
+
         data_dict = {
-                    'id': nmdc_id,
-                    'name': f'{self.workflow_analysis_name} for {raw_data_id}',
+            'id': nmdc_id,
+            'name': f'{self.workflow_analysis_name} for {raw_data_id}',
                     'description': self.workflow_description,
                     'processing_institution': processing_institution,
-                    'execution_resource': cluster_name, 
+                    'execution_resource': cluster_name,
                     'git_url': self.workflow_git_url,
                     'version': self.workflow_version,
                     'was_informed_by': data_gen_id,
-                    'has_input': [raw_data_id], 
+                    'has_input': [raw_data_id],
                     'has_output': [processed_data_id],
                     'started_at_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     'ended_at_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     'type': NmdcTypes.MetabolomicsAnalysis,
-                    }
-        
+        }
+
         metabAnalysis = nmdc.MetabolomicsAnalysis(**data_dict)
 
         return metabAnalysis
-    
+
     def update_outputs(self, mass_spec_obj: object, analysis_obj: object, raw_data_obj: object,
-                           processed_data_id_list: list):
+                       processed_data_id_list: list):
         """
         Updates output references for Mass Spectrometry and the Workflow Analysis objects.
 
@@ -406,12 +411,11 @@ class MetadataGenerator:
         - Sets `mass_spec_obj.has_output` to [raw_data_obj.id].
         - Sets `analysis_obj.has_output` to `processed_data_id_list`.
         """
-        
+
         mass_spec_obj.has_output = [raw_data_obj.id]
         analysis_obj.has_output = processed_data_id_list
 
-
-    def start_nmdc_database(self) -> nmdc.Database: 
+    def start_nmdc_database(self) -> nmdc.Database:
         """
         Initializes and returns a new NMDC Database instance.
 
@@ -421,7 +425,7 @@ class MetadataGenerator:
             A new instance of an NMDC Database.
         """
         return nmdc.Database()
-    
+
     def dump_nmdc_database(self, nmdc_database: nmdc.Database):
         """
         Dumps the NMDC database to a JSON file.
@@ -441,12 +445,7 @@ class MetadataGenerator:
         -------------
         - Writes the database content to the file specified by `self.database_dump_json_path`.
         """
-        
+
         json_dumper.dump(nmdc_database, self.database_dump_json_path)
-        print(f"Database successfully dumped in {self.database_dump_json_path}")
-
-
-
-    
-
-
+        print(
+            f"Database successfully dumped in {self.database_dump_json_path}")

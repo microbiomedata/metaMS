@@ -1,8 +1,10 @@
 import requests
 from dataclasses import dataclass
 
-#TODO: Update og_url to be regular nmdc api url when berkeley is implemented
-#TODO: Update GroupedMetadata.processing_type when sample processing is added.
+# TODO: Update og_url to be regular nmdc api url when berkeley is implemented
+# TODO: Update GroupedMetadata.processing_type when sample processing is added.
+
+
 class ApiInfoRetriever:
     """
     A class to retrieve API information from a specified collection.
@@ -17,8 +19,8 @@ class ApiInfoRetriever:
     get_id_by_name_from_collection(name_field_value: str) -> str:
         Retrieves the ID of an entry from the collection based on the given name field value.
     """
-    
-    def __init__(self, collection_name:str):
+
+    def __init__(self, collection_name: str):
         """
         Initializes the ApiInfoRetriever with the specified collection name.
 
@@ -48,18 +50,19 @@ class ApiInfoRetriever:
         """
         # trim trailing white spaces
         name_field_value = name_field_value.rstrip()
-        
+
         filter = f'{{"name": "{name_field_value}"}}'
         field = "id"
-        
+
         og_url = f'https://api-berkeley.microbiomedata.org/nmdcschema/{self.collection_name}?&filter={filter}&projection={field}'
         resp = requests.get(og_url)
         data = resp.json()
         identifier = data['resources'][0]['id']
-    
+
         return identifier
 
-@ dataclass 
+
+@ dataclass
 class GroupedMetadata:
     """
     Data class for holding grouped metadata information.
@@ -86,6 +89,7 @@ class GroupedMetadata:
     processing_institution: str
     nmdc_study: float
 
+
 @dataclass
 class WorkflowMetadata:
     """
@@ -108,7 +112,7 @@ class WorkflowMetadata:
     execution_resource : float
         Identifier for the execution resource.
     """
-    
+
     processed_data_dir: str
     mass_spec_config_name: str
     lc_config_name: str
@@ -116,6 +120,7 @@ class WorkflowMetadata:
     instrument_analysis_start_date: str
     instrument_analysis_end_date: str
     execution_resource: float
+
 
 @dataclass
 class NmdcTypes:
@@ -132,14 +137,9 @@ class NmdcTypes:
         NMDC type for Metabolomics Analysis.
     DataObject : str
         NMDC type for Data Object.
-    """ 
-    
-    Biosample:str = "nmdc:Biosample"
-    MassSpectrometry:str = "nmdc:MassSpectrometry"
-    MetabolomicsAnalysis:str = "nmdc:MetabolomicsAnalysis"
-    DataObject:str = "nmdc:DataObject"
+    """
 
-
-
-
-
+    Biosample: str = "nmdc:Biosample"
+    MassSpectrometry: str = "nmdc:MassSpectrometry"
+    MetabolomicsAnalysis: str = "nmdc:MetabolomicsAnalysis"
+    DataObject: str = "nmdc:DataObject"

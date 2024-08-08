@@ -2,8 +2,8 @@ from metadata_generator import MetadataGenerator
 from pathlib import Path
 import pandas as pd
 
-#TODO: Check the config version bump works for workflow_version
-#TODO: update has_input for MassSpectrometry to not be biosample id but an analyte id when Material Processing is in place
+# TODO: update has_input for MassSpectrometry to not be biosample id but an analyte id when Material Processing is in place
+
 
 class LipidomicsMetadataGenerator(MetadataGenerator):
     """
@@ -30,34 +30,37 @@ class LipidomicsMetadataGenerator(MetadataGenerator):
     hdf5_process_data_obj_type : str
         Object type for processed data files in HDF5 format.
     hdf5_process_data_description : str
-        Description for processed data files in HDF5 format.
+        Description for processed data files in HDF5 format
     """
 
-    def __init__(self, metadata_file, database_dump_json_path, raw_data_url, process_data_url, no_config_process_data_category="processed_data", no_config_process_data_obj_type="LC-MS Lipidomics Results",
+    def __init__(self, metadata_file, database_dump_json_path, raw_data_url, process_data_url,
+                 no_config_process_data_category="processed_data", no_config_process_data_obj_type="LC-MS Lipidomics Results",
                  csv_process_data_description="Lipid annotations as a result of a lipidomics workflow activity.",
-                 hdf5_process_data_obj_type="LC-MS Lipidomics Results", hdf5_process_data_description="CoreMS hdf5 file representing a lipidomics data file including annotations."):
+                 hdf5_process_data_obj_type="LC-MS Lipidomics Results",
+                 hdf5_process_data_description="CoreMS hdf5 file representing a lipidomics data file including annotations."):
         """
         Initializes the LipidomicsMetadataGenerator with specific parameters for lipidomics data.
         """
-        
-        super().__init__(metadata_file, 
+
+        super().__init__(metadata_file,
                          database_dump_json_path,
-                         minting_client_config_path = 'metaMS/nmdc_metadata_generation/.config.yaml',
-                         grouped_columns = ['Biosample Id', 'Associated Study', 'Processing Type', 'Raw Data File', 'Raw Data Object Alt Id', 'processing institution'],
-                         mass_spec_desc = "Analysis of raw mass spectrometry data for the annotation of lipids.",
-                         mass_spec_eluent_intro = "liquid_chromatography",
-                         analyte_category = "lipidome",
-                         raw_data_category = "instrument_data",
-                         raw_data_obj_type = "LC-DDA-MS/MS Raw Data",
-                         raw_data_obj_desc = "LC-DDA-MS/MS raw data for lipidomics data acquisition.",
-                         workflow_analysis_name = "Lipidomics analysis",
-                         workflow_description = "Analysis of raw mass spectrometry data for the annotation of lipids.",
-                         workflow_git_url = "https://github.com/microbiomedata/metaMS",
-                         workflow_version = "2.2.4",
-                         wf_config_process_data_category = "workflow_parameter_data",
-                         wf_config_process_data_obj_type = "Configuration toml",
-                         wf_config_process_data_description = "CoreMS parameters used for Lipidomics workflow.")
-        
+                         minting_client_config_path='metaMS/nmdc_metadata_generation/.config.yaml',
+                         grouped_columns=['Biosample Id', 'Associated Study', 'Processing Type',
+                                          'Raw Data File', 'Raw Data Object Alt Id', 'processing institution'],
+                         mass_spec_desc="Analysis of raw mass spectrometry data for the annotation of lipids.",
+                         mass_spec_eluent_intro="liquid_chromatography",
+                         analyte_category="lipidome",
+                         raw_data_category="instrument_data",
+                         raw_data_obj_type="LC-DDA-MS/MS Raw Data",
+                         raw_data_obj_desc="LC-DDA-MS/MS raw data for lipidomics data acquisition.",
+                         workflow_analysis_name="Lipidomics analysis",
+                         workflow_description="Analysis of raw mass spectrometry data for the annotation of lipids.",
+                         workflow_git_url="https://github.com/microbiomedata/metaMS",
+                         workflow_version="2.2.3",
+                         wf_config_process_data_category="workflow_parameter_data",
+                         wf_config_process_data_obj_type="Configuration toml",
+                         wf_config_process_data_description="CoreMS parameters used for Lipidomics workflow.")
+
         self.raw_data_url = raw_data_url
         self.process_data_url = process_data_url
         self.no_config_process_data_category = no_config_process_data_category
@@ -65,8 +68,7 @@ class LipidomicsMetadataGenerator(MetadataGenerator):
         self.csv_process_data_description = csv_process_data_description
         self.hdf5_process_data_obj_type = hdf5_process_data_obj_type
         self.hdf5_process_data_description = hdf5_process_data_description
-        
-        
+
     def run(self):
         """
         Executes the metadata generation process for lipidomics data.
@@ -83,39 +85,43 @@ class LipidomicsMetadataGenerator(MetadataGenerator):
         -------
         None
         """
-        
+
         nmdc_database_inst = self.start_nmdc_database()
 
         for group, data in self.load_metadata():
             # Get group level metadata (e.g. 1 Biosample to many MassSpec instances 1 sample -> 2 mass spec -> 2 raw data -> 6 processed data)
             grouped_df = data[self.grouped_columns].drop_duplicates()
-            group_metadata_obj = grouped_df.apply(lambda row: self.create_grouped_metadata(row), axis=1).iloc[0]
-        
+            group_metadata_obj = grouped_df.apply(
+                lambda row: self.create_grouped_metadata(row), axis=1).iloc[0]
+
             # Get MassSpec and downstream metadata
-            workflow_df = data.drop(columns = self.grouped_columns)
-            workflow_metadata = workflow_df.apply(lambda row: self.create_workflow_metadata(row), axis=1)
+            workflow_df = data.drop(columns=self.grouped_columns)
+            workflow_metadata = workflow_df.apply(
+                lambda row: self.create_workflow_metadata(row), axis=1)
             for workflow_metadata_obj in workflow_metadata:
 
-                MassSpectrometry = self.generate_mass_spec_object(grouped_metadata=group_metadata_obj, wf_metadata=workflow_metadata_obj)
+                MassSpectrometry = self.generate_mass_spec_object(
+                    grouped_metadata=group_metadata_obj, wf_metadata=workflow_metadata_obj)
 
-                RawDataObject = self.generate_raw_data_object(grouped_metadata=group_metadata_obj, mass_spec_obj=MassSpectrometry)  
+                RawDataObject = self.generate_raw_data_object(
+                    grouped_metadata=group_metadata_obj, mass_spec_obj=MassSpectrometry)
 
                 MetabAnalysis = self.generate_metab_analysis_object(grouped_metadata=group_metadata_obj, wf_metadata=workflow_metadata_obj,
-                                                                    raw_data_obj=RawDataObject, masss_spec_obj=MassSpectrometry) 
-                
+                                                                    raw_data_obj=RawDataObject, masss_spec_obj=MassSpectrometry)
+
                 processed_data = self.generate_processed_data_objects(wf_metadata=workflow_metadata_obj, metab_analysis_obj=MetabAnalysis,
                                                                       data_obj_set=nmdc_database_inst.data_object_set)
-                self.update_outputs(mass_spec_obj=MassSpectrometry, 
-                                        analysis_obj=MetabAnalysis,
-                                        raw_data_obj=RawDataObject,
-                                        processed_data_id_list=processed_data)
-                
+                self.update_outputs(mass_spec_obj=MassSpectrometry,
+                                    analysis_obj=MetabAnalysis,
+                                    raw_data_obj=RawDataObject,
+                                    processed_data_id_list=processed_data)
+
                 nmdc_database_inst.data_generation_set.append(MassSpectrometry)
                 nmdc_database_inst.data_object_set.append(RawDataObject)
                 nmdc_database_inst.workflow_execution_set.append(MetabAnalysis)
 
         self.dump_nmdc_database(nmdc_database=nmdc_database_inst)
-                
+
     def generate_mass_spec_object(self, grouped_metadata: object, wf_metadata: object) -> object:
         """"
         Generates a Mass Spectrometry object based on metadata.
@@ -147,7 +153,7 @@ class LipidomicsMetadataGenerator(MetadataGenerator):
             lc_config_name=wf_metadata.lc_config_name,
             start_date=wf_metadata.instrument_analysis_start_date,
             end_date=wf_metadata.instrument_analysis_end_date)
-    
+
     def generate_raw_data_object(self, grouped_metadata: object, mass_spec_obj: object) -> object:
         """
         Generates a Raw Data object based on metadata and a Mass Spectrometry object.
@@ -173,12 +179,11 @@ class LipidomicsMetadataGenerator(MetadataGenerator):
             data_object_type=self.raw_data_obj_type,
             description=self.raw_data_obj_desc,
             base_url=self.raw_data_url,
-            was_generated_by= mass_spec_obj.id,
+            was_generated_by=mass_spec_obj.id,
             alternative_id=grouped_metadata.raw_data_object_alt_id
         )
-    
-    
-    def generate_metab_analysis_object(self, grouped_metadata: object, wf_metadata: object, 
+
+    def generate_metab_analysis_object(self, grouped_metadata: object, wf_metadata: object,
                                        raw_data_obj: object, masss_spec_obj: object) -> object:
         """
         Generates a Metabolomics Analysis object based on metadata and related objects.
@@ -209,7 +214,7 @@ class LipidomicsMetadataGenerator(MetadataGenerator):
             processed_data_id="nmdc:placeholder",
             processing_institution=grouped_metadata.processing_institution
         )
-    
+
     def generate_processed_data_objects(self, wf_metadata: object, metab_analysis_obj: object, data_obj_set: list) -> list:
         """
         Generates Processed Data objects based on workflow metadata and a Metabolomics Analysis object.
@@ -241,8 +246,9 @@ class LipidomicsMetadataGenerator(MetadataGenerator):
         data objects based on these extensions.
         - The `data_obj_set` list is updated with the newly created Processed Data objects.
         """
-        
-        processed_data_paths = Path(wf_metadata.processed_data_dir).glob('**/*')
+
+        processed_data_paths = Path(
+            wf_metadata.processed_data_dir).glob('**/*')
         processed_data = []
 
         for file in processed_data_paths:
@@ -262,7 +268,7 @@ class LipidomicsMetadataGenerator(MetadataGenerator):
 
                     data_obj_set.append(ProcessedDataObjectWfConfig)
                     processed_data.append(ProcessedDataObjectWfConfig.id)
-                
+
                 elif file_type == 'csv':
                     ProcessedDataObjectCsv = self.generate_data_object(
                         file_path=file,
@@ -275,7 +281,7 @@ class LipidomicsMetadataGenerator(MetadataGenerator):
 
                     data_obj_set.append(ProcessedDataObjectCsv)
                     processed_data.append(ProcessedDataObjectCsv.id)
-                
+
                 elif file_type == 'hdf5':
                     ProcessedDataObjectHdf5 = self.generate_data_object(
                         file_path=file,
