@@ -53,7 +53,7 @@ class LipidomicsMetadataGenerator(MetadataGenerator):
                          workflow_analysis_name = "Lipidomics analysis",
                          workflow_description = "Analysis of raw mass spectrometry data for the annotation of lipids.",
                          workflow_git_url = "https://github.com/microbiomedata/metaMS",
-                         workflow_version = "2.2.3",
+                         workflow_version = "2.2.4",
                          wf_config_process_data_category = "workflow_parameter_data",
                          wf_config_process_data_obj_type = "Configuration toml",
                          wf_config_process_data_description = "CoreMS parameters used for Lipidomics workflow.")
