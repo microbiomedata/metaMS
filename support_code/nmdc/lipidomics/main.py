@@ -1,7 +1,8 @@
 from lipidomics_metadata_generator import LipidomicsMetadataGenerator
 import argparse
 
-
+# TODO: possibly combine --raw_data_url and --process_data_url to one argument that is base_url because it may be the same for raw and processed data (
+# this is the base url that points to where the data objects can be downloaded. The file name is appended to the end. E.g in NOM it is https://nmdcdemo.emsl.pnnl.gov/)
 def main():
     """
     Main function to parse command-line arguments and run the LipidomicsMetadataGenerator.
