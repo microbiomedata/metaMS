@@ -90,10 +90,10 @@ To be able to open chemstation files a installation of pythonnet is needed:
 ## Execution
 
 ```bash
-metaMS dump_toml_template metams.toml
+metaMS dump-toml-template metams.toml
 ```
 ```bash
-metaMS dump_corems_toml_template corems.toml
+metaMS dump-corems-toml-template corems.toml
 ```
 
  Modify the metams.toml and corems.toml accordingly to your dataset and workflow parameters
