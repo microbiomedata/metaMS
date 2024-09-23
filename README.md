@@ -120,7 +120,7 @@ pip3 install miniwdl
 
 Call:
 ```bash
-miniwdl run wdl/metaMS.wdl -i wdl/metams_input.json --verbose --no-cache --copy-input-files
+miniwdl run wdl/metaMS_gcms.wdl -i wdl/metams_input_gcms.json --verbose --no-cache --copy-input-files
 ```
 ## MetaMS Docker Container
 
