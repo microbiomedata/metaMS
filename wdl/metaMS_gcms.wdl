@@ -1,16 +1,16 @@
 version 1.0
 
 workflow gcmsMetabolomics {
-    call runMetaMS
+    call runMetaMSGCMS
 
     output {
-        String out = runMetaMS.out
-        File output_file = runMetaMS.output_file
-        File output_metafile = runMetaMS.output_metafile
+        String out = runMetaMSGCMS.out
+        File output_file = runMetaMSGCMS.output_file
+        File output_metafile = runMetaMSGCMS.output_metafile
     }
 }
 
-task runMetaMS {
+task runMetaMSGCMS {
     input {
         Array[File] file_paths
         File calibration_file_path
