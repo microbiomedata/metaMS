@@ -50,20 +50,20 @@ def run_gcms_workflow(gcms_workflow_paramaters_file, jobs, nmdc):
     else:
         run_gcms_metabolomics_workflow(gcms_workflow_paramaters_file, jobs)
 
-@cli.command()
+@cli.command(name='dump-gcms-toml-template')
 @click.argument('toml_file_name', required=True, type=str)
-def dump_toml_template(toml_file_name):
+def dump_gcms_toml_template(toml_file_name):
     '''Dumps a toml file template
-        to be used as the workflow parameters input 
+        to be used as the workflow parameters input for the GCMS workflow
     '''
     ref_lib_path = Path(toml_file_name).with_suffix('.toml')
     with open(ref_lib_path, 'w') as workflow_param:
     
         toml.dump(WorkflowParameters().__dict__, workflow_param)
 
-@cli.command()
+@cli.command(name='dump-corems-toml-template')
 @click.argument('toml_file_name', required=True, type=str)
-def dump_corems_toml_template(toml_file_name):
+def dump_gcms_corems_toml_template(toml_file_name):
     '''Dumps a CoreMS toml file template
         to be used as the workflow parameters input 
     '''
