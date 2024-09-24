@@ -61,7 +61,7 @@ def dump_gcms_toml_template(toml_file_name):
     
         toml.dump(WorkflowParameters().__dict__, workflow_param)
 
-@cli.command(name='dump-corems-toml-template')
+@cli.command(name='dump-gcms-corems-toml-template')
 @click.argument('toml_file_name', required=True, type=str)
 def dump_gcms_corems_toml_template(toml_file_name):
     '''Dumps a CoreMS toml file template
