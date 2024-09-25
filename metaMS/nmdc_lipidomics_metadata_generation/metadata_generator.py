@@ -211,9 +211,17 @@ class MetadataGenerator:
         -------
         FileNotFoundError
             If the `metadata_file` does not exist.
+        ValueError
+            If values in columns 'Raw Data File', 'Raw Data Objcet Alt Id', and 'Processed Data Directory' are 
+            not unique.
         """
 
         metadata_df = pd.read_csv(self.metadata_file)
+
+        # Check for uniqueness in specified columns and raise error if not unqiue
+        for column in ['Raw Data File', 'Raw Data Object Alt Id', 'Processed Data Directory']:
+            if not metadata_df[column].is_unique:
+                raise ValueError(f"Duplicate values found in column '{column}'.")
 
         # Group by Biosample
         grouped = metadata_df.groupby('Biosample Id')
