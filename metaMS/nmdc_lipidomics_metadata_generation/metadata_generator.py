@@ -185,6 +185,10 @@ class MetadataGenerator:
                             nmdc_database_inst.data_object_set.append(ProcessedDataObjectHdf5)
                             processed_data.append(ProcessedDataObjectHdf5.id)
 
+                            # Get creation and modified time for hdf5 file for the MetablomicsAnalysis times and update
+                            MetabAnalysis.started_at_time = datetime.fromtimestamp(Path(file).stat().st_ctime).strftime("%Y-%m-%d %H:%M:%S")
+                            MetabAnalysis.ended_at_time = datetime.fromtimestamp(Path(file).stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
+
                 self.update_outputs(mass_spec_obj=MassSpectrometry,
                                     analysis_obj=MetabAnalysis,
                                     raw_data_obj=RawDataObject,
@@ -491,8 +495,8 @@ class MetadataGenerator:
                     'was_informed_by': data_gen_id,
                     'has_input': [raw_data_name],
                     'has_output': [processed_data_id],
-                    'started_at_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    'ended_at_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    'started_at_time': 'placeholder',
+                    'ended_at_time': 'placeholder',
                     'type': NmdcTypes.MetabolomicsAnalysis,
         }
 
