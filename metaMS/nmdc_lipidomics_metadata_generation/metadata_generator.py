@@ -59,31 +59,142 @@ class MetadataGenerator:
         Description of the workflow configuration process data.
     """
 
-    def __init__(self, metadata_file, database_dump_json_path: str, minting_client_config_path: str, grouped_columns: list, mass_spec_desc: str, mass_spec_eluent_intro: str,
-                 analyte_category: str, raw_data_category, raw_data_obj_type: str, raw_data_obj_desc: str, workflow_analysis_name: str, workflow_description: str, workflow_git_url: str,
-                 workflow_version: str, wf_config_process_data_category: str, wf_config_process_data_obj_type: str, wf_config_process_data_description: str):
+    def __init__(self, metadata_file, database_dump_json_path: str, raw_data_url: str, process_data_url: str, minting_config_creds: str):
         """
         Initializes the MetadataGenerator with required file paths and configuration details.
         """
 
         self.metadata_file = metadata_file
         self.database_dump_json_path = database_dump_json_path
-        self.grouped_columns = grouped_columns
-        self.minting_client_config_path = minting_client_config_path
-        self.grouped_columns: list
-        self.mass_spec_desc = mass_spec_desc
-        self.mass_spec_eluent_intro = mass_spec_eluent_intro
-        self.analyte_category = analyte_category
-        self.raw_data_category = raw_data_category
-        self.raw_data_obj_type = raw_data_obj_type
-        self.raw_data_obj_desc = raw_data_obj_desc
-        self.workflow_analysis_name = workflow_analysis_name
-        self.workflow_description = workflow_description
-        self.workflow_git_url = workflow_git_url
-        self.workflow_version = workflow_version
-        self.wf_config_process_data_category = wf_config_process_data_category
-        self.wf_config_process_data_obj_type = wf_config_process_data_obj_type
-        self.wf_config_process_data_description = wf_config_process_data_description
+        self.raw_data_url = raw_data_url
+        self.process_data_url = process_data_url
+        self.minting_client_config_path=minting_config_creds
+        self.grouped_columns=['Biosample Id', 'Associated Study', 'Processing Type', 'processing institution']
+        self.mass_spec_desc="Analysis of raw mass spectrometry data for the annotation of lipids."
+        self.mass_spec_eluent_intro="liquid_chromatography"
+        self.analyte_category="lipidome"
+        self.raw_data_category="instrument_data"
+        self.raw_data_obj_type="LC-DDA-MS/MS Raw Data"
+        self.raw_data_obj_desc="LC-DDA-MS/MS raw data for lipidomics data acquisition."
+        self.workflow_analysis_name="Lipidomics analysis"
+        self.workflow_description="Analysis of raw mass spectrometry data for the annotation of lipids."
+        self.workflow_git_url="https://github.com/microbiomedata/metaMS"
+        self.workflow_version="2.2.3"
+        self.wf_config_process_data_category="workflow_parameter_data"
+        self.wf_config_process_data_obj_type="Configuration toml"
+        self.wf_config_process_data_description="CoreMS parameters used for Lipidomics workflow."
+        self.no_config_process_data_category="processed_data"
+        self.no_config_process_data_obj_type="LC-MS Lipidomics Results"
+        self.csv_process_data_description="Lipid annotations as a result of a lipidomics workflow activity."
+        self.hdf5_process_data_obj_type="LC-MS Lipidomics Results"
+        self.hdf5_process_data_description="CoreMS hdf5 file representing a lipidomics data file including annotations."
+
+    def run(self):
+        """
+        Executes the metadata generation process for lipidomics data.
+
+        This method performs the following steps:
+        1. Initializes an NMDC Database instance.
+        2. Loads metadata and processes it to create NMDC objects.
+        3. Generates Mass Spectrometry objects, Raw Data Objects, Metabolomics Analysis objects, and Processed Data Objects.
+        4. Updates the outputs for Mass Spectrometry and Metabolomics Analysis objects.
+        5. Appends the generated objects to the NMDC Database.
+        6. Dumps the NMDC Database to a JSON file.
+
+        Returns:
+        -------
+        None
+        """
+
+        nmdc_database_inst = self.start_nmdc_database()
+
+        for group, data in self.load_metadata():
+            # Get group level metadata (e.g. 1 Biosample to many MassSpec instances 1 sample -> 2 mass spec -> 2 raw data -> 6 processed data)
+            grouped_df = data[self.grouped_columns].drop_duplicates()
+            group_metadata_obj = grouped_df.apply(
+                lambda row: self.create_grouped_metadata(row), axis=1).iloc[0]
+
+            # Get MassSpec and downstream metadata
+            workflow_df = data.drop(columns=self.grouped_columns)
+            workflow_metadata = workflow_df.apply(
+                lambda row: self.create_workflow_metadata(row), axis=1)
+            for workflow_metadata_obj in workflow_metadata:
+
+                MassSpectrometry = self.generate_mass_spectrometry(file_path=Path(workflow_metadata_obj.raw_data_file),
+                                                                   instrument_name=workflow_metadata_obj.instrument_used,
+                                                                   sample_id=group_metadata_obj.biosample_id,
+                                                                   raw_data_id="nmdc:placeholder",
+                                                                   study_id=group_metadata_obj.nmdc_study,
+                                                                   processing_institution=group_metadata_obj.processing_institution,
+                                                                   mass_spec_config_name=workflow_metadata_obj.mass_spec_config_name,
+                                                                   lc_config_name=workflow_metadata_obj.lc_config_name,
+                                                                   start_date=workflow_metadata_obj.instrument_analysis_start_date,
+                                                                   end_date=workflow_metadata_obj.instrument_analysis_end_date)
+
+                RawDataObject = self.generate_data_object(file_path=Path(workflow_metadata_obj.raw_data_file),
+                                                          data_category=self.raw_data_category,
+                                                          data_object_type=self.raw_data_obj_type,
+                                                          description=self.raw_data_obj_desc,
+                                                          base_url=self.raw_data_url,
+                                                          was_generated_by=MassSpectrometry.id,
+                                                          alternative_id=workflow_metadata_obj.raw_data_object_alt_id)
+
+                MetabAnalysis = self.generate_metabolomics_analysis(cluster_name=workflow_metadata_obj.execution_resource,
+                                                                    raw_data_id=RawDataObject.id,
+                                                                    data_gen_id=MassSpectrometry.id,
+                                                                    processed_data_id="nmdc:placeholder",
+                                                                    processing_institution=group_metadata_obj.processing_institution)
+            
+                processed_data_paths = Path(workflow_metadata_obj.processed_data_dir).glob('**/*')
+                processed_data = []
+
+                for file in processed_data_paths:
+                    file_type = file.suffixes
+                    if file_type:
+                        file_type = file_type[0].lstrip('.')
+
+                        if file_type == 'toml':
+                            ProcessedDataObjectWfConfig = self.generate_data_object(file_path=file,
+                                                                                    data_category=self.wf_config_process_data_category,
+                                                                                    data_object_type=self.wf_config_process_data_obj_type,
+                                                                                    description=self.wf_config_process_data_description,
+                                                                                    base_url=self.process_data_url,
+                                                                                    was_generated_by=MetabAnalysis.id)
+                            nmdc_database_inst.data_object_set.append(ProcessedDataObjectWfConfig)
+                            processed_data.append(ProcessedDataObjectWfConfig.id)
+
+                        elif file_type == 'csv':
+                            ProcessedDataObjectCsv = self.generate_data_object(file_path=file,
+                                                                               data_category=self.no_config_process_data_category,
+                                                                               data_object_type=self.no_config_process_data_obj_type,
+                                                                               description=self.csv_process_data_description,
+                                                                               base_url=self.process_data_url,
+                                                                               was_generated_by=MetabAnalysis.id)
+                            nmdc_database_inst.data_object_set.append(ProcessedDataObjectCsv)
+                            processed_data.append(ProcessedDataObjectCsv.id)
+
+                        elif file_type == 'hdf5':
+                            ProcessedDataObjectHdf5 = self.generate_data_object(file_path=file,
+                                                                                data_category=self.no_config_process_data_category,
+                                                                                data_object_type=self.hdf5_process_data_obj_type,
+                                                                                description=self.hdf5_process_data_description,
+                                                                                base_url=self.process_data_url,
+                                                                                was_generated_by=MetabAnalysis.id
+                                                                                )
+                            
+                            nmdc_database_inst.data_object_set.append(ProcessedDataObjectHdf5)
+                            processed_data.append(ProcessedDataObjectHdf5.id)
+
+                self.update_outputs(mass_spec_obj=MassSpectrometry,
+                                    analysis_obj=MetabAnalysis,
+                                    raw_data_obj=RawDataObject,
+                                    processed_data_id_list=processed_data)
+
+                nmdc_database_inst.data_generation_set.append(MassSpectrometry)
+                nmdc_database_inst.data_object_set.append(RawDataObject)
+                nmdc_database_inst.workflow_execution_set.append(MetabAnalysis)
+        
+        self.dump_nmdc_database(nmdc_database=nmdc_database_inst)
 
     def load_metadata(self) -> pd.DataFrame:
         # TODO: Update docstring since adding the grouping functionality and splitting other methods out
@@ -128,9 +239,7 @@ class MetadataGenerator:
             biosample_id=row[self.grouped_columns[0]],
             nmdc_study=row[self.grouped_columns[1]],
             processing_type=row[self.grouped_columns[2]],
-            raw_data_file=row[self.grouped_columns[3]],
-            raw_data_object_alt_id=row[self.grouped_columns[4]],
-            processing_institution=row[self.grouped_columns[5]]
+            processing_institution=row[self.grouped_columns[3]]
         )
 
     def create_workflow_metadata(self, row: dict[str, str]) -> WorkflowMetadata:
@@ -151,6 +260,8 @@ class MetadataGenerator:
 
         return WorkflowMetadata(
             processed_data_dir=row['Processed Data Directory'],
+            raw_data_file=row['Raw Data File'],
+            raw_data_object_alt_id=row['Raw Data Object Alt Id'],
             mass_spec_config_name=row['mass spec configuration name'],
             lc_config_name=row['lc config name'],
             instrument_used=row['instrument used'],
@@ -311,7 +422,6 @@ class MetadataGenerator:
         """
 
         nmdc_id = self.mint_nmdc_id(nmdc_type=NmdcTypes.DataObject)[0]
-
         data_dict = {
             'id': nmdc_id,
             "data_category": data_category,

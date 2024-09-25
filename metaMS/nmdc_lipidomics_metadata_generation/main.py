@@ -1,4 +1,4 @@
-from lipidomics_metadata_generator import LipidomicsMetadataGenerator
+from metadata_generator import MetadataGenerator
 import argparse
 
 # TODO: possibly combine --raw_data_url and --process_data_url to one argument that is base_url because it may be the same for raw and processed data (
@@ -15,13 +15,15 @@ def main():
     Command-line arguments:
     -----------------------
     --metadata_file : str
-        Path to the input csv metadata file. See for example: https://docs.google.com/spreadsheets/d/1Uqf7Qb-0aOzJrjTe1LXhwNhG7e24i5WM2_qoFNUR1zY/edit?gid=746941834#gid=746941834
+        Path to the input csv metadata file. See example_metadata_file.csv in this directory for example.
     --database_dump_json_path : str
         Path where the output database dump JSON file will be saved.
     --raw_data_url : str
         URL base for the raw data files. For example: 'https://nmdcdemo.emsl.pnnl.gov/nom/1000soils/raw/'
     --process_data_url : str
         URL base for the processed data files. For example 'https://nmdcdemo.emsl.pnnl.gov/nom/1000soils/results/'
+    --minting_config_creds : str
+        The Path to where the config file is with credentials to mint ids. Should be a yaml file with format: line 1 is client_id: X and line 2 is client_secret: X
 
     Returns:
     -------
@@ -32,8 +34,9 @@ def main():
     parser.add_argument('--database_dump_json_path', required=True)
     parser.add_argument('--raw_data_url', required = True)
     parser.add_argument('--process_data_url', required = True)
+    parser.add_argument('--minting_config_creds', required=True)
     args = parser.parse_args()
-    generator = LipidomicsMetadataGenerator(args.metadata_file, args.database_dump_json_path, args.raw_data_url, args.process_data_url)
+    generator = MetadataGenerator(args.metadata_file, args.database_dump_json_path, args.raw_data_url, args.process_data_url, args.minting_config_creds)
     generator.run()
 
 if __name__ == "__main__":

@@ -84,8 +84,6 @@ class GroupedMetadata:
     """
     biosample_id: str
     processing_type: str
-    raw_data_file: str
-    raw_data_object_alt_id: str
     processing_institution: str
     nmdc_study: float
 
@@ -114,6 +112,8 @@ class WorkflowMetadata:
     """
 
     processed_data_dir: str
+    raw_data_file: str
+    raw_data_object_alt_id: str
     mass_spec_config_name: str
     lc_config_name: str
     instrument_used: str
