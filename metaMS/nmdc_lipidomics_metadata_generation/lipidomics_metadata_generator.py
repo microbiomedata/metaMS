@@ -44,7 +44,7 @@ class LipidomicsMetadataGenerator(MetadataGenerator):
 
         super().__init__(metadata_file,
                          database_dump_json_path,
-                         minting_client_config_path='metaMS/nmdc_metadata_generation/.config.yaml',
+                         minting_client_config_path='metaMS/nmdc_lipidomics_metadata_generation/.config.yaml',
                          grouped_columns=['Biosample Id', 'Associated Study', 'Processing Type',
                                           'Raw Data File', 'Raw Data Object Alt Id', 'processing institution'],
                          mass_spec_desc="Analysis of raw mass spectrometry data for the annotation of lipids.",
