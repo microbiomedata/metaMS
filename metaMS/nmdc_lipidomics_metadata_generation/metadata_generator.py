@@ -199,8 +199,8 @@ class MetadataGenerator:
     def load_metadata(self) -> pd.DataFrame:
         # TODO: Update docstring since adding the grouping functionality and splitting other methods out
         """
-        Loads and groups workflow metadata from a CSV file into a pandas DataFrame. See example CSV: 
-        https://docs.google.com/spreadsheets/d/1Uqf7Qb-0aOzJrjTe1LXhwNhG7e24i5WM2_qoFNUR1zY/edit?gid=746941834#gid=746941834
+        Loads and groups workflow metadata from a CSV file into a pandas DataFrame. See example_metadata_file.csv 
+        in this directory for example.
 
         Returns:
         -------

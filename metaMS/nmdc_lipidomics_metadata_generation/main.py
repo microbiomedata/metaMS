@@ -15,7 +15,7 @@ def main():
     Command-line arguments:
     -----------------------
     --metadata_file : str
-        Path to the input csv metadata file. See for example: https://docs.google.com/spreadsheets/d/1Uqf7Qb-0aOzJrjTe1LXhwNhG7e24i5WM2_qoFNUR1zY/edit?gid=746941834#gid=746941834
+        Path to the input csv metadata file. See example_metadata_file.csv in this directory for example.
     --database_dump_json_path : str
         Path where the output database dump JSON file will be saved.
     --raw_data_url : str
