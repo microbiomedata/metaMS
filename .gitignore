@@ -12,6 +12,7 @@ __pycache__/
 *.db
 # C extensions
 *.so
+*config.yaml
 
 
 # Distribution / packaging
