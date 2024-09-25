@@ -1,4 +1,4 @@
-from metadata_gen_supplement import WorkflowMetadata, GroupedMetadata, NmdcTypes, ApiInfoRetriever
+from api_info_retriever import ApiInfoRetriever
 from pathlib import Path
 from datetime import datetime
 import nmdc_schema.nmdc as nmdc
@@ -8,6 +8,8 @@ import json
 import yaml
 import oauthlib
 import requests_oauthlib
+import requests
+from dataclasses import dataclass
 
 from linkml_runtime.dumpers import json_dumper
 
@@ -16,6 +18,85 @@ from linkml_runtime.dumpers import json_dumper
 # TODO: og_url in ApiInfoGetter in metadata_gen_supplement.py to be regular url once Berkeley is integrated
 # TODO: Add directions to add a .config file in same folder as scripts with client_id and client_secret so can mint ids.
 
+@ dataclass
+class GroupedMetadata:
+    """
+    Data class for holding grouped metadata information.
+
+    Attributes:
+    ----------
+    biosample_id : str
+        Identifier for the biosample.
+    processing_type : str
+        Type of processing applied to the data (e.g. MPLEX).
+    raw_data_file : str
+        Path or name of the raw data file.
+    raw_data_object_alt_id : str
+        Alternative identifier for the raw data object.
+    processing_institution : str
+        Institution responsible for processing the data.
+    nmdc_study : float
+        Identifier for the NMDC study associated with the data.
+    """
+    biosample_id: str
+    processing_type: str
+    processing_institution: str
+    nmdc_study: float
+
+@dataclass
+class WorkflowMetadata:
+    """
+    Data class for holding workflow metadata information.
+
+    Attributes:
+    ----------
+    processed_data_dir : str
+        Directory containing processed data files.
+    mass_spec_config_name : str
+        Name of the mass spectrometry configuration used.
+    lc_config_name : str
+        Name of the liquid chromatography configuration used.
+    instrument_used : str
+        Name of the instrument used for analysis.
+    instrument_analysis_start_date : str
+        Start date of the instrument analysis.
+    instrument_analysis_end_date : str
+        End date of the instrument analysis.
+    execution_resource : float
+        Identifier for the execution resource.
+    """
+
+    processed_data_dir: str
+    raw_data_file: str
+    raw_data_object_alt_id: str
+    mass_spec_config_name: str
+    lc_config_name: str
+    instrument_used: str
+    instrument_analysis_start_date: str
+    instrument_analysis_end_date: str
+    execution_resource: float
+
+@dataclass
+class NmdcTypes:
+    """
+    Data class holding NMDC type constants.
+
+    Attributes:
+    ----------
+    Biosample : str
+        NMDC type for Biosample.
+    MassSpectrometry : str
+        NMDC type for Mass Spectrometry.
+    MetabolomicsAnalysis : str
+        NMDC type for Metabolomics Analysis.
+    DataObject : str
+        NMDC type for Data Object.
+    """
+
+    Biosample: str = "nmdc:Biosample"
+    MassSpectrometry: str = "nmdc:MassSpectrometry"
+    MetabolomicsAnalysis: str = "nmdc:MetabolomicsAnalysis"
+    DataObject: str = "nmdc:DataObject"
 
 class MetadataGenerator:
     """

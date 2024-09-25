@@ -34,7 +34,7 @@ def main():
     parser.add_argument('--database_dump_json_path', required=True)
     parser.add_argument('--raw_data_url', required = True)
     parser.add_argument('--process_data_url', required = True)
-    parser.add_argument('--minting_config_creds', required=True)
+    parser.add_argument('--minting_config_creds', default='metaMS/nmdc_lipidomics_metadata_generation/.config.yaml')
     args = parser.parse_args()
     generator = MetadataGenerator(args.metadata_file, args.database_dump_json_path, args.raw_data_url, args.process_data_url, args.minting_config_creds)
     generator.run()
