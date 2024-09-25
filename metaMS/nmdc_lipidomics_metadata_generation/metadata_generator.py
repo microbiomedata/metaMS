@@ -140,7 +140,7 @@ class MetadataGenerator:
                                                           alternative_id=workflow_metadata_obj.raw_data_object_alt_id)
 
                 MetabAnalysis = self.generate_metabolomics_analysis(cluster_name=workflow_metadata_obj.execution_resource,
-                                                                    raw_data_id=RawDataObject.id,
+                                                                    raw_data_name=Path(workflow_metadata_obj.raw_data_file).name,
                                                                     data_gen_id=MassSpectrometry.id,
                                                                     processed_data_id="nmdc:placeholder",
                                                                     processing_institution=group_metadata_obj.processing_institution)
@@ -450,7 +450,7 @@ class MetadataGenerator:
 
         return dataObject
 
-    def generate_metabolomics_analysis(self, cluster_name: str, raw_data_id: str, data_gen_id: str,
+    def generate_metabolomics_analysis(self, cluster_name: str, raw_data_name: str, data_gen_id: str,
                                        processed_data_id: str, processing_institution: str) -> nmdc.MetabolomicsAnalysis:
         """
         Creates an NMDC MetabolomicsAnalysis object with metadata for a workflow analysis.
@@ -482,14 +482,14 @@ class MetadataGenerator:
 
         data_dict = {
             'id': nmdc_id,
-            'name': f'{self.workflow_analysis_name} for {raw_data_id}',
+            'name': f'{self.workflow_analysis_name} for {raw_data_name}',
                     'description': self.workflow_description,
                     'processing_institution': processing_institution,
                     'execution_resource': cluster_name,
                     'git_url': self.workflow_git_url,
                     'version': self.workflow_version,
                     'was_informed_by': data_gen_id,
-                    'has_input': [raw_data_id],
+                    'has_input': [raw_data_name],
                     'has_output': [processed_data_id],
                     'started_at_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     'ended_at_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
