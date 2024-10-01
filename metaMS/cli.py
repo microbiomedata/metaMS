@@ -76,6 +76,11 @@ def dump_gcms_corems_toml_template(toml_file_name):
 def dump_lipidomics_toml_template(toml_file_name):
     """
     Writes a toml file template to run the lipidomics workflow, starting with the input file
+
+    Parameters
+    ----------
+    toml_file_name : str
+        The name of the toml file to write the parameters to
     """
     ref_lib_path = Path(toml_file_name).with_suffix('.toml')
     with open(ref_lib_path, 'w') as workflow_param:
@@ -87,6 +92,11 @@ def dump_lipidomics_toml_template(toml_file_name):
 def dump_lipidomics_corems_toml_template(toml_file_name):
     """
     Writes a toml file with the CoreMS parameters to be used in the lipidomics workflow 
+
+    Parameters
+    ----------
+    toml_file_name : str
+        The name of the toml file to write the parameters to
     """
     print("dumping lipidomics corems toml template")
     pass
