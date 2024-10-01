@@ -22,11 +22,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install miniwdl
 
-    - name: Run GCMS MiniWDL
+    - name: Test GCMS MiniWDL
       run: |
         # Add the commands to run your MiniWDL workflow
         miniwdl run wdl/metaMS_gcms.wdl -i wdl/metams_input_gcms.json --verbose --no-cache --copy-input-files
     
-    - name: Run LCMS Lipid MiniWDL
+    - name: Test LCMS Lipid MiniWDL
       run: |
-        miniwdl run wdl/metaMS_lcms_lipid.wdl configuration/lipidomics_metams.toml
+        miniwdl run wdl/metaMS_lipidomics.wdl configuration/lipidomics_metams.toml
