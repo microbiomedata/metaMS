@@ -22,9 +22,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install miniwdl
 
-    - name: Test LCMS Lipid MiniWDL
-      run: |
-        miniwdl run wdl/metaMS_lipidomics.wdl -i configuration/lipidomics_metams.toml
+# TODO KRH: Add these back in once the WDL and docker images are ready
+#    - name: Test LCMS Lipid MiniWDL
+#      run: |
+#        miniwdl run wdl/metaMS_lipidomics.wdl -i configuration/lipidomics_metams.toml
 
     - name: Test GCMS MiniWDL
       run: |

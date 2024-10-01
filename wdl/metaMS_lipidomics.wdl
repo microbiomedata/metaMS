@@ -1,18 +1,29 @@
 version 1.0
 
-workflow lcmsLipidomics{
-    call runLipidomicsMetaMS
+workflow lcmsLipidomics {
+    input {
+        # Path to the TOML file containing the configuration for the lipidomics workflow
+        File config_file_toml
+    }
 
+    call runLipidomicsMetaMS {
+        input:
+            config_file = config_file_toml
+    }
 }
 
-task runLipidomicsMetaMS{
+task runLipidomicsMetaMS {
     input {
-        File lipid_workflow_toml_path
+        File config_file
     }
 
     command {
-        metaMS run-lipidomics-workflow \
-            ${lipid_workflow_toml_path} 
+        #TODO KRH: This will be broken until docker image has been updated to include run-lipidomics-workflow function
+        metaMS run-lipidomics-workflow ${config_file}
+    }
+
+    output {
+        String result = read_string(stdout())
     }
 
     runtime {
