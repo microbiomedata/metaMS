@@ -5,7 +5,7 @@ workflow lcmsLipidomics{
 
 }
 
-task lcmsLipidomics{
+task runlcmsLipidomics{
     input {
         File lipid_workflow_toml_path
     }
