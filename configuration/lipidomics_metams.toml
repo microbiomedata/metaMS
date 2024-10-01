@@ -1,0 +1,4 @@
+directory = "data/raw_data/lipid_data"
+output_directory = "output"
+corems_toml_path = "configuration/lipidomics_corems.toml"
+cores = 1
