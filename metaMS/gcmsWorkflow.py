@@ -1,15 +1,13 @@
+import cProfile
 from dataclasses import dataclass
 from multiprocessing import Pool
 from pathlib import Path
 
 import toml
-
-from corems.mass_spectra.input.andiNetCDF import ReadAndiNetCDF
 from corems.encapsulation.input import parameter_from_json
 from corems.mass_spectra.calc.GC_RI_Calibration import get_rt_ri_pairs
+from corems.mass_spectra.input.andiNetCDF import ReadAndiNetCDF
 from corems.molecular_id.search.compoundSearch import LowResMassSpectralMatch
-
-import cProfile
 
 
 @dataclass
@@ -209,6 +207,7 @@ def get_gcms(file_path, corems_params):
 
 def start_sql_from_file():
     from pathlib import Path
+
     from corems.molecular_id.input.nistMSI import ReadNistMSI
 
     ref_lib_path = Path("data/PNNLMetV20191015.MSL")
@@ -218,7 +217,8 @@ def start_sql_from_file():
 
 
 def run_gcms_mpi(workflow_params_file, replicas, rt_ri_pairs):
-    import os, sys
+    import os
+    import sys
 
     sys.path.append(os.getcwd())
     from mpi4py import MPI
