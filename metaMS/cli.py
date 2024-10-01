@@ -7,7 +7,7 @@ import toml
 from corems.encapsulation.output.parameter_to_json import dump_gcms_settings_toml
 
 from metaMS.gcmsWorkflow import WorkflowParameters, run_gcms_metabolomics_workflow, run_gcms_metabolomics_workflow_wdl, run_nmdc_metabolomics_workflow
-from metaMS.lcms_lipidomics_workflow import LipidomicsWorkflowParameters
+from metaMS.lcms_lipidomics_workflow import LipidomicsWorkflowParameters, run_lcms_lipidomics_workflow
 
 @click.group()
 def cli():
@@ -90,7 +90,19 @@ def dump_lipidomics_corems_toml_template(toml_file_name):
     """
     print("dumping lipidomics corems toml template")
     pass
-    #TODO KRH: add lipidomics specific parameters
+    #TODO KRH: add lipidomics specific parameters here. Load in LCMSParameters and set set from default
 
+@cli.command(name='run-lipidomics-workflow')
+@click.argument('paramaters_file', required=True, type=str)
+def run_lipidomics_workflow(paramaters_file):
+    """Run the lipidomics workflow
 
+    Parameters
+    ----------
+    paramaters_file : str
+        The path to the toml file with the lipidomics workflow parameters
+        This file can be generated using the dump-lipidomics-toml-template command
+    """
+    click.echo('Running lipidomics workflow')
+    run_lcms_lipidomics_workflow(paramaters_file)
         
