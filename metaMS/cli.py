@@ -102,9 +102,32 @@ def dump_lipidomics_corems_toml_template(toml_file_name):
     pass
     #TODO KRH: add lipidomics specific parameters here. Load in LCMSParameters and set set from default
 
-@cli.command(name='run-lipidomics-workflow')
-@click.argument('paramaters_file', required=True, type=str)
-def run_lipidomics_workflow(paramaters_file):
+@cli.command(name="run-lipidomics-workflow")
+@click.option(
+    "-p",
+    "--paramaters_file",
+    required=False,
+    type=str,
+    help="The path to the toml file with the lipidomics workflow parameters",
+)
+@click.option(
+    "-i",
+    "--directory",
+    required=False,
+    type=str,
+    help="The directory where the data is stored, all files in the directory will be processed",
+)
+@click.option(
+    "-o",
+    "--output_directory",
+    required=False,
+    type=str,
+    help="The directory where the output files will be stored",
+)
+@click.option(
+    "-j", "--cores", required=False, type=int, help="'cpu's to use for processing"
+)
+def run_lipidomics_workflow(paramaters_file, directory, output_directory, cores):
     """Run the lipidomics workflow
 
     Parameters
@@ -113,6 +136,25 @@ def run_lipidomics_workflow(paramaters_file):
         The path to the toml file with the lipidomics workflow parameters
         This file can be generated using the dump-lipidomics-toml-template command
     """
-    click.echo('Running lipidomics workflow')
-    run_lcms_lipidomics_workflow(paramaters_file)
+    if paramaters_file is not None:
+        if cores is not None or directory is not None:
+            click.echo("Using parameters file, ignoring other parameters")
+        run_lcms_lipidomics_workflow(
+            lipidomics_workflow_paramaters_file=paramaters_file
+        )
+    else:
+        if cores is None:
+            cores = 1
+        if directory is None:
+            click.echo("No directory provided, no data to process")
+            return
+        if output_directory is None:
+            click.echo(
+                "Must provide an output directory if not using a parameters file"
+            )
+            return
+        run_lcms_lipidomics_workflow(
+            directory=directory, output_directory=output_directory, cores=cores
+        )
+    click.echo("Running lipidomics workflow")
         

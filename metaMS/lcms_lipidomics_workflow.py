@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import toml
 
+
 @dataclass
 class LipidomicsWorkflowParameters:
     """
@@ -15,17 +16,33 @@ class LipidomicsWorkflowParameters:
     corems_toml_path : str
         The path to the corems configuration file
     cores : int
-        The number of cores to use for processing   
+        The number of cores to use for processing
 
     """
 
-    directory: str = 'data/...'
-    output_directory: str = 'output/...'
-    corems_toml_path: str = 'configuration/lipidomics_corems.toml'
+    directory: str = "data/..."
+    output_directory: str = "output/..."
+    corems_toml_path: str = "configuration/lipidomics_corems.toml"
     cores: int = 1
-    
-def run_lcms_lipidomics_workflow(lipidomics_workflow_paramaters_file):
-    # Set the parameters from the toml file
-    with open(lipidomics_workflow_paramaters_file, 'r') as infile:
-        lipid_workflow_params = LipidomicsWorkflowParameters(**toml.load(infile)) 
-    #TODO KRH: Add full lipidomics workflow here
+
+
+def run_lcms_lipidomics_workflow(
+    lipidomics_workflow_paramaters_file=None,
+    directory=None,
+    output_directory=None,
+    corems_toml_path=None,
+    cores=None,
+):
+    if lipidomics_workflow_paramaters_file is not None:
+        # Set the parameters from the toml file
+        with open(lipidomics_workflow_paramaters_file, "r") as infile:
+            lipid_workflow_params = LipidomicsWorkflowParameters(**toml.load(infile))
+    else:
+        lipid_workflow_params = LipidomicsWorkflowParameters(
+            directory=directory,
+            output_directory=output_directory,
+            corems_toml_path=corems_toml_path,
+            cores=cores,
+        )
+        
+    # TODO KRH: Add full lipidomics workflow here
