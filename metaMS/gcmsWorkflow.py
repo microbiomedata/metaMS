@@ -101,6 +101,10 @@ def run_gcms_metabolomics_workflow_wdl(
     workflow_params.output_type = output_type
     workflow_params.corems_toml_path = corems_toml_path
 
+    # Load CoreMS settings
+    click.echo("Loading CoreMS settings from %s" % workflow_params.corems_toml_path)
+    corems_params = load_corems_parameters(workflow_params.corems_toml_path)
+
     # Create output directory
     dirloc = Path(workflow_params.output_directory)
     dirloc.mkdir(exist_ok=True)
@@ -111,15 +115,17 @@ def run_gcms_metabolomics_workflow_wdl(
     )
 
     # Load FAMEs calibration data
-    gcms_ref_obj = get_gcms(
+    gcms_cal_obj = get_gcms(
         workflow_params.calibration_file_path, workflow_params.corems_toml_path
     )
 
-    # [HARDCODED] Load FAMEs calibration reference
-    sql_obj = EI_LowRes_SQLite(url="sqlite:///db/MetabRef_FAMEs_EILowRes_20240816.db")
+    # Load FAMEs calibration reference
+    fames_ref_sql = EI_LowRes_SQLite(
+        url=corems_params["MolecularSearch"]["url_calibration"]
+    )
 
     # Compute RT:RI pairs
-    rt_ri_pairs = get_rt_ri_pairs(gcms_ref_obj, sql_obj=sql_obj)
+    rt_ri_pairs = get_rt_ri_pairs(gcms_cal_obj, sql_obj=fames_ref_sql)
 
     # Prepare worker arguments
     worker_args = [
@@ -158,23 +164,29 @@ def run_nmdc_metabolomics_workflow(workflow_params_file, jobs):
     dms_file_path = "db/GC-MS Metabolomics Experiments to Process Final.xlsx"
 
     # Load workflow settings
-    click.echo("Loading Searching Settings from %s" % workflow_params_file)
-    workflow_params = read_workflow_parameter(workflow_params_file)
+    click.echo("Loading search settings from %s" % workflow_params_file)
+    workflow_params = load_workflow_parameters(workflow_params_file)
+
+    # Load CoreMS settings
+    click.echo("Loading CoreMS settings from %s" % workflow_params.corems_toml_path)
+    corems_params = load_corems_parameters(workflow_params.corems_toml_path)
 
     # Create output directory
     dirloc = Path(workflow_params.output_directory)
     dirloc.mkdir(exist_ok=True)
 
     # Load FAMEs calibration data
-    gcms_ref_obj = get_gcms(
+    gcms_cal_obj = get_gcms(
         workflow_params.calibration_file_path, workflow_params.corems_toml_path
     )
 
-    # [HARDCODED] Load FAMEs calibration reference
-    sql_obj = EI_LowRes_SQLite(url="sqlite:///db/MetabRef_FAMEs_EILowRes_20240816.db")
+    # Load FAMEs calibration reference
+    fames_ref_sql = EI_LowRes_SQLite(
+        url=corems_params["MolecularSearch"]["url_calibration"]
+    )
 
     # Compute RT:RI pairs
-    rt_ri_pairs = get_rt_ri_pairs(gcms_ref_obj, sql_obj=sql_obj)
+    rt_ri_pairs = get_rt_ri_pairs(gcms_cal_obj, sql_obj=fames_ref_sql)
 
     # Prepare worker arguments
     worker_args = [
@@ -221,8 +233,12 @@ def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
     import click
 
     # Load workflow settings
-    click.echo("Loading Searching Settings from %s" % workflow_params_file)
-    workflow_params = read_workflow_parameter(workflow_params_file)
+    click.echo("Loading search settings from %s" % workflow_params_file)
+    workflow_params = load_workflow_parameters(workflow_params_file)
+
+    # Load CoreMS settings
+    click.echo("Loading CoreMS settings from %s" % workflow_params.corems_toml_path)
+    corems_params = load_corems_parameters(workflow_params.corems_toml_path)
 
     # Create output directory
     dirloc = Path(workflow_params.output_directory)
@@ -234,15 +250,17 @@ def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
     )
 
     # Load FAMEs calibration data
-    gcms_ref_obj = get_gcms(
+    gcms_cal_obj = get_gcms(
         workflow_params.calibration_file_path, workflow_params.corems_toml_path
     )
 
-    # [HARDCODED] Load FAMEs calibration reference
-    sql_obj = EI_LowRes_SQLite(url="sqlite:///db/MetabRef_FAMEs_EILowRes_20240816.db")
+    # Load FAMEs calibration reference
+    fames_ref_sql = EI_LowRes_SQLite(
+        url=corems_params["MolecularSearch"]["url_calibration"]
+    )
 
     # Compute RT:RI pairs
-    rt_ri_pairs = get_rt_ri_pairs(gcms_ref_obj, sql_obj=sql_obj)
+    rt_ri_pairs = get_rt_ri_pairs(gcms_cal_obj, sql_obj=fames_ref_sql)
 
     # Prepare worker arguments
     worker_args = [
@@ -262,9 +280,29 @@ def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
             eval("gcms.to_" + workflow_params.output_type + "(output_path)")
 
 
-def read_workflow_parameter(path):
+def read_toml(path):
     """
-    Read workflow configuration parameters from file.
+    Read TOML file.
+
+    Parameters
+    ----------
+    path : str
+        Path to TOML file.
+
+    Returns
+    -------
+    dict
+        Dictionary of parameter:value pairs.
+
+    """
+
+    with open(path, "r", encoding="utf8") as stream:
+        return toml.load(stream)
+
+
+def load_workflow_parameters(path):
+    """
+    Load workflow configuration parameters from file.
 
     Parameters
     ----------
@@ -275,10 +313,29 @@ def read_workflow_parameter(path):
     -------
     :obj:`WorkflowParameters`
         Data class containing workflow parameters.
+
     """
 
-    with open(path, "r") as infile:
-        return WorkflowParameters(**toml.load(infile))
+    return WorkflowParameters(**read_toml(path))
+
+
+def load_corems_parameters(path):
+    """
+    Load workflow configuration parameters from file.
+
+    Parameters
+    ----------
+    path : str
+        Path to parameters file.
+
+    Returns
+    -------
+    dict
+        Dictionary of parameter:value pairs.
+
+    """
+
+    return read_toml(path)
 
 
 def workflow_worker(args):
@@ -299,19 +356,24 @@ def workflow_worker(args):
     """
 
     # Unpack arguments
-    file_path, ref_dict, corems_params, cal_file_path = args
+    file_path, ref_dict, corems_params_file, cal_file_path = args
+
+    # Load CoreMS parameters
+    corems_parameters = load_corems_parameters(corems_params_file)
 
     # Load data
-    gcms = get_gcms(file_path, corems_params)
+    gcms = get_gcms(file_path, corems_params_file)
 
     # Calibrate retention indices
     gcms.calibrate_ri(ref_dict, cal_file_path)
 
-    # [HARDCODED] Load reference database
-    sql_obj = EI_LowRes_SQLite(url="sqlite:///db/MetabRef_Library_EILowRes_20240816.db")
+    # Load reference database
+    ref_db_sql = EI_LowRes_SQLite(
+        url=corems_parameters["MolecularSearch"]["url_database"]
+    )
 
     # Perform search
-    lowResSearch = LowResMassSpectralMatch(gcms, sql_obj=sql_obj)
+    lowResSearch = LowResMassSpectralMatch(gcms, sql_obj=ref_db_sql)
     lowResSearch.run()
 
     return gcms
@@ -353,12 +415,12 @@ def get_gcms(file_path, corems_params):
 #     sys.path.append(os.getcwd())
 #     from mpi4py import MPI
 
-#     workflow_params = read_workflow_parameter(workflow_params_file)
+#     workflow_params = load_workflow_parameters(workflow_params_file)
 
-#     gcms_ref_obj = get_gcms(workflow_params.calibration_file_path,
+#     gcms_cal_obj = get_gcms(workflow_params.calibration_file_path,
 #                             workflow_params.corems_toml_path)
 #     sql_obj = EI_LowRes_SQLite(url="sqlite:///db/MetabRef_FAMEs_EILowRes_20240816.db")
-#     rt_ri_pairs = get_rt_ri_pairs(gcms_ref_obj, sql_obj=sql_obj)
+#     rt_ri_pairs = get_rt_ri_pairs(gcms_cal_obj, sql_obj=sql_obj)
 
 #     worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_toml_path, workflow_params.calibration_file_path) for file_path in workflow_params.file_paths]
 
