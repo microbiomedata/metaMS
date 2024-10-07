@@ -35,12 +35,17 @@ class WorkflowParameters:
 
     """
 
+    # Filepaths to process
     file_paths: tuple = ("data/...", "data/...")
-    # RI FAMES Calibration File
+
+    # RI FAMEs calibration files
+    calibration_reference_path: str = "data/..."
     calibration_file_path: str = "data/..."
+
     # Sample/Process Metadata
     nmdc_metadata_path: str = "configuration/nmdc_metadata.json"
-    # configuration file for corems
+
+    # Configuration file for corems
     corems_toml_path: str = "configuration/corems.toml"
     output_directory: str = "data/..."
     output_filename: str = "data/..."
@@ -58,6 +63,7 @@ def worker(args):
 
 def run_gcms_metabolomics_workflow_wdl(
     file_paths,
+    calibration_reference_path,
     calibration_file_path,
     output_directory,
     output_filename,
@@ -73,6 +79,8 @@ def run_gcms_metabolomics_workflow_wdl(
     ----------
     file_paths : tuple(str)
         Paths to files to process.
+    calibration_reference_path : str
+        FAMEs retention index calibration reference filepath.
     calibration_file_path : str
         FAMEs retention index calibration filepath.
     output_directory : str
@@ -95,6 +103,7 @@ def run_gcms_metabolomics_workflow_wdl(
     # Store workflow parameters
     workflow_params = WorkflowParameters()
     workflow_params.file_paths = file_paths.split(",")
+    workflow_params.calibration_reference_path = calibration_reference_path
     workflow_params.calibration_file_path = calibration_file_path
     workflow_params.output_directory = output_directory
     workflow_params.output_filename = output_filename
@@ -103,7 +112,6 @@ def run_gcms_metabolomics_workflow_wdl(
 
     # Load CoreMS settings
     click.echo("Loading CoreMS settings from %s" % workflow_params.corems_toml_path)
-    corems_params = load_corems_parameters(workflow_params.corems_toml_path)
 
     # Create output directory
     dirloc = Path(workflow_params.output_directory)
@@ -121,7 +129,7 @@ def run_gcms_metabolomics_workflow_wdl(
 
     # Load FAMEs calibration reference
     fames_ref_sql = EI_LowRes_SQLite(
-        url=corems_params["MolecularSearch"]["url_calibration"]
+        url=workflow_params.calibration_reference_path
     )
 
     # Compute RT:RI pairs
@@ -167,10 +175,6 @@ def run_nmdc_metabolomics_workflow(workflow_params_file, jobs):
     click.echo("Loading search settings from %s" % workflow_params_file)
     workflow_params = load_workflow_parameters(workflow_params_file)
 
-    # Load CoreMS settings
-    click.echo("Loading CoreMS settings from %s" % workflow_params.corems_toml_path)
-    corems_params = load_corems_parameters(workflow_params.corems_toml_path)
-
     # Create output directory
     dirloc = Path(workflow_params.output_directory)
     dirloc.mkdir(exist_ok=True)
@@ -182,7 +186,7 @@ def run_nmdc_metabolomics_workflow(workflow_params_file, jobs):
 
     # Load FAMEs calibration reference
     fames_ref_sql = EI_LowRes_SQLite(
-        url=corems_params["MolecularSearch"]["url_calibration"]
+        url=workflow_params.calibration_reference_path
     )
 
     # Compute RT:RI pairs
@@ -236,10 +240,6 @@ def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
     click.echo("Loading search settings from %s" % workflow_params_file)
     workflow_params = load_workflow_parameters(workflow_params_file)
 
-    # Load CoreMS settings
-    click.echo("Loading CoreMS settings from %s" % workflow_params.corems_toml_path)
-    corems_params = load_corems_parameters(workflow_params.corems_toml_path)
-
     # Create output directory
     dirloc = Path(workflow_params.output_directory)
     dirloc.mkdir(exist_ok=True)
@@ -256,7 +256,7 @@ def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
 
     # Load FAMEs calibration reference
     fames_ref_sql = EI_LowRes_SQLite(
-        url=corems_params["MolecularSearch"]["url_calibration"]
+        url=workflow_params.calibration_reference_path
     )
 
     # Compute RT:RI pairs

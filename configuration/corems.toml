@@ -1,6 +1,5 @@
 [MolecularSearch]
 url_database: "sqlite:///db/MetabRef_Library_EILowRes_20240816.db"
-url_calibration: "sqlite:///db/MetabRef_FAMEs_EILowRes_20240816.db"
 ri_search_range = 35
 rt_search_range = 1.0
 correlation_threshold = 0.5

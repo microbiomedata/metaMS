@@ -20,6 +20,7 @@ def cli():
 
 @cli.command()
 @click.argument("file_paths", required=True, type=str)
+@click.argument("calibration_reference_path", required=True, type=str)
 @click.argument("calibration_file_path", required=True, type=str)
 @click.argument("output_directory", required=True, type=str)
 @click.argument("output_filename", required=True, type=str)
@@ -29,6 +30,7 @@ def cli():
 @click.option("--jobs", "-j", default=4, help="'cpu's'")
 def run_gcms_wdl_workflow(
     file_paths,
+    calibration_reference_path,
     calibration_file_path,
     output_directory,
     output_filename,
@@ -46,6 +48,7 @@ def run_gcms_wdl_workflow(
     click.echo("Running gcms workflow")
     run_gcms_metabolomics_workflow_wdl(
         file_paths,
+        calibration_reference_path,
         calibration_file_path,
         output_directory,
         output_filename,
