@@ -9,7 +9,9 @@ import yaml
 import oauthlib
 import requests_oauthlib
 import requests
+import logging
 from dataclasses import dataclass
+from tqdm import tqdm
 
 from linkml_runtime.dumpers import json_dumper
 
@@ -189,7 +191,11 @@ class MetadataGenerator:
 
         nmdc_database_inst = self.start_nmdc_database()
 
-        for group, data in self.load_metadata():
+        # Get the grouped data and count length
+        grouped_data = self.load_metadata()
+        total_groups = len(grouped_data)
+
+        for group, data in tqdm(grouped_data, total=total_groups, desc="Processing biosamples"):
             # Get group level metadata (e.g. 1 Biosample to many MassSpec instances 1 sample -> 2 mass spec -> 2 raw data -> 6 processed data)
             grouped_df = data[self.grouped_columns].drop_duplicates()
             group_metadata_obj = grouped_df.apply(
@@ -199,7 +205,7 @@ class MetadataGenerator:
             workflow_df = data.drop(columns=self.grouped_columns)
             workflow_metadata = workflow_df.apply(
                 lambda row: self.create_workflow_metadata(row), axis=1)
-            for workflow_metadata_obj in workflow_metadata:
+            for workflow_metadata_obj in tqdm(workflow_metadata, desc=f"Processing mass spec metadata for biosample {group_metadata_obj.biosample_id} ", leave=False):
 
                 MassSpectrometry = self.generate_mass_spectrometry(file_path=Path(workflow_metadata_obj.raw_data_file),
                                                                    instrument_name=workflow_metadata_obj.instrument_used,
@@ -280,6 +286,7 @@ class MetadataGenerator:
                 nmdc_database_inst.workflow_execution_set.append(MetabAnalysis)
         
         self.dump_nmdc_database(nmdc_database=nmdc_database_inst)
+        logging.info("Metadata processing completed.")
 
     def load_metadata(self) -> pd.DataFrame:
         # TODO: Update docstring since adding the grouping functionality and splitting other methods out
