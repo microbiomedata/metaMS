@@ -1,44 +1,79 @@
-from metadata_generator import MetadataGenerator
 import argparse
+from metadata_generator import MetadataGenerator
 
-# TODO: possibly combine --raw_data_url and --process_data_url to one argument that is base_url because it may be the same for raw and processed data (
-# this is the base url that points to where the data objects can be downloaded. The file name is appended to the end. E.g in NOM it is https://nmdcdemo.emsl.pnnl.gov/)
+# TODO: Consider combining --raw_data_url and --process_data_url into a single
+# base_url argument if they're often the same.
+# TODO: Update nmdc_schema version in requirements.txt after Berkeley rollout.
+
 def main():
     """
-    Main function to parse command-line arguments and run the LipidomicsMetadataGenerator.
+    Parse command-line arguments and run the LipidomicsMetadataGenerator.
 
-    This function sets up argument parsing for the script. It requires the user to provide 
-    paths for the metadata csv file, database dump JSON path, raw data URL, and processed data URL. 
-    It then initializes an instance of `LipidomicsMetadataGenerator` with these arguments 
-    and calls its `run` method to generate metadata and process the data.
+    This function sets up argument parsing for the script, initializes a
+    LipidomicsMetadataGenerator instance with the provided arguments, and
+    runs the metadata generation process.
 
-    Command-line arguments:
-    -----------------------
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    Side Effects
+    ------------
+    Generates a JSON file with the database dump at the specified path.
+
+    Command-line Arguments
+    ----------------------
     --metadata_file : str
-        Path to the input csv metadata file. See example_metadata_file.csv in this directory for example.
+        Path to the input CSV metadata file. 
+        Example: See example_metadata_file.csv in this directory.
     --database_dump_json_path : str
         Path where the output database dump JSON file will be saved.
     --raw_data_url : str
-        URL base for the raw data files. For example: 'https://nmdcdemo.emsl.pnnl.gov/nom/1000soils/raw/'
+        URL base for the raw data files.
+        Example: 'https://nmdcdemo.emsl.pnnl.gov/nom/1000soils/raw/'
     --process_data_url : str
-        URL base for the processed data files. For example 'https://nmdcdemo.emsl.pnnl.gov/nom/1000soils/results/'
-    --minting_config_creds : str
-        The Path to where the config file is with credentials to mint ids. Should be a yaml file with format: line 1 is client_id: X and line 2 is client_secret: X
+        URL base for the processed data files.
+        Example: 'https://nmdcdemo.emsl.pnnl.gov/nom/1000soils/results/'
+    --minting_config_creds : str, optional
+        Path to the config file with credentials for minting IDs.
+        Should be a YAML file with format:
+        line 1: client_id: X
+        line 2: client_secret: X
+        Default: 'metaMS/nmdc_lipidomics_metadata_generation/.config.yaml'
 
-    Returns:
-    -------
-    A json file with the database dump.
+    Notes
+    -----
+    See example_metadata_file.csv in this directory for an example of
+    the expected metadata file format.
     """
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--metadata_file', required=True)
-    parser.add_argument('--database_dump_json_path', required=True)
-    parser.add_argument('--raw_data_url', required = True)
-    parser.add_argument('--process_data_url', required = True)
-    parser.add_argument('--minting_config_creds', default='metaMS/nmdc_lipidomics_metadata_generation/.config.yaml')
+    parser = argparse.ArgumentParser(description="Generate NMDC metadata from input files")
+    parser.add_argument('--metadata_file', required=True,
+                        help="Path to the input CSV metadata file")
+    parser.add_argument('--database_dump_json_path', required=True,
+                        help="Path where the output database dump JSON file will be saved")
+    parser.add_argument('--raw_data_url', required=True,
+                        help="URL base for the raw data files")
+    parser.add_argument('--process_data_url', required=True,
+                        help="URL base for the processed data files")
+    parser.add_argument('--minting_config_creds',
+                        default='metaMS/nmdc_lipidomics_metadata_generation/.config.yaml',
+                        help="Path to the config file with credentials for minting IDs")
+
     args = parser.parse_args()
-    generator = MetadataGenerator(args.metadata_file, args.database_dump_json_path, args.raw_data_url, args.process_data_url, args.minting_config_creds)
+
+    generator = MetadataGenerator(
+        args.metadata_file,
+        args.database_dump_json_path,
+        args.raw_data_url,
+        args.process_data_url,
+        args.minting_config_creds
+    )
     generator.run()
+
 
 if __name__ == "__main__":
     main()
-
