@@ -26,7 +26,6 @@ logging.basicConfig(
 # TODO: Update script to for Sample Processing - has_input for MassSpectrometry will have to be changed to be a processed sample id - not biosample id
 # TODO: Update api_base_url in minter to regular url once Berkeley is integrated
 # TODO: og_url in ApiInfoGetter in metadata_gen_supplement.py to be regular url once Berkeley is integrated
-# TODO: Add directions to add a .config file in same folder as scripts with client_id and client_secret so can mint ids.
 
 @dataclass
 class GroupedMetadata:
