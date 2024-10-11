@@ -20,6 +20,8 @@ class WorkflowParameters:
     ----------
     file_paths : tuple(str)
         Paths to files to process.
+    calibration_reference_path : str
+        FAMEs retention index reference SQLite database.
     calibration_file_path : str
         FAMEs retention index calibration filepath.
     nmdc_metadata_path : str
