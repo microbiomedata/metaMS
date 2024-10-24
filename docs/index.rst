@@ -40,7 +40,7 @@ Please contact NMDC (support@microbiomedata.org) for access.
 
 Test datasets
 -------------
-https://github.com/microbiomedata/metaMS/blob/master/data/GCMS_FAMES_01_GCMS-01_20191023.cdf
+https://github.com/microbiomedata/metaMS/tree/master/data/raw_data/GCMS_FAMES_01_GCMS-01_20191023.cdf
 
 
 Execution Details
