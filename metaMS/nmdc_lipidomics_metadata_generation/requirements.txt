@@ -1,4 +1,4 @@
-nmdc-schema~=11.0.0rc24
+nmdc-schema~=11.0.3
 requests~=2.32.3
 requests-oauthlib~=2.0.0
 linkml-runtime~=1.8.2

@@ -1,8 +1,6 @@
 import requests
 from dataclasses import dataclass
 
-# TODO: Update og_url to be regular nmdc api url when berkeley is implemented
-
 class ApiInfoRetriever:
     """
     A class to retrieve API information from a specified collection.
@@ -63,7 +61,7 @@ class ApiInfoRetriever:
         filter_param = f'{{"name": "{name_field_value}"}}'
         field = "id"
 
-        og_url = f'https://api-berkeley.microbiomedata.org/nmdcschema/{self.collection_name}?&filter={filter_param}&projection={field}'
+        og_url = f'https://api.microbiomedata.org/nmdcschema/{self.collection_name}?&filter={filter_param}&projection={field}'
         
         try:
             resp = requests.get(og_url)

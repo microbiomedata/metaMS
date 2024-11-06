@@ -24,8 +24,6 @@ logging.basicConfig(
     )
 
 # TODO: Update script to for Sample Processing - has_input for MassSpectrometry will have to be changed to be a processed sample id - not biosample id
-# TODO: Update api_base_url in minter to regular url once Berkeley is integrated
-# TODO: og_url in ApiInfoGetter in metadata_gen_supplement.py to be regular url once Berkeley is integrated
 
 @dataclass
 class GroupedMetadata:
@@ -517,7 +515,6 @@ class MetadataGenerator:
         This method relies on a YAML configuration file for authentication
         details. The file should contain 'client_id' and 'client_secret' keys.
 
-        TODO: Update api_base_url to regular url once Berkeley is integrated.
         """
         config = yaml.safe_load(open(self.minting_client_config_path))
         client = oauthlib.oauth2.BackendApplicationClient(
@@ -525,7 +522,7 @@ class MetadataGenerator:
         )
         oauth = requests_oauthlib.OAuth2Session(client=client)
 
-        api_base_url = 'https://api-berkeley.microbiomedata.org'
+        api_base_url = 'https://api.microbiomedata.org'
 
         token = oauth.fetch_token(
             token_url=f'{api_base_url}/token',

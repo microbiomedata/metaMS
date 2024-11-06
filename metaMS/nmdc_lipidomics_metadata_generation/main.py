@@ -3,7 +3,6 @@ from metadata_generator import MetadataGenerator
 
 # TODO: Consider combining --raw_data_url and --process_data_url into a single
 # base_url argument if they're often the same.
-# TODO: Update nmdc_schema version in requirements.txt after Berkeley rollout.
 
 def main():
     """
