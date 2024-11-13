@@ -14,6 +14,8 @@ task runLipidomicsMetaMS {
     }
 
     runtime {
-        docker: "microbiomedata/metams:2.2.2"
+        docker: "local-metams:latest"
+        #TODO KRH: Change to dockerhub version after we've pushed the updated image
     }
 }
+

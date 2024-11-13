@@ -160,9 +160,15 @@ def dump_lipidomics_corems_toml_template(toml_file_name):
     help="The directory where the output files will be stored",
 )
 @click.option(
+    "-t", "--token_path", required=False, type=str, help="The path to the metabref token"
+)
+@click.option(
+    "-s", "--scan_translator_path", required=False, type=str, help="The path to the scan translator file"
+)
+@click.option(
     "-j", "--cores", required=False, type=int, help="'cpu's to use for processing"
 )
-def run_lipidomics_workflow(paramaters_file, directory, output_directory, cores):
+def run_lipidomics_workflow(paramaters_file, directory, output_directory, token_path, scan_translator_path, cores):
     """Run the lipidomics workflow
 
     Parameters

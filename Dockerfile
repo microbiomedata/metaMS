@@ -1,4 +1,4 @@
-FROM corilo/corems:base-mono-pythonnet
+FROM jcarr87/corems-base-py3.10
 WORKDIR /metams
 
 COPY metaMS/ /metams/metaMS/

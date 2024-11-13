@@ -1,4 +1,4 @@
-corems>=1.5.0
+corems>=3.0.0
 Click>=7.1.1
 requests
 nmdc-schema>=7.0.0
