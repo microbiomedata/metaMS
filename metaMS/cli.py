@@ -198,3 +198,6 @@ def run_lipidomics_workflow(paramaters_file, directory, output_directory, token_
             directory=directory, output_directory=output_directory, cores=cores
         )
     click.echo("Running lipidomics workflow")
+    # test call:
+    # MetaMS run-lipidomics-workflow -p configuration/lipidomics_metams.toml
+    # miniwdl run wdl/metaMS_lipidomics.wdl -i wdl/metams_input_lipidomics.json

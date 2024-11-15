@@ -4,8 +4,8 @@ from pathlib import Path
 import datetime
 from multiprocessing import Pool
 
-from corems.mass_spectra.input.mzml import MZMLSpectraParser
-from corems.mass_spectra.input.rawFileReader import ImportMassSpectraThermoMSFileReader
+#from corems.mass_spectra.input.mzml import MZMLSpectraParser
+#from corems.mass_spectra.input.rawFileReader import ImportMassSpectraThermoMSFileReader
 
 @dataclass
 class LipidomicsWorkflowParameters:
@@ -58,10 +58,12 @@ def instantiate_lcms_obj(file_in):
         #parser = ImportMassSpectraThermoMSFileReader(file_in)
 
     if ".mzML" in str(file_in):
-        parser = MZMLSpectraParser(file_in)
+        #parser = MZMLSpectraParser(file_in)
+        pass
 
     # Instantiate lc-ms data object using parser and pull in ms1 spectra into dataframe (without storing as MassSpectrum objects to save memory)
-    myLCMSobj = parser.get_lcms_obj(spectra="ms1")
+    #myLCMSobj = parser.get_lcms_obj(spectra="ms1")
+    myLCMSobj = None
 
     return myLCMSobj
 
@@ -129,5 +131,6 @@ def run_lcms_lipidomics_workflow(
         mz_dicts = pool.starmap(run_lipid_sp_ms1, args)
         pool.close()
         pool.join()
+    print("Finished processing all files")
 
     # TODO KRH: Add full lipidomics workflow here
