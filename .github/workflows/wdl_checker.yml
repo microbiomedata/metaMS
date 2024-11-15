@@ -17,15 +17,24 @@ jobs:
       with:
         python-version: '3.8' # specify the Python version you need
 
+    - name: Install Docker
+      run: |
+        curl -fsSL https://get.docker.com -o get-docker.sh
+        sh get-docker.sh
+        sudo usermod -aG docker $USER
+
+    - name: Build Docker Image
+      run: |
+        docker build -t local-metams:latest .
+
     - name: Install MiniWDL
       run: |
         python -m pip install --upgrade pip
         pip install miniwdl
 
-# TODO KRH: Add these back in once the WDL and docker images are ready
-#    - name: Test LCMS Lipid MiniWDL
-#      run: |
-#        miniwdl run wdl/metaMS_lipidomics.wdl -i wdl/metams_input_lipidomics.json
+    - name: Test Lipid MiniWDL
+      run: |
+        miniwdl run wdl/metaMS_lipidomics.wdl -i wdl/metams_input_lipidomics.json --verbose --no-cache --copy-input-files
 
     - name: Test GCMS MiniWDL
       run: |
