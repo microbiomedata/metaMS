@@ -103,7 +103,7 @@ def run_lcms_lipidomics_workflow(
     files_list = list(file_dir.glob("*.raw"))
     out_paths_list = [out_dir / f.stem for f in files_list]
         
-    # Run signal processing, get associated ms1, add associated ms2, do ms1 molecular search, and export temp results
+    # Run signal processing, get associated ms1, add associated ms2, do ms1 molecular search, and export intermediate results
     cores = lipid_workflow_params.cores
     params_toml = lipid_workflow_params.corems_toml_path
     scan_translator = lipid_workflow_params.scan_translator_path

@@ -132,9 +132,10 @@ def dump_lipidomics_corems_toml_template(toml_file_name):
     toml_file_name : str
         The name of the toml file to write the parameters to
     """
+    path_obj = Path(toml_file_name).with_suffix(".toml")
     print("dumping lipidomics corems toml template")
     pass
-    # TODO KRH: add lipidomics specific parameters here. Load in LCMSParameters and set set from default
+    # TODO KRH: add call for dumping lipidomics corems toml template from corems once we can import it
 
 
 @cli.command(name="run-lipidomics-workflow")

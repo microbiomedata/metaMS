@@ -1,6 +1,6 @@
 directory = "data/raw_data/lipid_data"
 output_directory = "output"
-corems_toml_path = "configuration/emsl_lipidomics_corems_params.toml"
+corems_toml_path = "configuration/lipid_configs/emsl_lipidomics_corems_params.toml"
 metabref_token_path = "metabref.token"
-scan_translator_path = "configuration/emsl_lipidomics_scan_translator.toml"
+scan_translator_path = "configuration/lipid_configs/emsl_lipidomics_scan_translator.toml"
 cores = 1
