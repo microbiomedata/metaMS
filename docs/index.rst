@@ -1,7 +1,7 @@
 Metabolomics Workflow
 ==============================
 
-.. image:: metamsworkflow.png
+.. image:: metams_workflow2024.svg
 
 Workflow Overview
 -------
