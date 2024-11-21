@@ -54,6 +54,7 @@ def instantiate_lcms_obj(file_in):
     """
     # Instantiate parser based on binary file type
     if ".raw" in str(file_in):
+        #TODO KRH: Add real functionality here
         pass
         #parser = ImportMassSpectraThermoMSFileReader(file_in)
 
