@@ -4,8 +4,8 @@ from pathlib import Path
 import datetime
 from multiprocessing import Pool
 
-#from corems.mass_spectra.input.mzml import MZMLSpectraParser
-#from corems.mass_spectra.input.rawFileReader import ImportMassSpectraThermoMSFileReader
+from corems.mass_spectra.input.mzml import MZMLSpectraParser
+from corems.mass_spectra.input.rawFileReader import ImportMassSpectraThermoMSFileReader
 
 @dataclass
 class LipidomicsWorkflowParameters:
