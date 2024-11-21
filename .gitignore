@@ -15,6 +15,8 @@ __pycache__/
 *.so
 *config.yaml
 
+# .config.yaml file
+.config.yaml
 
 # Distribution / packaging
 .Python

@@ -1,0 +1,3 @@
+{
+    "lcmsLipidomics.runLipidomicsMetaMS.config_file": "./configuration/lipidomics_metams.toml"
+}
