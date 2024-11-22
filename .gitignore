@@ -2,6 +2,7 @@ venv/
 *.egg-info
 .vscode
 *.csv
+!example_metadata_file.csv
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -12,7 +13,10 @@ __pycache__/
 *.db
 # C extensions
 *.so
+*config.yaml
 
+# .config.yaml file
+.config.yaml
 
 # Distribution / packaging
 .Python

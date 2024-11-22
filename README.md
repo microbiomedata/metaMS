@@ -90,17 +90,17 @@ To be able to open chemstation files a installation of pythonnet is needed:
 ## Execution
 
 ```bash
-metaMS dump_toml_template metams.toml
+metaMS dump-gcms-toml-template gcms_metams.toml
 ```
 ```bash
-metaMS dump_corems_toml_template corems.toml
+metaMS dump-gcms-corems-toml-template gcms_corems.toml
 ```
 
- Modify the metams.toml and corems.toml accordingly to your dataset and workflow parameters
-make sure to include corems.json path inside the metams.toml: "corems_toml_path": "path_to_corems.toml" 
+ Modify the gcms_metams.toml and gcms_corems.toml accordingly to your dataset and workflow parameters
+make sure to include gcms_corems.json path inside the gcms_metams.toml: "corems_toml_path": "path_to_corems.toml" 
 
 ```bash
-metaMS run-gcms-workflow path_to_metams.toml
+metaMS run-gcms-workflow path_to_gcms_metams.toml
 ```
 
 ## MiniWDL 
@@ -109,9 +109,9 @@ Make sure you have python 3.9.13 installed before continue
 
 MiniWDL uses the microbiome/metaMS image so there is not need to install metaMS
 
-- Change wdl/metams_input.json to specify the data location
+- Change wdl/gcms_metams_input.json to specify the data location
 
-- Change data/corems.toml to specify the workflow parameters
+- Change data/gcms_corems.toml to specify the workflow parameters
 
 Install miniWDL:
 ```bash
@@ -120,7 +120,7 @@ pip3 install miniwdl
 
 Call:
 ```bash
-miniwdl run wdl/metaMS.wdl -i wdl/metams_input.json --verbose --no-cache --copy-input-files
+miniwdl run wdl/metaMS_gcms.wdl -i wdl/metams_input_gcms.json --verbose --no-cache --copy-input-files
 ```
 ## MetaMS Docker Container
 

@@ -11,6 +11,11 @@ from metaMS.gcmsWorkflow import (
     run_nmdc_metabolomics_workflow,
 )
 
+from metaMS.lcms_lipidomics_workflow import (
+    LipidomicsWorkflowParameters,
+    run_lcms_lipidomics_workflow,
+)
+
 
 @click.group()
 def cli():
@@ -81,22 +86,121 @@ def run_gcms_workflow(gcms_workflow_paramaters_file, jobs, nmdc):
         run_gcms_metabolomics_workflow(gcms_workflow_paramaters_file, jobs)
 
 
-@cli.command()
+@cli.command(name="dump-gcms-toml-template")
 @click.argument("toml_file_name", required=True, type=str)
-def dump_toml_template(toml_file_name):
+def dump_gcms_toml_template(toml_file_name):
     """Dumps a toml file template
-    to be used as the workflow parameters input
+    to be used as the workflow parameters input for the GCMS workflow
     """
     ref_lib_path = Path(toml_file_name).with_suffix(".toml")
     with open(ref_lib_path, "w") as workflow_param:
         toml.dump(WorkflowParameters().__dict__, workflow_param)
 
 
-@cli.command()
+@cli.command(name="dump-gcms-corems-toml-template")
 @click.argument("toml_file_name", required=True, type=str)
-def dump_corems_toml_template(toml_file_name):
+def dump_gcms_corems_toml_template(toml_file_name):
     """Dumps a CoreMS toml file template
     to be used as the workflow parameters input
     """
     path_obj = Path(toml_file_name).with_suffix(".toml")
     dump_gcms_settings_toml(file_path=path_obj)
+
+
+@cli.command(name="dump-lipidomics-toml-template")
+@click.argument("toml_file_name", required=True, type=str)
+def dump_lipidomics_toml_template(toml_file_name):
+    """
+    Writes a toml file template to run the lipidomics workflow, starting with the input file
+
+    Parameters
+    ----------
+    toml_file_name : str
+        The name of the toml file to write the parameters to
+    """
+    ref_lib_path = Path(toml_file_name).with_suffix(".toml")
+    with open(ref_lib_path, "w") as workflow_param:
+        toml.dump(LipidomicsWorkflowParameters().__dict__, workflow_param)
+
+
+@cli.command(name="dump-lipidomics-corems-toml-template")
+@click.argument("toml_file_name", required=True, type=str)
+def dump_lipidomics_corems_toml_template(toml_file_name):
+    """
+    Writes a toml file with the CoreMS parameters to be used in the lipidomics workflow
+
+    Parameters
+    ----------
+    toml_file_name : str
+        The name of the toml file to write the parameters to
+    """
+    path_obj = Path(toml_file_name).with_suffix(".toml")
+    print("dumping lipidomics corems toml template")
+    pass
+    # TODO KRH: add call for dumping lipidomics corems toml template from corems once we can import it
+
+
+@cli.command(name="run-lipidomics-workflow")
+@click.option(
+    "-p",
+    "--paramaters_file",
+    required=False,
+    type=str,
+    help="The path to the toml file with the lipidomics workflow parameters",
+)
+@click.option(
+    "-i",
+    "--directory",
+    required=False,
+    type=str,
+    help="The directory where the data is stored, all files in the directory will be processed",
+)
+@click.option(
+    "-o",
+    "--output_directory",
+    required=False,
+    type=str,
+    help="The directory where the output files will be stored",
+)
+@click.option(
+    "-t", "--token_path", required=False, type=str, help="The path to the metabref token"
+)
+@click.option(
+    "-s", "--scan_translator_path", required=False, type=str, help="The path to the scan translator file"
+)
+@click.option(
+    "-j", "--cores", required=False, type=int, help="'cpu's to use for processing"
+)
+def run_lipidomics_workflow(paramaters_file, directory, output_directory, token_path, scan_translator_path, cores):
+    """Run the lipidomics workflow
+
+    Parameters
+    ----------
+    paramaters_file : str
+        The path to the toml file with the lipidomics workflow parameters
+        This file can be generated using the dump-lipidomics-toml-template command
+    """
+    if paramaters_file is not None:
+        if cores is not None or directory is not None:
+            click.echo("Using parameters file, ignoring other parameters")
+        run_lcms_lipidomics_workflow(
+            lipidomics_workflow_paramaters_file=paramaters_file
+        )
+    else:
+        if cores is None:
+            cores = 1
+        if directory is None:
+            click.echo("No directory provided, no data to process")
+            return
+        if output_directory is None:
+            click.echo(
+                "Must provide an output directory if not using a parameters file"
+            )
+            return
+        run_lcms_lipidomics_workflow(
+            directory=directory, output_directory=output_directory, cores=cores
+        )
+    click.echo("Running lipidomics workflow")
+    # test call:
+    # MetaMS run-lipidomics-workflow -p configuration/lipidomics_metams.toml
+    # miniwdl run wdl/metaMS_lipidomics.wdl -i wdl/metams_input_lipidomics.json
