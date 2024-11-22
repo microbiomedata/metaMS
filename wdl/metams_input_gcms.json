@@ -8,7 +8,7 @@
 "gcmsMetabolomics.runMetaMS.output_directory": "test_output",
 "gcmsMetabolomics.runMetaMS.output_filename": "test_dataset",
 "gcmsMetabolomics.runMetaMS.output_type": "csv",
-"gcmsMetabolomics.runMetaMS.corems_toml_path": "./configuration/corems.toml",
+"gcmsMetabolomics.runMetaMS.corems_toml_path": "./configuration/gcms_corems.toml",
 "gcmsMetabolomics.runMetaMS.nmdc_metadata_path": "./configuration/nmdc_metadata.json",
 "gcmsMetabolomics.runMetaMS.jobs_count": 4
 }
