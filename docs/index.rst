@@ -80,6 +80,9 @@ Requirements for Execution
 - Python Environment >= 3.6
 - Python Dependencies are listed on requirements.txt
 
+Hardware Requirements
+--------------------------
+- To run this application, you need a processor with at least 2.0 GHz speed, 8GB of RAM, 10GB of free hard disk space
 
 Version History
 ---------------
