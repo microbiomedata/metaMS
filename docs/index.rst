@@ -1,7 +1,7 @@
 Metabolomics Workflow
 ==============================
 
-.. image:: metamsworkflow.png
+.. image:: metams_workflow2024.svg
 
 Workflow Overview
 -------
@@ -9,19 +9,6 @@ Workflow Overview
 The gas chromatography-mass spectrometry (GC-MS) based metabolomics workflow (metaMS) has been developed by leveraging PNNL's CoreMS software framework.
 The current software design allows for the orchestration of the metabolite characterization pipeline, i.e., signal noise reduction, m/z based Chromatogram Peak Deconvolution,
 abundance threshold calculation, peak picking, spectral similarity calculation and molecular search, similarity score calculation, and confidence filtering, all in a single step.
-
-Workflow Dependencies
----------------------
-
-Third party software
-~~~~~~~~~~~~~~~~~~~~
-
-- CoreMS (2-clause BSD)
-- Click (BSD 3-Clause "New" or "Revised" License)
-
-Database 
-~~~~~~~~~~~~~~~~
-- PNNL Metabolomics GC-MS Spectral Database
 
 Workflow Availability
 ---------------------
@@ -38,17 +25,44 @@ https://pypi.org/project/metaMS/
 The databases are available by request.
 Please contact NMDC (support@microbiomedata.org) for access.
 
-Test datasets
--------------
-https://github.com/microbiomedata/metaMS/tree/master/data/raw_data/GCMS_FAMES_01_GCMS-01_20191023.cdf
+Requirements for Execution
+--------------------------
 
+- Docker Container Runtime
+  
+  or  
+- Python Environment >= 3.10
+- Python Dependencies are listed on requirements.txt
 
 Execution Details
----------------------
+~~~~~~~~~~~~~~~~
 
 Please refer to: 
 
 https://github.com/microbiomedata/metaMS#metams-installation
+
+Hardware Requirements
+--------------------------
+- To run this application, you need a processor with at least 2.0 GHz speed, 8GB of RAM, 10GB of free hard disk space
+
+
+Workflow Dependencies
+---------------------
+
+Software
+~~~~~~~~~~~~~~~~~~~~
+
+- CoreMS (2-clause BSD)
+- Click (BSD 3-Clause "New" or "Revised" License)
+
+Database
+~~~~~~~~~~~~~~~~
+- PNNL Metabolomics GC-MS Spectral Database
+
+Test datasets
+-------------
+https://github.com/microbiomedata/metaMS/tree/master/data/raw_data/GCMS_FAMES_01_GCMS-01_20191023.cdf
+
 
 Inputs
 ~~~~~~~~
@@ -71,18 +85,6 @@ Outputs
 - Workflow Metadata:
     - JSON
 
-Requirements for Execution
---------------------------
-
-- Docker Container Runtime
-  
-  or  
-- Python Environment >= 3.6
-- Python Dependencies are listed on requirements.txt
-
-Hardware Requirements
---------------------------
-- To run this application, you need a processor with at least 2.0 GHz speed, 8GB of RAM, 10GB of free hard disk space
 
 Version History
 ---------------
