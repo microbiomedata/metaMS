@@ -19,7 +19,13 @@ task runMetaMSLCMSLipidomics {
     }
 
     command {
-
+        metaMS run-lipidomics-workflow \
+            -i ${sep=',' file_paths} \
+            -o ${output_directory} \
+            -c ${corems_toml_path} \
+            -t ${metabref_token_path} \
+            -s ${scan_translator_path} \
+            -j ${cores}
     }
 
     output {
@@ -27,6 +33,6 @@ task runMetaMSLCMSLipidomics {
     }
 
     runtime {
-        docker: "microbiomedata/metams:2.2.2"
+        docker: "local-metams:latest"
     }
 }

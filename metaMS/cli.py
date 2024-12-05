@@ -148,10 +148,10 @@ def dump_lipidomics_corems_toml_template(toml_file_name):
 )
 @click.option(
     "-i",
-    "--directory",
+    "--file_paths",
     required=False,
     type=str,
-    help="The directory where the data is stored, all files in the directory will be processed",
+    help="The path to the directory with the input files",
 )
 @click.option(
     "-o",
@@ -159,6 +159,13 @@ def dump_lipidomics_corems_toml_template(toml_file_name):
     required=False,
     type=str,
     help="The directory where the output files will be stored",
+)
+@click.option(
+    "-c",
+    "--corems_params",
+    required=False,
+    type=str,
+    help="The path corems parameters toml file",
 )
 @click.option(
     "-t", "--token_path", required=False, type=str, help="The path to the metabref token"
@@ -169,36 +176,51 @@ def dump_lipidomics_corems_toml_template(toml_file_name):
 @click.option(
     "-j", "--cores", required=False, type=int, help="'cpu's to use for processing"
 )
-def run_lipidomics_workflow(paramaters_file, directory, output_directory, token_path, scan_translator_path, cores):
+def run_lipidomics_workflow(
+    paramaters_file, 
+    file_paths, 
+    output_directory, 
+    corems_params, 
+    token_path, 
+    scan_translator_path, 
+    cores
+    ):
     """Run the lipidomics workflow
 
     Parameters
     ----------
-    paramaters_file : str
-        The path to the toml file with the lipidomics workflow parameters
-        This file can be generated using the dump-lipidomics-toml-template command
+    #TODO KRH: Add this in
     """
     if paramaters_file is not None:
-        if cores is not None or directory is not None:
+        if cores is not None or file_paths is not None:
+        #TODO KRH: Add all other parameters above
             click.echo("Using parameters file, ignoring other parameters")
-        run_lcms_lipidomics_workflow(
-            lipidomics_workflow_paramaters_file=paramaters_file
-        )
+        #run_lcms_lipidomics_workflow(
+        #    lipidomics_workflow_paramaters_file=paramaters_file
+        #)
     else:
         if cores is None:
             cores = 1
-        if directory is None:
-            click.echo("No directory provided, no data to process")
+        if file_paths is None:
+            click.echo("No file paths provided, no data to process")
             return
+        if corems_params is None:
+            click.echo("No corems parameters provided")
+        if scan_translator is None:
+            click.echo("No scan translator provided")
         if output_directory is None:
             click.echo(
                 "Must provide an output directory if not using a parameters file"
             )
             return
-        run_lcms_lipidomics_workflow(
-            directory=directory, output_directory=output_directory, cores=cores
-        )
-    click.echo("Running lipidomics workflow")
+        if token_path is None:
+            click.echo("No metabref token provided")
+            return
+        #run_lcms_lipidomics_workflow(
+        #    directory=directory, output_directory=output_directory, cores=cores
+        #)
+    click.echo("Ready to run lipidomics workflow")
+    
     # test call:
     # MetaMS run-lipidomics-workflow -p configuration/lipidomics_metams.toml
     # miniwdl run wdl/metaMS_lipidomics.wdl -i wdl/metams_input_lipidomics.json
