@@ -36,3 +36,6 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+
+# Raw thermo data
+*.raw

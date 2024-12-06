@@ -8,6 +8,9 @@ import click
 
 from corems.mass_spectra.input.mzml import MZMLSpectraParser
 from corems.mass_spectra.input.rawFileReader import ImportMassSpectraThermoMSFileReader
+from corems.encapsulation.input.parameter_from_json import (
+    load_and_set_toml_parameters_lcms,
+)
 
 @dataclass
 class LipidomicsWorkflowParameters:
@@ -67,7 +70,6 @@ def check_lipidomics_workflow_params(lipid_workflow_params):
 
     #TODO KRH: Add a check that we can access the metabref API with the token
 
-
 def instantiate_lcms_obj(file_in):
     """Instantiate a corems LCMS object from a binary file.  Pull in ms1 spectra into dataframe (without storing as MassSpectrum objects to save memory)
 
@@ -85,23 +87,45 @@ def instantiate_lcms_obj(file_in):
     """
     # Instantiate parser based on binary file type
     if ".raw" in str(file_in):
-        #TODO KRH: Add real functionality here
-        pass
-        #parser = ImportMassSpectraThermoMSFileReader(file_in)
+        parser = ImportMassSpectraThermoMSFileReader(file_in)
 
     if ".mzML" in str(file_in):
-        #parser = MZMLSpectraParser(file_in)
-        pass
+        parser = MZMLSpectraParser(file_in)
 
     # Instantiate lc-ms data object using parser and pull in ms1 spectra into dataframe (without storing as MassSpectrum objects to save memory)
-    #myLCMSobj = parser.get_lcms_obj(spectra="ms1")
-    myLCMSobj = None
+    myLCMSobj = parser.get_lcms_obj(spectra="ms1")
 
     return myLCMSobj
 
+def set_params_on_lcms_obj(myLCMSobj, params_toml):
+    """Set parameters on the LCMS object
+
+    Parameters
+    ----------
+    myLCMSobj : corems LCMS object
+        LCMS object to set parameters on
+    params_toml : str or Path
+        Path to toml file with parameters
+
+    Returns
+    -------
+    None, sets parameters on the LCMS object
+    """
+    # Load parameters from toml file
+    load_and_set_toml_parameters_lcms(myLCMSobj, params_toml)
+
+    # If myLCMSobj is a positive mode, remove Cl from atoms used in molecular search
+    # This cuts down on the number of molecular formulas searched hugely
+    if myLCMSobj.polarity == "positive":
+        myLCMSobj.parameters.mass_spectrum["ms1"].molecular_search.usedAtoms.pop("Cl")
+    elif myLCMSobj.polarity == "negative":
+        myLCMSobj.parameters.mass_spectrum["ms1"].molecular_search.usedAtoms.pop("Na")
+
 def run_lipid_sp_ms1(file_in, out_path, params_toml, scan_translator):
     time_start = datetime.datetime.now()
-    myLCMSobj = instantiate_lcms_obj(file_in)   
+    myLCMSobj = instantiate_lcms_obj(file_in)           
+    set_params_on_lcms_obj(myLCMSobj, params_toml)
+
     # TODO KRH: Add signal processing and ms1 molecular search here
 
 def run_lcms_lipidomics_workflow(
@@ -146,7 +170,6 @@ def run_lcms_lipidomics_workflow(
 
     click.echo("Starting lipidomics workflow for " + str(len(files_list)) + " files, using " +  str(cores) + " core(s)")
     
-    """
     if cores == 1 or len(files_list) == 1:
         mz_dicts = []
         for file_in, file_out in list(zip(files_list, out_paths_list)):
@@ -172,5 +195,4 @@ def run_lcms_lipidomics_workflow(
         pool.close()
         pool.join()
     print("Finished processing all files")
-    """
     # TODO KRH: Add full lipidomics workflow here
