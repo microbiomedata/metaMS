@@ -72,6 +72,6 @@ wdl-run-gcms :
 
 wdl-run-lipid :
 #TODO KRH: remove the docker-build-local when the docker image is available in dockerhub and
-# update the docker image in the wdl file
+# update the docker image in the wdl file.  Good to rebuild for each run while in development
 	 make docker-build-local
 	 miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics.json --verbose --no-cache --copy-input-files
