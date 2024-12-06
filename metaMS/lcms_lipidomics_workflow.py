@@ -121,10 +121,69 @@ def set_params_on_lcms_obj(myLCMSobj, params_toml):
     elif myLCMSobj.polarity == "negative":
         myLCMSobj.parameters.mass_spectrum["ms1"].molecular_search.usedAtoms.pop("Na")
 
+def load_scan_translator(scan_translator=None):
+    """Translate scans using a scan translator
+
+    Parameters
+    ----------
+    scan_translator : str or Path
+        Path to scan translator yaml file
+
+    Returns
+    -------
+    scan_dict : dict
+        Dict with keys as parameter keys and values as lists of scans
+    """
+    # Convert the scan translator to a dictionary
+    if scan_translator is None:
+        scan_translator_dict = {"ms2": {"scan_filter": "", "resolution": "high"}}
+    else:
+        # Convert the scan translator to a dictionary
+        if isinstance(scan_translator, str):
+            scan_translator = Path(scan_translator)
+        # read in the scan translator from toml
+        with open(scan_translator, "r") as f:
+            scan_translator_dict = toml.load(f)
+    for param_key in scan_translator_dict.keys():
+        if scan_translator_dict[param_key]["scan_filter"] == "":
+            scan_translator_dict[param_key]["scan_filter"] = None
+    return scan_translator_dict
+
+def check_scan_translator(myLCMSobj, scan_translator):
+    """Check if scan translator is provided and that it maps correctly to scans and parameters"""
+    scan_translator_dict = load_scan_translator(scan_translator)
+    # Check that the scan translator maps correctly to scans and parameters
+    scan_df = myLCMSobj.scan_df
+    scans_pulled_out = []
+    for param_key in scan_translator_dict.keys():
+        assert param_key in myLCMSobj.parameters.mass_spectrum.keys()
+        assert "scan_filter" in scan_translator_dict[param_key].keys()
+        assert "resolution" in scan_translator_dict[param_key].keys()
+        # Pull out scans that match the scan filter
+        scan_df_sub = scan_df[
+            scan_df.scan_text.str.contains(
+                scan_translator_dict[param_key]["scan_filter"]
+            )
+        ]
+        scans_pulled_out.extend(scan_df_sub.scan.tolist())
+        if len(scan_df_sub) == 0:
+            raise ValueError(
+                "No scans pulled out by scan translator for parameter key: ",
+                param_key,
+                " and scan filter: ",
+                scan_translator_dict[param_key]["scan_filter"],
+            )
+
+    # Check that the scans pulled out by the scan translator are not overlapping and assert error if they are
+    if len(set(scans_pulled_out)) != len(scans_pulled_out):
+        raise ValueError("Overlapping scans pulled out by scan translator")
+
 def run_lipid_sp_ms1(file_in, out_path, params_toml, scan_translator):
     time_start = datetime.datetime.now()
     myLCMSobj = instantiate_lcms_obj(file_in)           
     set_params_on_lcms_obj(myLCMSobj, params_toml)
+    check_scan_translator(myLCMSobj, scan_translator)
+
 
     # TODO KRH: Add signal processing and ms1 molecular search here
 
