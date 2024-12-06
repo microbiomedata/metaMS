@@ -224,8 +224,3 @@ def run_lipidomics_workflow(
             scan_translator_path=scan_translator_path,
             cores=cores,
         )
-    click.echo("Ready to run lipidomics workflow")
-    
-    # test call:
-    # MetaMS run-lipidomics-workflow -p configuration/lipidomics_metams.toml
-    # miniwdl run wdl/metaMS_lipidomics.wdl -i wdl/metams_input_lipidomics.json

@@ -1,7 +1,6 @@
 {
     "lcmsLipidomics.runMetaMSLCMSLipidomics.file_paths": [
-        "./data/raw_data/GCMS_FAMES_01_GCMS-01_20191023.cdf",
-        "./configuration/lipid_configs/emsl_lipidomics_corems_params.toml"
+        "./data/raw_data/Blanch_Nat_Lip_C_12_AB_M_17_NEG_25Jan18_Brandi-WCSH5801.raw"
     ],
     "lcmsLipidomics.runMetaMSLCMSLipidomics.output_directory": "output",
     "lcmsLipidomics.runMetaMSLCMSLipidomics.corems_toml_path": "./configuration/lipid_configs/emsl_lipidomics_corems_params.toml",

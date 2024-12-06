@@ -41,29 +41,31 @@ class LipidomicsWorkflowParameters:
 def check_lipidomics_workflow_params(lipid_workflow_params):
     # Check that corems_toml_path exists
     if not Path(lipid_workflow_params.corems_toml_path).exists():
-        click.echo("Corems toml file not found, exiting workflow")
-        return
+        raise FileNotFoundError("Corems toml file not found, exiting workflow")
     
     # Check that metabref_token_path exists
     if not Path(lipid_workflow_params.metabref_token_path).exists():
-        click.echo("Metabref token file not found, exiting workflow")
-        return
+        raise FileNotFoundError("Metabref token file not found, exiting workflow")
     
     # Check that scan_translator_path exists
     if not Path(lipid_workflow_params.scan_translator_path).exists():
-        click.echo("Scan translator file not found, exiting workflow")
-        return
+        raise FileNotFoundError("Scan translator file not found, exiting workflow")
     
     # Check that output_directory exists
     if not Path(lipid_workflow_params.output_directory).exists():
-        click.echo("Output directory not found, exiting workflow")
-        return
+        raise FileNotFoundError("Output directory not found, exiting workflow")
     
     # Check that file_paths exist
     for file_path in lipid_workflow_params.file_paths:
         if not Path(file_path).exists():
-            click.echo(f"File path {file_path} not found, exiting workflow")
-            return
+            raise FileNotFoundError(f"File path {file_path} not found, exiting workflow")
+    
+    # Check that all file_paths end in .raw or .mzML
+    for file_path in lipid_workflow_params.file_paths:
+        if ".raw" not in file_path and ".mzML" not in file_path:
+            raise ValueError(f"File path {file_path} is not a .raw or .mzML file, exiting workflow")
+
+    #TODO KRH: Add a check that we can access the metabref API with the token
 
 
 def instantiate_lcms_obj(file_in):
@@ -141,6 +143,8 @@ def run_lcms_lipidomics_workflow(
     cores = lipid_workflow_params.cores
     params_toml = lipid_workflow_params.corems_toml_path
     scan_translator = lipid_workflow_params.scan_translator_path
+
+    click.echo("Starting lipidomics workflow for " + str(len(files_list)) + " files, using " +  str(cores) + " core(s)")
     
     """
     if cores == 1 or len(files_list) == 1:
