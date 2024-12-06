@@ -5,9 +5,11 @@ import datetime
 from multiprocessing import Pool
 from typing import List
 import click
+import warnings
 
 from corems.mass_spectra.input.mzml import MZMLSpectraParser
 from corems.mass_spectra.input.rawFileReader import ImportMassSpectraThermoMSFileReader
+from corems.mass_spectra.output.export import LipidomicsExport
 from corems.encapsulation.input.parameter_from_json import (
     load_and_set_toml_parameters_lcms,
 )
@@ -178,13 +180,93 @@ def check_scan_translator(myLCMSobj, scan_translator):
     if len(set(scans_pulled_out)) != len(scans_pulled_out):
         raise ValueError("Overlapping scans pulled out by scan translator")
 
+def add_mass_features(myLCMSobj, scan_translator):
+    """Process ms1 spectra and perform molecular search
+
+    This includes peak picking, adding and processing associated ms1 spectra,
+    integration of mass features, annotation of c13 mass features, deconvolution of ms1 mass features,
+    and adding of peak shape metrics of mass features to the mass feature dataframe.
+
+    Parameters
+    ----------
+    myLCMSobj : corems LCMS object
+        LCMS object to process
+    scan_translator : str or Path
+        Path to scan translator yaml file
+
+    Returns
+    -------
+    None, processes the LCMS object
+    """
+    # Process ms1 spectra
+    myLCMSobj.find_mass_features()
+    myLCMSobj.add_associated_ms1(
+        auto_process=True, use_parser=False, spectrum_mode="profile"
+    )
+    myLCMSobj.integrate_mass_features(drop_if_fail=True)
+    myLCMSobj.find_c13_mass_features()
+    myLCMSobj.deconvolute_ms1_mass_features()
+    myLCMSobj.add_peak_metrics()
+
+    # Add associated ms2 spectra to mass features
+    scan_dictionary = load_scan_translator(scan_translator=scan_translator)
+    for param_key in scan_dictionary.keys():
+        scan_filter = scan_dictionary[param_key]["scan_filter"]
+        if scan_filter == "":
+            scan_filter = None
+        myLCMSobj.add_associated_ms2_dda(
+            spectrum_mode="centroid", ms_params_key=param_key, scan_filter=scan_filter
+        )
+
+def export_results(myLCMSobj, out_path, molecular_metadata=None, final=False):
+    """Export results to hdf5 and csv as a lipid report
+
+    Parameters
+    ----------
+    myLCMSobj : corems LCMS object
+        LCMS object to process
+    out_path : str or Path
+        Path to output file
+    molecular_metadata : dict
+        Dict with molecular metadata
+    final : bool
+        Whether to export final results
+
+    Returns
+    -------
+    None, exports results to hdf5 and csv as a lipid report
+    """
+    exporter = LipidomicsExport(out_path, myLCMSobj)
+    exporter.to_hdf(overwrite=True)
+    if final:
+        # Do not show warnings, these are expected
+        exporter.report_to_csv(molecular_metadata=molecular_metadata)
+    else:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            exporter.report_to_csv()
+
+
 def run_lipid_sp_ms1(file_in, out_path, params_toml, scan_translator):
     time_start = datetime.datetime.now()
     myLCMSobj = instantiate_lcms_obj(file_in)           
     set_params_on_lcms_obj(myLCMSobj, params_toml)
     check_scan_translator(myLCMSobj, scan_translator)
-
-
+    add_mass_features(myLCMSobj, scan_translator)
+    myLCMSobj.remove_unprocessed_data()
+    #TODO KRH: add molecular search here
+    export_results(myLCMSobj, out_path=out_path, final=False)
+    precursor_mz_list = list(
+        set(
+            [
+                v.mz
+                for k, v in myLCMSobj.mass_features.items()
+                if len(v.ms2_scan_numbers) > 0 and v.isotopologue_type is None
+            ]
+        )
+    )
+    mz_dict = {myLCMSobj.polarity: precursor_mz_list}
+    return mz_dict
     # TODO KRH: Add signal processing and ms1 molecular search here
 
 def run_lcms_lipidomics_workflow(
