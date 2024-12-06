@@ -206,7 +206,7 @@ def run_lipidomics_workflow(
             return
         if corems_params is None:
             click.echo("No corems parameters provided")
-        if scan_translator is None:
+        if scan_translator_path is None:
             click.echo("No scan translator provided")
         if output_directory is None:
             click.echo(
@@ -216,9 +216,14 @@ def run_lipidomics_workflow(
         if token_path is None:
             click.echo("No metabref token provided")
             return
-        #run_lcms_lipidomics_workflow(
-        #    directory=directory, output_directory=output_directory, cores=cores
-        #)
+        run_lcms_lipidomics_workflow(
+            file_paths=file_paths,
+            output_directory=output_directory,
+            corems_toml_path=corems_params,
+            metabref_token_path=token_path,
+            scan_translator_path=scan_translator_path,
+            cores=cores,
+        )
     click.echo("Ready to run lipidomics workflow")
     
     # test call:

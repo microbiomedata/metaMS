@@ -1,7 +1,7 @@
 {
     "lcmsLipidomics.runMetaMSLCMSLipidomics.file_paths": [
         "./data/raw_data/GCMS_FAMES_01_GCMS-01_20191023.cdf",
-        "./data/raw_data/GCMS_FAMES_01_GCMS-01_20191023.cdf"
+        "./configuration/lipid_configs/emsl_lipidomics_corems_params.toml"
     ],
     "lcmsLipidomics.runMetaMSLCMSLipidomics.output_directory": "output",
     "lcmsLipidomics.runMetaMSLCMSLipidomics.corems_toml_path": "./configuration/lipid_configs/emsl_lipidomics_corems_params.toml",

@@ -3,6 +3,8 @@ import toml
 from pathlib import Path
 import datetime
 from multiprocessing import Pool
+from typing import List
+import click
 
 from corems.mass_spectra.input.mzml import MZMLSpectraParser
 from corems.mass_spectra.input.rawFileReader import ImportMassSpectraThermoMSFileReader
@@ -29,13 +31,40 @@ class LipidomicsWorkflowParameters:
         The number of cores to use for processing, optional
 
     """
-
-    directory: str = "data/..."
-    output_directory: str = "output/..."
-    corems_toml_path: str = "configuration/lipidomics_corems.toml"
+    file_paths: tuple = ('data/...', 'data/...')
+    output_directory: str = "output"
+    corems_toml_path: str = None
     metabref_token_path: str = None
     scan_translator_path: str = None
     cores: int = 1
+
+def check_lipidomics_workflow_params(lipid_workflow_params):
+    # Check that corems_toml_path exists
+    if not Path(lipid_workflow_params.corems_toml_path).exists():
+        click.echo("Corems toml file not found, exiting workflow")
+        return
+    
+    # Check that metabref_token_path exists
+    if not Path(lipid_workflow_params.metabref_token_path).exists():
+        click.echo("Metabref token file not found, exiting workflow")
+        return
+    
+    # Check that scan_translator_path exists
+    if not Path(lipid_workflow_params.scan_translator_path).exists():
+        click.echo("Scan translator file not found, exiting workflow")
+        return
+    
+    # Check that output_directory exists
+    if not Path(lipid_workflow_params.output_directory).exists():
+        click.echo("Output directory not found, exiting workflow")
+        return
+    
+    # Check that file_paths exist
+    for file_path in lipid_workflow_params.file_paths:
+        if not Path(file_path).exists():
+            click.echo(f"File path {file_path} not found, exiting workflow")
+            return
+
 
 def instantiate_lcms_obj(file_in):
     """Instantiate a corems LCMS object from a binary file.  Pull in ms1 spectra into dataframe (without storing as MassSpectrum objects to save memory)
@@ -75,7 +104,7 @@ def run_lipid_sp_ms1(file_in, out_path, params_toml, scan_translator):
 
 def run_lcms_lipidomics_workflow(
     lipidomics_workflow_paramaters_file=None,
-    directory=None,
+    file_paths=None,
     output_directory=None,
     corems_toml_path=None,
     metabref_token_path=None,
@@ -88,7 +117,7 @@ def run_lcms_lipidomics_workflow(
             lipid_workflow_params = LipidomicsWorkflowParameters(**toml.load(infile))
     else:
         lipid_workflow_params = LipidomicsWorkflowParameters(
-            directory=directory,
+            file_paths= file_paths.split(","),
             output_directory=output_directory,
             metabref_token_path=metabref_token_path,
             scan_translator_path=scan_translator_path,
@@ -100,14 +129,20 @@ def run_lcms_lipidomics_workflow(
     out_dir = Path(lipid_workflow_params.output_directory)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    file_dir = Path(lipid_workflow_params.directory)
-    files_list = list(file_dir.glob("*.raw"))
+    # Check that all parameters are valid and exist
+    check_lipidomics_workflow_params(lipid_workflow_params)
+
+    # Organize input and output paths
+    file_paths = [Path(file_path) for file_path in lipid_workflow_params.file_paths]
+    files_list = list(file_paths)
     out_paths_list = [out_dir / f.stem for f in files_list]
-        
+    
     # Run signal processing, get associated ms1, add associated ms2, do ms1 molecular search, and export intermediate results
     cores = lipid_workflow_params.cores
     params_toml = lipid_workflow_params.corems_toml_path
     scan_translator = lipid_workflow_params.scan_translator_path
+    
+    """
     if cores == 1 or len(files_list) == 1:
         mz_dicts = []
         for file_in, file_out in list(zip(files_list, out_paths_list)):
@@ -133,5 +168,5 @@ def run_lcms_lipidomics_workflow(
         pool.close()
         pool.join()
     print("Finished processing all files")
-
+    """
     # TODO KRH: Add full lipidomics workflow here

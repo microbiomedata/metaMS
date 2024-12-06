@@ -58,6 +58,9 @@ docker-build:
 
 	docker build -t microbiomedata/metams:latest .
 
+docker-build-local:
+	docker build -t local-metams:latest .
+	
 docker-run:
 	@echo $(data_dir)
 	@echo $(config_dir)

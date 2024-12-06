@@ -4,6 +4,7 @@ workflow lcmsLipidomics {
     call runMetaMSLCMSLipidomics
 
     output {
+        String out = runMetaMSLCMSLipidomics.out
         Array[File] output_files = runMetaMSLCMSLipidomics.output_files
     }
 }
@@ -29,7 +30,8 @@ task runMetaMSLCMSLipidomics {
     }
 
     output {
-        Array[File] output_files = glob('${output_directory}/**/*.*')
+        String out = read_string(stdout())
+        Array[File] output_files = glob('${output_directory}/*')
     }
 
     runtime {
