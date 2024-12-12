@@ -1,5 +1,7 @@
 # Lipidomics Workflow (v1.0.0)
 
+MS$^{1}$
+
 ## Summary
 
 The liquid chromatography-mass spectrometry (LC-MS)-based lipidomics
@@ -8,10 +10,10 @@ framework. The workflow leverages many features of CoreMS as well as
 PNNL's MetabRef LC-MS database to process LC-MS/MS data and identify
 lipids. The initial signal processing includes peak picking, integration
 of mass features, deconvolution of MS\<sup\>1\</sup\>, and calculation
-of peak shape metrics. The workflow associates MS\<sup\>1\</sup\>
+of peak shape metrics. The workflow associates MS<sup>1</sup>
 spectra with their corresponding MS\<sup\>2\</sup\> spectra (only for
-data-dependent acqusition, currently). It uses the MS\<sup\>2\</sup\>
-spectra to search an in-silico spectra database for lipids and uses the
+data-dependent acqusition, currently). It uses the MS^2^ spectra to
+search an in-silico spectra database for lipids and uses the
 MS\<sup\>1\</sup\> data to assign a molecular formula. Each candidate
 lipid assignment is given two confidence scores: one for its match to
 the predicted molecular formula based on the mass accuracy and fine
