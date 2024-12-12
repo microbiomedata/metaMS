@@ -67,5 +67,6 @@ wdl-run :
  	 
 	 miniwdl run wdl/metaMS.wdl -i wdl/metams_input.json --verbose --no-cache --copy-input-files
 
-
+convert_lipid_rst_to_md:
+	python docs/convert_rst_to_md.py
 	
