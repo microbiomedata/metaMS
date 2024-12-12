@@ -56,10 +56,10 @@ Software Requirements
 Database
 ~~~~~~~~
 
--  PNNL Metabolomics LC-MS *in silico* Spectral Database
+-  PNNL Metabref Database
    (https://metabref.emsl.pnnl.gov/)
 
-The in-silico lipid spectra in the database are generated from the LipidBlast database (v68), found at https://systemsomicslab.github.io/compms/msdial/main.html.
+The in-silico lipid spectra in PNNL's Metaref database are generated from the LipidBlast database (v68), found at https://systemsomicslab.github.io/compms/msdial/main.html.
 Note that there is no retention time in the PNNL version of the database and the workflow does not use retention time scoring.
 
 Sample datasets
