@@ -1,13 +1,11 @@
 Lipidomics Workflow (v1.0.0)
 ============================
 
-.. figure:: metamsworkflow.png
+.. figure:: lipid_workflow_v1.png
    :alt: diagram of lipid workflow
 
-#TODO KRH: replace with lipid diagram when available
-
-Overview
---------
+Workflow Overview
+-----------------
 
 The liquid chromatography-mass spectrometry (LC-MS)-based lipidomics
 workflow (part of MetaMS) is built using PNNL’s CoreMS software
@@ -31,13 +29,10 @@ Workflow Availability
 ---------------------
 
 The workflow is available in GitHub:
-https://github.com/microbiomedata/metaMS
+https://github.com/microbiomedata/metaMS #TODO KRH: update with direct link to lipidomics wdl
 
 The container is available at Docker Hub (microbiomedata/metaMS):
 https://hub.docker.com/r/microbiomedata/metams
-
-The python package is available on PyPi:
-https://pypi.org/project/metaMS/
 
 The database is available by request. Please contact NMDC
 (support@microbiomedata.org) for access.
@@ -56,7 +51,7 @@ Software Requirements
 -  Docker Container Runtime
 -  miniwdl (v1, https://pypi.org/project/miniwdl/)
 
-*Note that the wdl file will automatically pull the necessary docker with the required software dependencies.*
+*Note that the wdl file will automatically pull the necessary docker with the required workflow dependencies.*
 
 Database
 ~~~~~~~~
@@ -67,8 +62,8 @@ Database
 The in-silico lipid spectra in the database are generated from the LipidBlast database (v68), found at https://systemsomicslab.github.io/compms/msdial/main.html.
 Note that there is no retention time in the PNNL version of the database and the workflow does not use retention time scoring.
 
-Test datasets
--------------
+Sample datasets
+---------------
 
 - An example dataset can be downloaded from here: https://nmdcdemo.emsl.pnnl.gov/lipidomics/blanchard_11_8ws97026/Blanch_Nat_Lip_H_32_AB_O_19_NEG_25Jan18_Brandi-WCSH5801.raw
 - Example CoreMS Parameter file (applicable to the example dataset): https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/emsl_lipidomics_corems_params.toml
@@ -110,8 +105,6 @@ Outputs
 -  Lipidomics data
    -  Peak data table with annotated lipids (.csv)
    -  HDF: CoreMS HDF5 format of CoreMS LCMS object for further analysis
-
-
 -  Workflow Metadata
    -  CoreMS Parameter file (.toml), the full set of parameters used in the workflow, some of which are set dynamically within the workflow.
 
