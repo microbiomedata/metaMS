@@ -26,6 +26,9 @@ formula based on the mass accuracy and fine isotopic structure and a
 second for the MS2 spectral matching for filtering and
 selecting the best match.
 
+Note that only data collected in profile mode for MS1 and
+data-dependent acquisition for MS2 is supported at this time.
+
 Workflow Availability
 ---------------------
 
@@ -64,7 +67,7 @@ Database
    (https://metabref.emsl.pnnl.gov/)
 
 The in-silico lipid spectra in the database are generated from the LipidBlast database (v68), found at https://systemsomicslab.github.io/compms/msdial/main.html.
-Note that there is no retention time in the PNNL version of the database.
+Note that there is no retention time in the PNNL version of the database and the workflow does not use retention time scoring.
 
 Test datasets
 -------------
@@ -87,9 +90,6 @@ Example command to run the workflow:
 
 Inputs
 ~~~~~~
-
-Only data collected in profile mode for MS1 and
-data-dependent acquisition for MS2 is supported at this time.
 
 To use the wdl, inputs should be specified in a json file. See example
 input json file in wdl/metaMS_lipidomics.wdl.
@@ -120,7 +120,7 @@ Outputs
 Version History
 ---------------
 
-#TODO KRH: add version history
+- v1.0.0: Initial release of the lipidomics workflow #TODO KRH: update wtih releease date when available
 
 Point of contact
 ----------------
