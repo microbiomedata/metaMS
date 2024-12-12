@@ -1,7 +1,6 @@
 <h1 id="lipidomics-workflow-v1.0.0">Lipidomics Workflow (v1.0.0)</h1>
 <figure>
 <img src="metamsworkflow.png" alt="metamsworkflow.png" />
-<figcaption>image</figcaption>
 </figure>
 <p>#TODO KRH: replace with lipid diagram when available</p>
 <h2 id="overview">Overview</h2>
@@ -61,8 +60,7 @@ and the workflow does not use retention time scoring.</p>
 href="https://nmdcdemo.emsl.pnnl.gov/lipidomics/blanchard_11_8ws97026/Blanch_Nat_Lip_H_32_AB_O_19_NEG_25Jan18_Brandi-WCSH5801.raw">https://nmdcdemo.emsl.pnnl.gov/lipidomics/blanchard_11_8ws97026/Blanch_Nat_Lip_H_32_AB_O_19_NEG_25Jan18_Brandi-WCSH5801.raw</a></li>
 <li>Example CoreMS Parameter file (applicable to the example dataset):
 <a
-href="https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/emsl_lipidomics_corems_params.toml">https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/emsl_lipidomics_corems_params.toml</a>
-#TODO KRH: still needs to be uploaded</li>
+href="https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/emsl_lipidomics_corems_params.toml">https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/emsl_lipidomics_corems_params.toml</a></li>
 <li>Example Scan Translator file (applicable to the example dataset): <a
 href="https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/emsl_lipidomics_scan_translator.toml">https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/emsl_lipidomics_scan_translator.toml</a></li>
 </ul>
@@ -70,7 +68,7 @@ href="https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/emsl_lipidomics_
 <p>This workflow should be executed using the wdl file provided in the
 MetaMS package (wdl/metaMS_lipidomics.wdl).</p>
 <p>Example command to run the workflow:</p>
-<pre><code>miniwdl run wdl/metaMS_lipidomics.wdl -i wdl/metams_input_lipidomics.json --verbose --no-cache --copy-input-files</code></pre>
+<pre><code>miniwdl run wdl/metaMS_lipidomics.wdl -i metams_input_lipidomics.json --verbose --no-cache --copy-input-files</code></pre>
 <h3 id="inputs">Inputs</h3>
 <p>To use the wdl, inputs should be specified in a json file. See
 example input json file in wdl/metaMS_lipidomics.wdl.</p>
@@ -86,8 +84,8 @@ file):</p>
 <ul>
 <li>CoreMS Parameter file (.toml)</li>
 <li>Scan Translator Parameter file (.toml)</li>
-<li>MetabRef configuration key (metabref.token). See [MetabRef
-documentation] (<a
+<li>MetabRef configuration key (metabref.token). See MetabRef
+documentation (<a
 href="https://metabref.emsl.pnnl.gov/api">https://metabref.emsl.pnnl.gov/api</a>)
 for how to generate a token.</li>
 </ul></li>
@@ -114,7 +112,7 @@ workflow.</li>
 <h2 id="version-history">Version History</h2>
 <ul>
 <li>v1.0.0: Initial release of the lipidomics workflow #TODO KRH: update
-wtih releease date when available</li>
+wtih release date when available</li>
 </ul>
 <h2 id="point-of-contact">Point of contact</h2>
 <p>Package maintainer: Katherine R. Heal &lt;<a

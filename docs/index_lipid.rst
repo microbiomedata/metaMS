@@ -2,9 +2,7 @@ Lipidomics Workflow (v1.0.0)
 ============================
 
 .. figure:: metamsworkflow.png
-   :alt: image
-
-   image
+   :alt: diagram of lipid workflow
 
 #TODO KRH: replace with lipid diagram when available
 
@@ -73,7 +71,7 @@ Test datasets
 -------------
 
 - An example dataset can be downloaded from here: https://nmdcdemo.emsl.pnnl.gov/lipidomics/blanchard_11_8ws97026/Blanch_Nat_Lip_H_32_AB_O_19_NEG_25Jan18_Brandi-WCSH5801.raw
-- Example CoreMS Parameter file (applicable to the example dataset): https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/emsl_lipidomics_corems_params.toml #TODO KRH: still needs to be uploaded
+- Example CoreMS Parameter file (applicable to the example dataset): https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/emsl_lipidomics_corems_params.toml
 - Example Scan Translator file (applicable to the example dataset): https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/emsl_lipidomics_scan_translator.toml
 
 Execution Details
@@ -86,7 +84,7 @@ Example command to run the workflow:
 
 .. code-block::
 
-    miniwdl run wdl/metaMS_lipidomics.wdl -i wdl/metams_input_lipidomics.json --verbose --no-cache --copy-input-files
+    miniwdl run wdl/metaMS_lipidomics.wdl -i metams_input_lipidomics.json --verbose --no-cache --copy-input-files
 
 Inputs
 ~~~~~~
@@ -102,7 +100,7 @@ The following inputs are required (declared in the input json file):
 -  Workflow inputs
    -  CoreMS Parameter file (.toml)
    -  Scan Translator Parameter file (.toml)
-   -  MetabRef configuration key (metabref.token). See [MetabRef documentation] (https://metabref.emsl.pnnl.gov/api) for how to generate a token.
+   -  MetabRef configuration key (metabref.token). See MetabRef documentation (https://metabref.emsl.pnnl.gov/api) for how to generate a token.
 -  Cores (optional input)
    -  How many cores to use for processing. Default is 1.
 
@@ -120,7 +118,7 @@ Outputs
 Version History
 ---------------
 
-- v1.0.0: Initial release of the lipidomics workflow #TODO KRH: update wtih releease date when available
+- v1.0.0: Initial release of the lipidomics workflow #TODO KRH: update wtih release date when available
 
 Point of contact
 ----------------
