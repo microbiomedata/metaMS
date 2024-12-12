@@ -1,20 +1,9 @@
 # Table of Contents  
-- Introduction
   - [MetaMS](#MetaMS)  
   - [Version](#current-version)  
-  - [Data Input](#data-input-formats)  
-  - [Data Output](#data-output-formats)  
-  - [Data Structure](#data-structure-types)  
-  - [Features](#available-features)  
-  - [Code Documentation](https://emsl-computing.github.io/MetaMS/)  
-
-- Installation
-  - [PyPi](#metams-installation)  
-
-- Execution:  
-  - [CLI](#execution)  
-  - [MiniWDL](#MiniWDL)  
-  - [Docker Container](#metams-docker-container)  
+  - [Available Workflows](#available-workflows)
+  - [Disclaimer](#disclaimer)
+  
 # MetaMS
 
 **MetaMS** is a repository of workflows for metabolomics data processing and annotation in association with the NMDC ([National Microbiome Data Collaborative](https://microbiomedata.org/))
