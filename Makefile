@@ -69,4 +69,5 @@ wdl-run :
 convert_lipid_rst_to_md:
     # convert the lipid documentation from rst to md
 	pandoc -f rst -t markdown -o docs/README_LCMS_LIPID.md docs/index_lipid.rst
-	
+	# render the lipid documentation into html from the rst file
+	pandoc -f rst -t html -o docs/index_lipid.html docs/index_lipid.rst
