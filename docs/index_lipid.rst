@@ -1,7 +1,7 @@
 Lipidomics Workflow (v1.0.0)
 ============================
 
-MS\ :math:`^{1}`
+MS\ :sup:`1`
 
 Summary
 -------

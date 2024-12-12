@@ -1,6 +1,6 @@
 # Lipidomics Workflow (v1.0.0)
 
-MS$^{1}$
+MS^1^
 
 ## Summary
 
