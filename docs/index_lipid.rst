@@ -70,8 +70,8 @@ Test datasets
 -------------
 
 - An example dataset can be downloaded from here: https://nmdcdemo.emsl.pnnl.gov/lipidomics/blanchard_11_8ws97026/Blanch_Nat_Lip_H_32_AB_O_19_NEG_25Jan18_Brandi-WCSH5801.raw
-- Example CoreMS Parameter file (applicable to the example dataset) 
-- Example Scan Translator file (applicable to the example dataset)
+- Example CoreMS Parameter file (applicable to the example dataset): https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/emsl_lipidomics_corems_params.toml #TODO KRH: still needs to be uploaded
+- Example Scan Translator file (applicable to the example dataset): https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/emsl_lipidomics_scan_translator.toml
 
 Execution Details
 -----------------
