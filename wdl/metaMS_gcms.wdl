@@ -19,6 +19,7 @@ task runMetaMSGCMS {
         String output_type
         File corems_toml_path
         File nmdc_metadata_path
+        File metabref_token_path
         Int jobs_count
     }
 
@@ -31,6 +32,7 @@ task runMetaMSGCMS {
             ${output_type} \
             ${corems_toml_path} \
             ${nmdc_metadata_path} \
+            ${metabref_token_path} \
             --jobs ${jobs_count}
     }
 

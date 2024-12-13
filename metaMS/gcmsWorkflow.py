@@ -54,6 +54,9 @@ class WorkflowParameters:
     output_filename: str = "data/..."
     output_type: str = "csv"
 
+    # Token
+    metabref_token_path: str = "configuration/..."
+
 
 def worker(args):
     """
@@ -72,6 +75,7 @@ def run_gcms_metabolomics_workflow_wdl(
     output_filename,
     output_type,
     corems_toml_path,
+    metabref_token_path,
     jobs,
     db_path=None,
 ):
@@ -92,6 +96,8 @@ def run_gcms_metabolomics_workflow_wdl(
         Output extension.
     corems_toml_path : str
         CoreMS configuration.
+    metabref_token_path : str
+        Token to authenticate MetabRef database access.
     jobs : int
         Number of concurrent jobs.
     [unused] db_path : str
@@ -109,6 +115,7 @@ def run_gcms_metabolomics_workflow_wdl(
     workflow_params.output_filename = output_filename
     workflow_params.output_type = output_type
     workflow_params.corems_toml_path = corems_toml_path
+    workflow_params.metabref_token_path = metabref_token_path
 
     # Load CoreMS settings
     click.echo("Loading CoreMS settings from %s" % workflow_params.corems_toml_path)
@@ -128,6 +135,7 @@ def run_gcms_metabolomics_workflow_wdl(
     )
 
     # Load FAMEs calibration reference
+    MetabRefGCInterface().set_token(workflow_params.metabref_token_path)
     fames_ref_sql = MetabRefGCInterface().get_fames(format="sql")
 
     # Compute RT:RI pairs
@@ -183,9 +191,8 @@ def run_nmdc_metabolomics_workflow(workflow_params_file, jobs):
     )
 
     # Load FAMEs calibration reference
-    fames_ref_sql = EI_LowRes_SQLite(
-        url=workflow_params.calibration_reference_path
-    )
+    MetabRefGCInterface().set_token(workflow_params.metabref_token_path)
+    fames_ref_sql = MetabRefGCInterface().get_fames(format='sql')
 
     # Compute RT:RI pairs
     rt_ri_pairs = get_rt_ri_pairs(gcms_cal_obj, sql_obj=fames_ref_sql)
@@ -253,6 +260,7 @@ def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
     )
 
     # Load FAMEs calibration reference
+    MetabRefGCInterface().set_token(workflow_params.metabref_token_path)
     fames_ref_sql = MetabRefGCInterface().get_fames(format="sql")
 
     # Compute RT:RI pairs

@@ -31,6 +31,7 @@ def cli():
 @click.argument("output_type", required=True, type=str)
 @click.argument("corems_toml_path", required=True, type=str)
 @click.argument("nmdc_metadata_path", required=True, type=str)
+@click.argument("metabref_token_path", required=True, type=str)
 @click.option("--jobs", "-j", default=4, help="'cpu's'")
 def run_gcms_wdl_workflow(
     file_paths,
@@ -40,6 +41,7 @@ def run_gcms_wdl_workflow(
     output_type,
     corems_toml_path,
     nmdc_metadata_path,
+    metabref_token_path,
     jobs,
 ):
     """Run the GCMS workflow\n
@@ -56,6 +58,7 @@ def run_gcms_wdl_workflow(
         output_filename,
         output_type,
         corems_toml_path,
+        metabref_token_path,
         jobs,
     )
 
