@@ -208,7 +208,7 @@ def run_nmdc_metabolomics_workflow(workflow_params_file, jobs):
     # Create multiprocess pool
     with Pool(jobs) as pool:
         # Map workflow over inputs
-        for i, gcms in enumerate(pool.imap_unordered(workflow_worker, worker_args), 1):
+        for i, gcms in enumerate(pool.imap_unordered(workflow_worker, worker_args)):
             # Determine output path
             input_path = Path(workflow_params.file_paths[i])
             output_path = Path(workflow_params.output_directory) / input_path.name
