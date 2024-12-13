@@ -9,6 +9,7 @@ from corems.mass_spectra.calc.GC_RI_Calibration import get_rt_ri_pairs
 from corems.mass_spectra.input.andiNetCDF import ReadAndiNetCDF
 from corems.molecular_id.factory.EI_SQL import EI_LowRes_SQLite
 from corems.molecular_id.search.compoundSearch import LowResMassSpectralMatch
+from corems.molecular_id.search.database_interfaces import MetabRefGCInterface
 
 
 @dataclass
@@ -81,8 +82,6 @@ def run_gcms_metabolomics_workflow_wdl(
     ----------
     file_paths : tuple(str)
         Paths to files to process.
-    calibration_reference_path : str
-        FAMEs retention index calibration reference filepath.
     calibration_file_path : str
         FAMEs retention index calibration filepath.
     output_directory : str
@@ -105,7 +104,6 @@ def run_gcms_metabolomics_workflow_wdl(
     # Store workflow parameters
     workflow_params = WorkflowParameters()
     workflow_params.file_paths = file_paths.split(",")
-    workflow_params.calibration_reference_path = calibration_reference_path
     workflow_params.calibration_file_path = calibration_file_path
     workflow_params.output_directory = output_directory
     workflow_params.output_filename = output_filename
@@ -130,9 +128,7 @@ def run_gcms_metabolomics_workflow_wdl(
     )
 
     # Load FAMEs calibration reference
-    fames_ref_sql = EI_LowRes_SQLite(
-        url=workflow_params.calibration_reference_path
-    )
+    fames_ref_sql = MetabRefGCInterface().get_fames(format="sql")
 
     # Compute RT:RI pairs
     rt_ri_pairs = get_rt_ri_pairs(gcms_cal_obj, sql_obj=fames_ref_sql)
@@ -257,9 +253,7 @@ def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
     )
 
     # Load FAMEs calibration reference
-    fames_ref_sql = EI_LowRes_SQLite(
-        url=workflow_params.calibration_reference_path
-    )
+    fames_ref_sql = MetabRefGCInterface().get_fames(format="sql")
 
     # Compute RT:RI pairs
     rt_ri_pairs = get_rt_ri_pairs(gcms_cal_obj, sql_obj=fames_ref_sql)
@@ -360,9 +354,6 @@ def workflow_worker(args):
     # Unpack arguments
     file_path, ref_dict, corems_params_file, cal_file_path = args
 
-    # Load CoreMS parameters
-    corems_parameters = load_corems_parameters(corems_params_file)
-
     # Load data
     gcms = get_gcms(file_path, corems_params_file)
 
@@ -370,9 +361,7 @@ def workflow_worker(args):
     gcms.calibrate_ri(ref_dict, cal_file_path)
 
     # Load reference database
-    ref_db_sql = EI_LowRes_SQLite(
-        url=corems_parameters["MolecularSearch"]["url_database"]
-    )
+    ref_db_sql = MetabRefGCInterface().get_library(format="sql")
 
     # Perform search
     lowResSearch = LowResMassSpectralMatch(gcms, sql_obj=ref_db_sql)

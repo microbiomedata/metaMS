@@ -13,7 +13,6 @@ workflow gcmsMetabolomics {
 task runMetaMSGCMS {
     input {
         Array[File] file_paths
-        File calibration_reference_path
         File calibration_file_path
         String output_directory
         String output_filename
@@ -26,7 +25,6 @@ task runMetaMSGCMS {
     command {
         metaMS run-gcms-wdl-workflow \
             ${sep=',' file_paths} \
-            ${calibration_reference_path} \
             ${calibration_file_path} \
             ${output_directory} \
             ${output_filename} \

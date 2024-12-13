@@ -1,5 +1,4 @@
 file_paths = [  "data/raw_data/GCMS_FAMES_01_GCMS-01_20191023.cdf", "data/raw_data/GCMS_FAMES_01_GCMS-01_20191023.cdf"]
-calibration_reference_path = "sqlite:///db/MetabRef_FAMEs_EILowRes_20240816.db"
 calibration_file_path = "data/raw_data/GCMS_FAMES_01_GCMS-01_20191023.cdf"
 corems_toml_path = "configuration/gcms_corems.toml"
 nmdc_metadata_path = "configuration/nmdc_metadata.json"
