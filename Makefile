@@ -17,14 +17,29 @@ mem:
 major:
 	
 	@bumpversion major --allow-dirty
+	@bumpversion major --allow-dirty --config-file .bumpversion_lipid.cfg
 
 minor:
 	
 	@bumpversion minor --allow-dirty
+	@bumpversion minor --allow-dirty --config-file .bumpversion_lipid.cfg
 
 patch:
 	
 	@bumpversion patch --allow-dirty
+	@bumpversion patch --allow-dirty --config-file .bumpversion_lipid.cfg
+
+bump_lipid_major:
+	
+	@bumpversion major --allow-dirty --config-file .bumpversion_lipid.cfg
+
+bump_lipid_minor:
+	
+	@bumpversion minor --allow-dirty --config-file .bumpversion_lipid.cfg
+
+bump_lipid_patch:
+	
+	@bumpversion patch --allow-dirty --config-file .bumpversion_lipid.cfg
 
 install:
 	@source venv/bin/activate
