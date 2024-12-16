@@ -69,7 +69,6 @@ def worker(args):
 
 def run_gcms_metabolomics_workflow_wdl(
     file_paths,
-    calibration_reference_path,
     calibration_file_path,
     output_directory,
     output_filename,
