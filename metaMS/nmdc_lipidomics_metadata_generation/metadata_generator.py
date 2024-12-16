@@ -57,8 +57,6 @@ class WorkflowMetadata:
         Directory containing processed data files.
     raw_data_file : str
         Path or name of the raw data file.
-    raw_data_object_alt_id : str
-        Alternative identifier for the raw data object.
     mass_spec_config_name : str
         Name of the mass spectrometry configuration used.
     lc_config_name : str
@@ -74,7 +72,6 @@ class WorkflowMetadata:
     """
     processed_data_dir: str
     raw_data_file: str
-    raw_data_object_alt_id: str
     mass_spec_config_name: str
     lc_config_name: str
     instrument_used: str
@@ -302,7 +299,6 @@ class MetadataGenerator:
                     description=self.raw_data_obj_desc,
                     base_url=self.raw_data_url,
                     was_generated_by=mass_spec.id,
-                    alternative_id=workflow_metadata_obj.raw_data_object_alt_id
                 )
 
                 metab_analysis = self.generate_metabolomics_analysis(
@@ -397,7 +393,7 @@ class MetadataGenerator:
         FileNotFoundError
             If the `metadata_file` does not exist.
         ValueError
-            If values in columns 'Raw Data File', 'Raw Data Object Alt Id',
+            If values in columns 'Raw Data File',
             and 'Processed Data Directory' are not unique.
 
         Notes
@@ -413,7 +409,6 @@ class MetadataGenerator:
         # Check for uniqueness in specified columns
         columns_to_check = [
             'Raw Data File',
-            'Raw Data Object Alt Id',
             'Processed Data Directory'
         ]
         for column in columns_to_check:
@@ -482,7 +477,6 @@ class MetadataGenerator:
         return WorkflowMetadata(
             processed_data_dir=row['Processed Data Directory'],
             raw_data_file=row['Raw Data File'],
-            raw_data_object_alt_id=row['Raw Data Object Alt Id'],
             mass_spec_config_name=row['mass spec configuration name'],
             lc_config_name=row['lc config name'],
             instrument_used=row['instrument used'],
