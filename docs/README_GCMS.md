@@ -13,7 +13,7 @@
 
 - Execution:  
   - [CLI](#execution)  
-  - [MiniWDL](#MiniWDL)  
+  - [MiniWDL](#miniwdl)  
   - [Docker Container](#metams-docker-container)  
 
 # MetaMS's GC/MS Metabolomics Workflow
@@ -21,11 +21,6 @@
 ## Current Version
 
 ### `2.2.3`
-
-## Available Workflows
-
-- GC/MS metabolomics workflow
-- LC/MS lipidomics workflow
 
 ### Data input formats
 
