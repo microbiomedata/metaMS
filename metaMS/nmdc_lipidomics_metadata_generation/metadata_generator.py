@@ -209,7 +209,7 @@ class MetadataGenerator:
             'processing institution'
         ]
         self.mass_spec_desc = (
-            "Analysis of raw mass spectrometry data for the annotation of lipids."
+            "Generation of mass spectrometry data for the analysis of lipids."
         )
         self.mass_spec_eluent_intro = "liquid_chromatography"
         self.analyte_category = "lipidome"
