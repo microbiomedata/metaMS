@@ -308,6 +308,7 @@ class MetadataGenerator:
                 metab_analysis = self.generate_metabolomics_analysis(
                     cluster_name=workflow_metadata_obj.execution_resource,
                     raw_data_name=Path(workflow_metadata_obj.raw_data_file).name,
+                    raw_data_id=raw_data_object.id,
                     data_gen_id=mass_spec.id,
                     processed_data_id="nmdc:placeholder",
                     processing_institution=group_metadata_obj.processing_institution
@@ -704,6 +705,7 @@ class MetadataGenerator:
         self,
         cluster_name: str,
         raw_data_name: str,
+        raw_data_id: str,
         data_gen_id: str,
         processed_data_id: str,
         processing_institution: str
@@ -720,6 +722,8 @@ class MetadataGenerator:
             Name of the cluster or computing resource used for the analysis.
         raw_data_name : str
             Name of the raw data file that was analyzed.
+        raw_data_id : str
+            ID of the raw data object that was analyzed.
         data_gen_id : str
             ID of the DataGeneration object that generated the raw data.
         processed_data_id : str
@@ -749,7 +753,7 @@ class MetadataGenerator:
             'git_url': self.workflow_git_url,
             'version': self.workflow_version,
             'was_informed_by': data_gen_id,
-            'has_input': [raw_data_name],
+            'has_input': [raw_data_id],
             'has_output': [processed_data_id],
             'started_at_time': 'placeholder',
             'ended_at_time': 'placeholder',
