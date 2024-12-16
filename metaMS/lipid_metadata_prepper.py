@@ -199,6 +199,12 @@ def get_lipid_library(
         fe_kwargs={},
 ):
 
+    # prepare the mz_list for searching against the database
+    mz_list = pd.DataFrame(mz_list, columns=['mz_obs'])
+    mz_list = mz_list.sort_values(by='mz_obs')
+    mz_list = mz_list.reset_index(drop=True)
+    mz_obs_arr = mz_list['mz_obs'].values
+
     # connect to the database
     conn = sqlite3.connect('/Users/heal742/LOCAL/05_NMDC/00_Lipid_Databse/lipid_db/lipid_ref.sqlite')
 
@@ -206,10 +212,14 @@ def get_lipid_library(
     mz_all = pd.read_sql_query("SELECT id, polarity, precursor_mz FROM lipidMassSpectrumObject", conn)
     mz_all = mz_all.sort_values(by='precursor_mz')
 
-    # filter by polarity
+    # filter by polarity and if there are any matches within mz_tol_ppm
     mz_subset = mz_all[mz_all['polarity'] == polarity].copy()
-    mz_subset['closest_mz'] = mz_all['precursor_mz'].apply(lambda x: mz_list[find_closest(np.array(mz_list), x)])
-    mz_subset['ppm_error'] = (mz_subset['precursor_mz'] - mz_subset['closest_mz']) / mz_subset['closest_mz'] * 1e6
+    mz_subset = mz_subset.sort_values(by='precursor_mz')
+    mz_subset = mz_subset.reset_index(drop=True)
+    mz_subset['closest_mz_obs'] = mz_obs_arr[
+        find_closest(mz_obs_arr, mz_subset.precursor_mz.values)
+    ]
+    mz_subset['ppm_error'] = (mz_subset['precursor_mz'] - mz_subset['closest_mz_obs']) / mz_subset['precursor_mz'] * 1e6
     mz_subset = mz_subset[np.abs(mz_subset['ppm_error']) <= mz_tol_ppm]
 
     # get the full lipidMassSpectrumObject table for the filtered ms2 ids
