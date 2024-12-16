@@ -6,6 +6,7 @@ from multiprocessing import Pool
 from typing import List
 import click
 import warnings
+import pandas as pd
 
 from corems.mass_spectra.input.mzml import MZMLSpectraParser
 from corems.mass_spectra.input.rawFileReader import ImportMassSpectraThermoMSFileReader
@@ -13,6 +14,8 @@ from corems.mass_spectra.output.export import LipidomicsExport
 from corems.encapsulation.input.parameter_from_json import (
     load_and_set_toml_parameters_lcms,
 )
+
+from metaMS.lipid_metadata_prepper import get_lipid_library
 
 @dataclass
 class LipidomicsWorkflowParameters:
@@ -42,15 +45,12 @@ class LipidomicsWorkflowParameters:
     metabref_token_path: str = None
     scan_translator_path: str = None
     cores: int = 1
+    #TODO KRH: Add a parameter for the location of the sqlite database
 
 def check_lipidomics_workflow_params(lipid_workflow_params):
     # Check that corems_toml_path exists
     if not Path(lipid_workflow_params.corems_toml_path).exists():
         raise FileNotFoundError("Corems toml file not found, exiting workflow")
-    
-    # Check that metabref_token_path exists
-    if not Path(lipid_workflow_params.metabref_token_path).exists():
-        raise FileNotFoundError("Metabref token file not found, exiting workflow")
     
     # Check that scan_translator_path exists
     if not Path(lipid_workflow_params.scan_translator_path).exists():
@@ -267,7 +267,91 @@ def run_lipid_sp_ms1(file_in, out_path, params_toml, scan_translator):
     )
     mz_dict = {myLCMSobj.polarity: precursor_mz_list}
     return mz_dict
-    # TODO KRH: Add signal processing and ms1 molecular search here
+
+def prep_metadata(mz_dicts, out_dir):
+    """Prepare metadata for ms2 spectral search
+
+    Parameters
+    ----------
+    mz_dicts : list of dicts
+        List of dicts with keys "positive" and "negative" and values of lists of precursor mzs
+    out_dir : Path
+        Path to output directory
+
+    Returns
+    -------
+    metadata : dict
+        Dict with keys "mzs", "fe", and "molecular_metadata" with values of dicts of precursor mzs (negative and positive), flash entropy search databases (negative and positive), and molecular metadata, respectively
+
+    Notes
+    -------
+    Also writes out files for the flash entropy search databases and molecular metadata
+    """
+    metadata = {
+        "mzs": {"positive": None, "negative": None},
+        "fe": {"positive": None, "negative": None},
+        "molecular_metadata": {},
+    }
+    for d in mz_dicts:
+        metadata["mzs"].update(d)
+
+    print("Preparing negative lipid library")
+
+    if metadata["mzs"]["negative"] is not None:
+        metabref_negative, lipidmetadata_negative = get_lipid_library(
+            mz_list=metadata["mzs"]["negative"],
+            polarity="negative",
+            mz_tol_ppm=5,
+            format="flashentropy",
+            normalize=True,
+            fe_kwargs={
+                "normalize_intensity": True,
+                "min_ms2_difference_in_da": 0.02,  # for cleaning spectra
+                "max_ms2_tolerance_in_da": 0.01,  # for setting search space
+                "max_indexed_mz": 3000,
+                "precursor_ions_removal_da": None,
+                "noise_threshold": 0,
+            },
+        )
+        metadata["fe"]["negative"] = metabref_negative
+        metadata["molecular_metadata"].update(lipidmetadata_negative)
+        fe_negative_df = pd.DataFrame.from_dict(
+            {k: v for k, v in enumerate(metadata["fe"]["negative"])}, orient="index"
+        )
+        fe_negative_df.to_csv(out_dir / "ms2_db_negative.csv")
+    
+    print("Preparing positive lipid library")
+    if metadata["mzs"]["positive"] is not None:
+        metabref_positive, lipidmetadata_positive = get_lipid_library(
+            mz_list=metadata["mzs"]["positive"],
+            polarity="positive",
+            mz_tol_ppm=5,
+            format="flashentropy",
+            normalize=True,
+            fe_kwargs={
+                "normalize_intensity": True,
+                "min_ms2_difference_in_da": 0.02,  # for cleaning spectra
+                "max_ms2_tolerance_in_da": 0.01,  # for setting search space
+                "max_indexed_mz": 3000,
+                "precursor_ions_removal_da": None,
+                "noise_threshold": 0,
+            },
+        )
+        metadata["fe"]["positive"] = metabref_positive
+        metadata["molecular_metadata"].update(lipidmetadata_positive)
+        fe_positive_df = pd.DataFrame.from_dict(
+            {k: v for k, v in enumerate(metadata["fe"]["positive"])}, orient="index"
+        )
+        fe_positive_df.to_csv(out_dir / "ms2_db_positive.csv")
+
+    mol_metadata_df = pd.concat(
+        [
+            pd.DataFrame.from_dict(v.__dict__, orient="index").transpose()
+            for k, v in metadata["molecular_metadata"].items()
+        ],
+        ignore_index=True,
+    )
+    mol_metadata_df.to_csv(out_dir / "molecular_metadata.csv")
 
 def run_lcms_lipidomics_workflow(
     lipidomics_workflow_paramaters_file=None,
@@ -304,13 +388,14 @@ def run_lcms_lipidomics_workflow(
     files_list = list(file_paths)
     out_paths_list = [out_dir / f.stem for f in files_list]
     
-    # Run signal processing, get associated ms1, add associated ms2, do ms1 molecular search, and export intermediate results
+    # Set the workflow parameters
     cores = lipid_workflow_params.cores
     params_toml = lipid_workflow_params.corems_toml_path
     scan_translator = lipid_workflow_params.scan_translator_path
 
-    click.echo("Starting lipidomics workflow for " + str(len(files_list)) + " files, using " +  str(cores) + " core(s)")
+    click.echo("Starting lipidomics workflow for " + str(len(files_list)) + " file(s), using " +  str(cores) + " core(s)")
     
+    # Run signal processing, get associated ms1, add associated ms2, do ms1 molecular search, and export intermediate results
     if cores == 1 or len(files_list) == 1:
         mz_dicts = []
         for file_in, file_out in list(zip(files_list, out_paths_list)):
@@ -335,5 +420,13 @@ def run_lcms_lipidomics_workflow(
         mz_dicts = pool.starmap(run_lipid_sp_ms1, args)
         pool.close()
         pool.join()
+    
+    # Prepare metadata for searching
+    prep_metadata(mz_dicts, out_dir)
     print("Finished processing all files")
     # TODO KRH: Add full lipidomics workflow here
+
+if __name__ == "__main__":
+    run_lcms_lipidomics_workflow(
+        lipidomics_workflow_paramaters_file="configuration/lipidomics_metams.toml"
+    )
