@@ -10,12 +10,13 @@ import pandas as pd
 
 from corems.mass_spectra.input.mzml import MZMLSpectraParser
 from corems.mass_spectra.input.rawFileReader import ImportMassSpectraThermoMSFileReader
+from corems.mass_spectra.input.corems_hdf5 import ReadCoreMSHDFMassSpectra
 from corems.mass_spectra.output.export import LipidomicsExport
 from corems.encapsulation.input.parameter_from_json import (
     load_and_set_toml_parameters_lcms,
 )
 
-from metaMS.lipid_metadata_prepper import get_lipid_library
+from metaMS.lipid_metadata_prepper import get_lipid_library, _to_flashentropy
 
 @dataclass
 class LipidomicsWorkflowParameters:
@@ -353,6 +354,109 @@ def prep_metadata(mz_dicts, out_dir):
     )
     mol_metadata_df.to_csv(out_dir / "molecular_metadata.csv")
 
+    return metadata
+
+def process_ms2(myLCMSobj, metadata, scan_translator):
+    """Process ms2 spectra and perform molecular search
+
+    Parameters
+    ----------
+    myLCMSobj : corems LCMS object
+        LCMS object to process
+    metadata : dict
+        Dict with keys "mzs", "fe", and "molecular_metadata" with values of dicts of precursor mzs (negative and positive), flash entropy search databases (negative and positive), and molecular metadata, respectively
+
+    Returns
+    -------
+    None, processes the LCMS object
+    """
+    # Perform molecular search on ms2 spectra
+    # Grab fe from metatdata associated with polarity (this is inherently high resolution as its from a in-silico high res library)
+    fe_search = metadata["fe"][myLCMSobj.polarity]
+
+    scan_dictionary = load_scan_translator(scan_translator)
+    ms2_scan_df = myLCMSobj.scan_df[myLCMSobj.scan_df.ms_level == 2]
+
+    # Process high resolution MS2 scans
+    # Collect all high resolution MS2 scans using the scan translator
+    ms2_scans_oi_hr = []
+    for param_key in scan_dictionary.keys():
+        if scan_dictionary[param_key]["resolution"] == "high":
+            scan_filter = scan_dictionary[param_key]["scan_filter"]
+            if scan_filter is not None:
+                ms2_scan_df_hr = ms2_scan_df[
+                    ms2_scan_df.scan_text.str.contains(scan_filter)
+                ]
+            else:
+                ms2_scan_df_hr = ms2_scan_df
+            ms2_scans_oi_hr_i = [
+                x for x in ms2_scan_df_hr.scan.tolist() if x in myLCMSobj._ms.keys()
+            ]
+            ms2_scans_oi_hr.extend(ms2_scans_oi_hr_i)
+    # Perform search on high res scans
+    if len(ms2_scans_oi_hr) > 0:
+        myLCMSobj.fe_search(
+            scan_list=ms2_scans_oi_hr, fe_lib=fe_search, peak_sep_da=0.01
+        )
+
+    # Process low resolution MS2 scans
+    # Collect all low resolution MS2 scans using the scan translator
+    ms2_scans_oi_lr = []
+    for param_key in scan_dictionary.keys():
+        if scan_dictionary[param_key]["resolution"] == "low":
+            scan_filter = scan_dictionary[param_key]["scan_filter"]
+            if scan_filter is not None:
+                ms2_scan_df_lr = ms2_scan_df[
+                    ms2_scan_df.scan_text.str.contains(scan_filter)
+                ]
+            else:
+                ms2_scan_df_lr = ms2_scan_df
+            ms2_scans_oi_lri = [
+                x for x in ms2_scan_df_lr.scan.tolist() if x in myLCMSobj._ms.keys()
+            ]
+            ms2_scans_oi_lr.extend(ms2_scans_oi_lri)
+    # Perform search on low res scans
+    if len(ms2_scans_oi_lr) > 0:
+        # Recast the flashentropy search database to low resolution
+        fe_search_lr = _to_flashentropy(
+            metabref_lib=fe_search,
+            normalize=True,
+            fe_kwargs={
+                "normalize_intensity": True,
+                "min_ms2_difference_in_da": 0.4,
+                "max_ms2_tolerance_in_da": 0.2,
+                "max_indexed_mz": 3000,
+                "precursor_ions_removal_da": None,
+                "noise_threshold": 0,
+            },
+        )
+        myLCMSobj.fe_search(
+            scan_list=ms2_scans_oi_lr, fe_lib=fe_search_lr, peak_sep_da=0.3
+        )
+
+def run_lipid_ms2(out_path, metadata, scan_translator=None):
+    """Run ms2 spectral search and export final results
+
+    Parameters
+    ----------
+    out_path : str or Path
+        Path to output file
+    metadata : dict
+        Dict with keys "mzs", "fe", and "molecular_metadata" with values of dicts of precursor mzs (negative and positive), flash entropy search databases (negative and positive), and molecular metadata, respectively
+
+    Returns
+    -------
+    None, runs ms2 spectral search and exports final results
+    """
+    # Read in the intermediate results
+    out_path_hdf5 = str(out_path) + ".corems/" + out_path.stem + ".hdf5"
+    parser = ReadCoreMSHDFMassSpectra(out_path_hdf5)
+    myLCMSobj = parser.get_lcms_obj()
+
+    # Process ms2 spectra, perform spectral search, and export final results
+    process_ms2(myLCMSobj, metadata, scan_translator=scan_translator)
+    export_results(myLCMSobj, str(out_path), metadata["molecular_metadata"], final=True)
+
 def run_lcms_lipidomics_workflow(
     lipidomics_workflow_paramaters_file=None,
     file_paths=None,
@@ -422,9 +526,21 @@ def run_lcms_lipidomics_workflow(
         pool.join()
     
     # Prepare metadata for searching
-    prep_metadata(mz_dicts, out_dir)
-    print("Finished processing all files")
-    # TODO KRH: Add full lipidomics workflow here
+    metadata = prep_metadata(mz_dicts, out_dir)
+    
+    # Run ms2 spectral search and export final results
+    click.echo("Starting ms2 spectral search and exporting final results")
+    if cores == 1 or len(files_list) == 1:
+        for file_out in out_paths_list:
+            mz_dicts = run_lipid_ms2(
+                file_out, metadata, scan_translator=scan_translator
+            )
+    elif cores > 1:
+        pool = Pool(cores)
+        args = [(file_out, metadata, scan_translator) for file_out in out_paths_list]
+        mz_dicts = pool.starmap(run_lipid_ms2, args)
+        pool.close()
+        pool.join()
 
 if __name__ == "__main__":
     run_lcms_lipidomics_workflow(

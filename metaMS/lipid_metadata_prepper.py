@@ -223,7 +223,8 @@ def get_lipid_library(
     lipid_tree = pd.read_sql_query(f"SELECT * FROM lipidTree WHERE id IN {mol_ids}", conn)
 
     # convert molecular data to dictionary of LipidMetadata objects, with mol_id as key
-    lipid_tree = lipid_tree.set_index('id')
+    lipid_tree['id_index'] = lipid_tree['id']
+    lipid_tree = lipid_tree.set_index('id_index')
     lipid_tree = lipid_tree.to_dict(orient='index')
     lipid_metadata = {
             k: _dict_to_dataclass(v, LipidMetadata)
@@ -231,8 +232,8 @@ def get_lipid_library(
         }
 
     # convert ms2 data to flashentropy library
-    mz_subset_full = mz_subset_full.to_dict(orient='records')
-    fe_lib = _to_flashentropy(mz_subset_full, normalize=normalize)
+    mz_subset_full_dict = mz_subset_full.to_dict(orient='records')
+    fe_lib = _to_flashentropy(mz_subset_full_dict, normalize=normalize, fe_kwargs=fe_kwargs)
 
     # close the connection
     conn.close()
