@@ -1,7 +1,15 @@
+:github_url: https://github.com/microbiomedata/metaMS/blob/master/docs/index_lipid.rst
+
+..
+   Note: The above `github_url` field is used to force the target of the "Edit on GitHub" link
+         to be the specified URL. That makes it so the link will work, regardless of the Sphinx
+         site the file is incorporated into. You can learn more about the `github_url` field at:
+         https://sphinx-rtd-theme.readthedocs.io/en/stable/configuring.html#confval-github_url
+
 Lipidomics Workflow (v1.0.0)
 ============================
 
-.. figure:: lipid_workflow_v1.png
+.. figure:: lipid_workflow_v1.svg
    :alt: diagram of lipid workflow
 
 Workflow Overview
@@ -60,7 +68,8 @@ Database
    (https://metabref.emsl.pnnl.gov/)
 
 The in-silico lipid spectra in PNNL's Metaref database are generated from the LipidBlast database (v68), found at https://systemsomicslab.github.io/compms/msdial/main.html.
-Note that there is no retention time in the PNNL version of the database and the workflow does not use retention time scoring.
+Note that there is no retention time in the PNNL version of the database and the workflow does not use retention time scoring.  
+Currently the workflow uses a local copy of the database, but the database is available by request.
 
 Sample datasets
 ---------------
@@ -95,7 +104,7 @@ The following inputs are required (declared in the input json file):
 -  Workflow inputs
    -  CoreMS Parameter file (.toml)
    -  Scan Translator Parameter file (.toml)
-   -  MetabRef configuration key (metabref.token). See MetabRef documentation (https://metabref.emsl.pnnl.gov/api) for how to generate a token.
+   -  Path to local MetabRef database (.sqlite)
 -  Cores (optional input)
    -  How many cores to use for processing. Default is 1.
 

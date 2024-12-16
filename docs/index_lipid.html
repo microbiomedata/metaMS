@@ -1,6 +1,13 @@
+<dl>
+<dt>github_url</dt>
+<dd>
+<p><a
+href="https://github.com/microbiomedata/metaMS/blob/master/docs/index_lipid.rst">https://github.com/microbiomedata/metaMS/blob/master/docs/index_lipid.rst</a></p>
+</dd>
+</dl>
 <h1 id="lipidomics-workflow-v1.0.0">Lipidomics Workflow (v1.0.0)</h1>
 <figure>
-<img src="lipid_workflow_v1.png" alt="lipid_workflow_v1.png" />
+<img src="lipid_workflow_v1.svg" alt="lipid_workflow_v1.svg" />
 </figure>
 <h2 id="workflow-overview">Workflow Overview</h2>
 <p>The liquid chromatography-mass spectrometry (LC-MS)-based lipidomics
@@ -51,7 +58,9 @@ href="https://metabref.emsl.pnnl.gov/">https://metabref.emsl.pnnl.gov/</a>)</li>
 from the LipidBlast database (v68), found at <a
 href="https://systemsomicslab.github.io/compms/msdial/main.html">https://systemsomicslab.github.io/compms/msdial/main.html</a>.
 Note that there is no retention time in the PNNL version of the database
-and the workflow does not use retention time scoring.</p>
+and the workflow does not use retention time scoring. Currently the
+workflow uses a local copy of the database, but the database is
+available by request.</p>
 <h2 id="sample-datasets">Sample datasets</h2>
 <ul>
 <li>An example dataset can be downloaded from here: <a
@@ -82,10 +91,7 @@ file):</p>
 <ul>
 <li>CoreMS Parameter file (.toml)</li>
 <li>Scan Translator Parameter file (.toml)</li>
-<li>MetabRef configuration key (metabref.token). See MetabRef
-documentation (<a
-href="https://metabref.emsl.pnnl.gov/api">https://metabref.emsl.pnnl.gov/api</a>)
-for how to generate a token.</li>
+<li>Path to local MetabRef database (.sqlite)</li>
 </ul></li>
 <li>Cores (optional input)
 <ul>

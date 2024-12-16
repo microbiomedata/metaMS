@@ -1,6 +1,10 @@
+github_url
+
+:   <https://github.com/microbiomedata/metaMS/blob/master/docs/index_lipid.rst>
+
 # Lipidomics Workflow (v1.0.0)
 
-![](lipid_workflow_v1.png)
+![](lipid_workflow_v1.svg)
 
 ## Workflow Overview
 
@@ -60,7 +64,9 @@ The in-silico lipid spectra in PNNL\'s Metaref database are generated
 from the LipidBlast database (v68), found at
 <https://systemsomicslab.github.io/compms/msdial/main.html>. Note that
 there is no retention time in the PNNL version of the database and the
-workflow does not use retention time scoring.
+workflow does not use retention time scoring. Currently the workflow
+uses a local copy of the database, but the database is available by
+request.
 
 ## Sample datasets
 
@@ -95,9 +101,7 @@ The following inputs are required (declared in the input json file):
 -   Workflow inputs
     -   CoreMS Parameter file (.toml)
     -   Scan Translator Parameter file (.toml)
-    -   MetabRef configuration key (metabref.token). See MetabRef
-        documentation (<https://metabref.emsl.pnnl.gov/api>) for how to
-        generate a token.
+    -   Path to local MetabRef database (.sqlite)
 -   Cores (optional input)
     -   How many cores to use for processing. Default is 1.
 
