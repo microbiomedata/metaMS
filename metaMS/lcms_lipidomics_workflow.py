@@ -5,7 +5,6 @@ import datetime
 from multiprocessing import Pool
 
 from corems.mass_spectra.input.mzml import MZMLSpectraParser
-from corems.mass_spectra.input.rawFileReader import ImportMassSpectraThermoMSFileReader
 
 @dataclass
 class LipidomicsWorkflowParameters:
@@ -55,7 +54,7 @@ def instantiate_lcms_obj(file_in):
     # Instantiate parser based on binary file type
     if ".raw" in str(file_in):
         #TODO KRH: Add real functionality here
-        pass
+        from corems.mass_spectra.input.rawFileReader import ImportMassSpectraThermoMSFileReader
         #parser = ImportMassSpectraThermoMSFileReader(file_in)
 
     if ".mzML" in str(file_in):
