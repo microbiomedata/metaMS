@@ -7,6 +7,7 @@ from typing import List
 import click
 import warnings
 import pandas as pd
+import gc
 
 from corems.mass_spectra.input.mzml import MZMLSpectraParser
 from corems.mass_spectra.input.rawFileReader import ImportMassSpectraThermoMSFileReader
@@ -246,7 +247,6 @@ def export_results(myLCMSobj, out_path, molecular_metadata=None, final=False):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             exporter.report_to_csv()
-
 
 def run_lipid_sp_ms1(file_in, out_path, params_toml, scan_translator):
     time_start = datetime.datetime.now()
@@ -498,7 +498,8 @@ def run_lcms_lipidomics_workflow(
     scan_translator = lipid_workflow_params.scan_translator_path
 
     click.echo("Starting lipidomics workflow for " + str(len(files_list)) + " file(s), using " +  str(cores) + " core(s)")
-    
+    gc.collect()
+
     # Run signal processing, get associated ms1, add associated ms2, do ms1 molecular search, and export intermediate results
     if cores == 1 or len(files_list) == 1:
         mz_dicts = []
@@ -511,22 +512,23 @@ def run_lcms_lipidomics_workflow(
             )
             mz_dicts.append(mz_dict)
     elif cores > 1:
-        pool = Pool(cores)
-        args = [
-            (
-                str(file_in),
-                str(file_out),
-                params_toml,
-                scan_translator,
-            )
-            for file_in, file_out in list(zip(files_list, out_paths_list))
-        ]
-        mz_dicts = pool.starmap(run_lipid_sp_ms1, args)
-        pool.close()
-        pool.join()
-    
+        with Pool(cores) as pool:
+            args = [
+                (
+                    str(file_in),
+                    str(file_out),
+                    params_toml,
+                    scan_translator,
+                )
+                for file_in, file_out in zip(files_list, out_paths_list)
+            ]
+            mz_dicts = pool.starmap(run_lipid_sp_ms1, args)
+    gc.collect() 
+        
     # Prepare metadata for searching
     metadata = prep_metadata(mz_dicts, out_dir)
+    del mz_dicts
+    gc.collect()
     
     # Run ms2 spectral search and export final results
     click.echo("Starting ms2 spectral search and exporting final results")
@@ -536,11 +538,11 @@ def run_lcms_lipidomics_workflow(
                 file_out, metadata, scan_translator=scan_translator
             )
     elif cores > 1:
-        pool = Pool(cores)
-        args = [(file_out, metadata, scan_translator) for file_out in out_paths_list]
-        mz_dicts = pool.starmap(run_lipid_ms2, args)
-        pool.close()
-        pool.join()
+        with Pool(cores) as pool:
+            args = [(file_out, metadata, scan_translator) for file_out in out_paths_list]
+            pool.starmap(run_lipid_ms2, args)
+
+    gc.collect()
 
 if __name__ == "__main__":
     run_lcms_lipidomics_workflow(
