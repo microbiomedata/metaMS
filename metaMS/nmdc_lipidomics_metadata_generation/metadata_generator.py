@@ -742,7 +742,8 @@ class MetadataGenerator:
         placeholder values and should be updated with actual timestamps later
         when the processed files are iterated over in the run method.
         """
-        nmdc_id = self.mint_nmdc_id(nmdc_type=NmdcTypes.MetabolomicsAnalysis)[0]
+        nmdc_id = self.mint_nmdc_id(nmdc_type=NmdcTypes.MetabolomicsAnalysis)[0]+".1"
+        #TODO: Update the minting to handle versioning in the future
 
         data_dict = {
             'id': nmdc_id,
