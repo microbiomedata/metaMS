@@ -65,7 +65,9 @@ Software
 
 Database
 ~~~~~~~~~~~~~~~~
-- PNNL Metabolomics GC-MS Spectral Database
+- PNNL Internal Metabolomics GC-MS Spectral Database, version 20191015
+- Test database provided at db/EMSL_lowres_gcms_test_database.sqlite
+- Database will be provided via an API in FY25
 
 Test datasets
 -------------
