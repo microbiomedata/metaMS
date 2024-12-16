@@ -13,6 +13,7 @@ from corems.mass_spectra.input.mzml import MZMLSpectraParser
 from corems.mass_spectra.input.rawFileReader import ImportMassSpectraThermoMSFileReader
 from corems.mass_spectra.input.corems_hdf5 import ReadCoreMSHDFMassSpectra
 from corems.mass_spectra.output.export import LipidomicsExport
+from corems.molecular_id.search.molecularFormulaSearch import SearchMolecularFormulas
 from corems.encapsulation.input.parameter_from_json import (
     load_and_set_toml_parameters_lcms,
 )
@@ -220,6 +221,45 @@ def add_mass_features(myLCMSobj, scan_translator):
             spectrum_mode="centroid", ms_params_key=param_key, scan_filter=scan_filter
         )
 
+def molecular_formula_search(myLCMSobj):
+    """Perform molecular search on ms1 spectra
+
+    Parameters
+    ----------
+    myLCMSobj : corems LCMS object
+        LCMS object to process
+
+    Returns
+    -------
+    None, processes the LCMS object
+    """
+    i = 1
+    # get df of mass features
+    mf_df = myLCMSobj.mass_features_to_df()
+
+    # search molecular formulas for each mass features that are the deconvoluted parent and have a ms2
+    mf_searched = []
+    for mf_id in mf_df.index:
+        if myLCMSobj.mass_features[mf_id].mass_spectrum_deconvoluted_parent:
+            if len(myLCMSobj.mass_features[mf_id].ms2_scan_numbers) > 0:
+                if mf_id not in mf_searched:
+                    if i > 5:  # TODO KRH: remove this when ready
+                        break
+
+                    scan = myLCMSobj.mass_features[mf_id].apex_scan
+                    # Search single spectrum for all peaks that correspond to the same scan
+                    mf_df_scan = mf_df[mf_df.apex_scan == scan]
+                    peaks_to_search = [
+                        myLCMSobj.mass_features[x].ms1_peak for x in mf_df_scan.index.tolist()
+                    ]
+                    SearchMolecularFormulas(
+                        myLCMSobj._ms[scan],
+                        first_hit=False,
+                        find_isotopologues=True,
+                    ).run_worker_ms_peaks(peaks_to_search)
+                    mf_searched.extend(mf_df_scan.index.tolist())
+                    i += 1
+
 def export_results(myLCMSobj, out_path, molecular_metadata=None, final=False):
     """Export results to hdf5 and csv as a lipid report
 
@@ -249,13 +289,12 @@ def export_results(myLCMSobj, out_path, molecular_metadata=None, final=False):
             exporter.report_to_csv()
 
 def run_lipid_sp_ms1(file_in, out_path, params_toml, scan_translator):
-    time_start = datetime.datetime.now()
     myLCMSobj = instantiate_lcms_obj(file_in)           
     set_params_on_lcms_obj(myLCMSobj, params_toml)
     check_scan_translator(myLCMSobj, scan_translator)
     add_mass_features(myLCMSobj, scan_translator)
     myLCMSobj.remove_unprocessed_data()
-    #TODO KRH: add molecular search here
+    molecular_formula_search(myLCMSobj)
     export_results(myLCMSobj, out_path=out_path, final=False)
     precursor_mz_list = list(
         set(
@@ -480,7 +519,7 @@ def run_lcms_lipidomics_workflow(
             cores=cores,
         )
     
-    # Make output dir and get list of files to process
+    # Make output dir
     out_dir = Path(lipid_workflow_params.output_directory)
     out_dir.mkdir(parents=True, exist_ok=True)
 

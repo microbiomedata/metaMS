@@ -207,6 +207,7 @@ def get_lipid_library(
 
     # connect to the database
     conn = sqlite3.connect('/Users/heal742/LOCAL/05_NMDC/00_Lipid_Databse/lipid_db/lipid_ref.sqlite')
+    #TODO KRH: change path to a parameter
 
     # read in lipidMassSpectrumObject, get only id, polarity, and precursor_mz
     mz_all = pd.read_sql_query("SELECT id, polarity, precursor_mz FROM lipidMassSpectrumObject", conn)
