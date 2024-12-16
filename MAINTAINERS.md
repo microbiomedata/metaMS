@@ -3,7 +3,7 @@
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [Setting Up the Development Environment](#setting-up-the-development-environment)
-3. [Pushing Docker Images](#pushing-docker-images)
+3. [Pushing New Docker Image](#pushing-updated-docker-image)
 4. [Generating Documentation](#generating-documentation)
 5. [Bumping Version Numbers](#bumping-version-numbers)
 
@@ -55,7 +55,8 @@ To bump *both* the repo and the lipid workflow, run one of the following command
 ### Generate Documentation
 Documentation of the two workflows can be found the docs folder of this repo.
 
-For the lipidomics workflow, edit only the `docs/index_lipid.rst` file.  Once changes are made there, re-render the `docs/index_lipid.html` and the `docs/README_LCMS_LIPID.md` with the following command.  This should happen after the version numbers are bumped.
+For the lipidomics workflow, edit only the `docs/index_lipid.rst` file.  Once changes are made there, re-render the `docs/index_lipid.html` and the `docs/README_LCMS_LIPID.md` with the following command.  **This should happen after the version numbers are bumped.**
+
     ```sh
     make convert_lipid_rst_to_md
     ```

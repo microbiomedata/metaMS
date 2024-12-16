@@ -1,5 +1,5 @@
 # Table of Contents  
-  - [MetaMS](#MetaMS)  
+  - [MetaMS](#metams)  
   - [Version](#current-version)  
   - [Available Workflows](#available-workflows)
   - [Disclaimer](#disclaimer)
