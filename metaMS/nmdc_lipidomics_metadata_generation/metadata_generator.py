@@ -381,7 +381,7 @@ class MetadataGenerator:
         Load and group workflow metadata from a CSV file.
 
         This method reads the metadata CSV file, checks for uniqueness in
-        specified columns, and groups the data by biosample ID.
+        specified columns, checks that biosamples exist, and groups the data by biosample ID.
 
         Returns
         -------
@@ -414,6 +414,13 @@ class MetadataGenerator:
         for column in columns_to_check:
             if not metadata_df[column].is_unique:
                 raise ValueError(f"Duplicate values found in column '{column}'.")
+            
+        # Check that all biosamples exist
+        biosample_ids = metadata_df['Biosample Id'].unique()
+        api_biosample_getter = ApiInfoRetriever(collection_name="biosample_set")
+
+        if not api_biosample_getter.check_if_ids_exist(biosample_ids):
+            raise ValueError("Biosample IDs do not exist in the collection.")
 
         # Group by Biosample
         grouped = metadata_df.groupby('Biosample Id')
