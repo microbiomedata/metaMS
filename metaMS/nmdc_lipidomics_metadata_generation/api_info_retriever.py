@@ -1,6 +1,7 @@
 import requests
 from dataclasses import dataclass
 
+
 class ApiInfoRetriever:
     """
     A class to retrieve API information from a specified collection.
@@ -61,13 +62,13 @@ class ApiInfoRetriever:
         filter_param = f'{{"name": "{name_field_value}"}}'
         field = "id"
 
-        og_url = f'https://api.microbiomedata.org/nmdcschema/{self.collection_name}?&filter={filter_param}&projection={field}'
-        
+        og_url = f"https://api.microbiomedata.org/nmdcschema/{self.collection_name}?&filter={filter_param}&projection={field}"
+
         try:
             resp = requests.get(og_url)
             resp.raise_for_status()  # Raises an HTTPError for bad responses
             data = resp.json()
-            identifier = data['resources'][0]['id']
+            identifier = data["resources"][0]["id"]
             return identifier
         except requests.RequestException as e:
             raise requests.RequestException(f"Error making API request: {e}")
@@ -98,15 +99,14 @@ class ApiInfoRetriever:
         ids_test = list(set(ids))
         ids_test = [id.replace('"', "'") for id in ids_test]
         ids_test_str = ", ".join(f'"{id}"' for id in ids_test)
-        match_id_field = "id"  # Replace with the actual field name if different
-        filter_param = f'{{"{match_id_field}": {{"$in": [{ids_test_str}]}}}}'
-        og_url = f'https://api.microbiomedata.org/nmdcschema/{self.collection_name}?&filter={filter_param}&projection={match_id_field}'
-        
+        filter_param = f'{{"id": {{"$in": [{ids_test_str}]}}}}'
+        og_url = f"https://api.microbiomedata.org/nmdcschema/{self.collection_name}?&filter={filter_param}&projection=id"
+
         try:
             resp = requests.get(og_url)
             resp.raise_for_status()  # Raises an HTTPError for bad responses
             data = resp.json()
-            if not len(data['resources']) != len(ids_test):
+            if not len(data["resources"]) != len(ids_test):
                 return False
         except requests.RequestException as e:
             raise requests.RequestException(f"Error making API request: {e}")
