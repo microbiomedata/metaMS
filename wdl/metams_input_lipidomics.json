@@ -4,7 +4,7 @@
     ],
     "lcmsLipidomics.runMetaMSLCMSLipidomics.output_directory": "output",
     "lcmsLipidomics.runMetaMSLCMSLipidomics.corems_toml_path": "./configuration/lipid_configs/emsl_lipidomics_corems_params.toml",
-    "lcmsLipidomics.runMetaMSLCMSLipidomics.metabref_token_path": "./configuration/gcms_corems.toml",
+    "lcmsLipidomics.runMetaMSLCMSLipidomics.db_location": "",
     "lcmsLipidomics.runMetaMSLCMSLipidomics.scan_translator_path": "./configuration/lipid_configs/emsl_lipidomics_scan_translator.toml",
     "lcmsLipidomics.runMetaMSLCMSLipidomics.cores": 1
 }

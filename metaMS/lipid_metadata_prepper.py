@@ -123,6 +123,11 @@ def _to_flashentropy(metabref_lib, normalize=True, fe_kwargs={}):
             spectrum["mz"], normalize=normalize
         )
 
+        # Cast "fragment_types" to a list (if present and not already a list)
+        if "fragment_types" in spectrum.keys():
+            if not isinstance(spectrum["fragment_types"], list):
+                spectrum["fragment_types"] = spectrum["fragment_types"].split(",")
+
         # Add spectrum to library
         fe_lib.append(spectrum)
 
@@ -191,6 +196,7 @@ def _dict_to_dataclass(metabref_lib, data_class):
     return data_class(**input_dict)
 
 def get_lipid_library(
+        db_location,
         mz_list,
         polarity,
         mz_tol_ppm,
@@ -206,8 +212,7 @@ def get_lipid_library(
     mz_obs_arr = mz_list['mz_obs'].values
 
     # connect to the database
-    conn = sqlite3.connect('/Users/heal742/LOCAL/05_NMDC/00_Lipid_Databse/lipid_db/lipid_ref.sqlite')
-    #TODO KRH: change path to a parameter
+    conn = sqlite3.connect(db_location)
 
     # read in lipidMassSpectrumObject, get only id, polarity, and precursor_mz
     mz_all = pd.read_sql_query("SELECT id, polarity, precursor_mz FROM lipidMassSpectrumObject", conn)

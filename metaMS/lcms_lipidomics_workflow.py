@@ -1,9 +1,7 @@
 from dataclasses import dataclass
 import toml
 from pathlib import Path
-import datetime
 from multiprocessing import Pool
-from typing import List
 import click
 import warnings
 import pandas as pd
@@ -13,12 +11,19 @@ from corems.mass_spectra.input.mzml import MZMLSpectraParser
 from corems.mass_spectra.input.rawFileReader import ImportMassSpectraThermoMSFileReader
 from corems.mass_spectra.input.corems_hdf5 import ReadCoreMSHDFMassSpectra
 from corems.mass_spectra.output.export import LipidomicsExport
-from corems.molecular_id.search.molecularFormulaSearch import SearchMolecularFormulas
+from corems.molecular_id.search.molecularFormulaSearch import SearchMolecularFormulasLC
 from corems.encapsulation.input.parameter_from_json import (
     load_and_set_toml_parameters_lcms,
 )
 
 from metaMS.lipid_metadata_prepper import get_lipid_library, _to_flashentropy
+
+# Suppress specific warning from the corems.mass_spectrum.input.massList module
+warnings.filterwarnings(
+    "ignore",
+    message="No isotopologue matched the formula_dict: {formula_dict}",
+    module="corems.mass_spectrum.input.massList"
+)
 
 @dataclass
 class LipidomicsWorkflowParameters:
@@ -33,9 +38,8 @@ class LipidomicsWorkflowParameters:
         The directory where the output files will be stored
     corems_toml_path : str
         The path to the corems configuration file
-    metabref_token_path : str
-        The path to the metabref token file
-        See https://metabref.emsl.pnnl.gov/api for more information for how to get a token
+    db_location : str
+        The path to the local sqlite database used for searching lipid ms2 spectra
     scan_translator_path : str
         The path to the scan translator file, optional
     cores : int
@@ -45,10 +49,9 @@ class LipidomicsWorkflowParameters:
     file_paths: tuple = ('data/...', 'data/...')
     output_directory: str = "output"
     corems_toml_path: str = None
-    metabref_token_path: str = None
+    db_location: str = None
     scan_translator_path: str = None
     cores: int = 1
-    #TODO KRH: Add a parameter for the location of the sqlite database
 
 def check_lipidomics_workflow_params(lipid_workflow_params):
     # Check that corems_toml_path exists
@@ -72,8 +75,11 @@ def check_lipidomics_workflow_params(lipid_workflow_params):
     for file_path in lipid_workflow_params.file_paths:
         if ".raw" not in file_path and ".mzML" not in file_path:
             raise ValueError(f"File path {file_path} is not a .raw or .mzML file, exiting workflow")
-
-    #TODO KRH: Add a check that we can access the metabref API with the token
+    
+    # Check that db_location exists
+    if lipid_workflow_params.db_location is not None:
+        if not Path(lipid_workflow_params.db_location).exists():
+            raise FileNotFoundError("Database location not found, exiting workflow")
 
 def instantiate_lcms_obj(file_in):
     """Instantiate a corems LCMS object from a binary file.  Pull in ms1 spectra into dataframe (without storing as MassSpectrum objects to save memory)
@@ -233,32 +239,9 @@ def molecular_formula_search(myLCMSobj):
     -------
     None, processes the LCMS object
     """
-    i = 1
-    # get df of mass features
-    mf_df = myLCMSobj.mass_features_to_df()
-
-    # search molecular formulas for each mass features that are the deconvoluted parent and have a ms2
-    mf_searched = []
-    for mf_id in mf_df.index:
-        if myLCMSobj.mass_features[mf_id].mass_spectrum_deconvoluted_parent:
-            if len(myLCMSobj.mass_features[mf_id].ms2_scan_numbers) > 0:
-                if mf_id not in mf_searched:
-                    if i > 5:  # TODO KRH: remove this when ready
-                        break
-
-                    scan = myLCMSobj.mass_features[mf_id].apex_scan
-                    # Search single spectrum for all peaks that correspond to the same scan
-                    mf_df_scan = mf_df[mf_df.apex_scan == scan]
-                    peaks_to_search = [
-                        myLCMSobj.mass_features[x].ms1_peak for x in mf_df_scan.index.tolist()
-                    ]
-                    SearchMolecularFormulas(
-                        myLCMSobj._ms[scan],
-                        first_hit=False,
-                        find_isotopologues=True,
-                    ).run_worker_ms_peaks(peaks_to_search)
-                    mf_searched.extend(mf_df_scan.index.tolist())
-                    i += 1
+    # Perform a molecular search on all of the mass features
+    mol_form_search = SearchMolecularFormulasLC(myLCMSobj)
+    mol_form_search.run_mass_feature_search()
 
 def export_results(myLCMSobj, out_path, molecular_metadata=None, final=False):
     """Export results to hdf5 and csv as a lipid report
@@ -281,7 +264,6 @@ def export_results(myLCMSobj, out_path, molecular_metadata=None, final=False):
     exporter = LipidomicsExport(out_path, myLCMSobj)
     exporter.to_hdf(overwrite=True)
     if final:
-        # Do not show warnings, these are expected
         exporter.report_to_csv(molecular_metadata=molecular_metadata)
     else:
         with warnings.catch_warnings():
@@ -294,6 +276,7 @@ def run_lipid_sp_ms1(file_in, out_path, params_toml, scan_translator):
     check_scan_translator(myLCMSobj, scan_translator)
     add_mass_features(myLCMSobj, scan_translator)
     myLCMSobj.remove_unprocessed_data()
+    #Finally, perform molecular formula search on all ms1 spectra associated with mass features
     molecular_formula_search(myLCMSobj)
     export_results(myLCMSobj, out_path=out_path, final=False)
     precursor_mz_list = list(
@@ -308,7 +291,7 @@ def run_lipid_sp_ms1(file_in, out_path, params_toml, scan_translator):
     mz_dict = {myLCMSobj.polarity: precursor_mz_list}
     return mz_dict
 
-def prep_metadata(mz_dicts, out_dir):
+def prep_metadata(mz_dicts, out_dir, db_location):
     """Prepare metadata for ms2 spectral search
 
     Parameters
@@ -317,6 +300,8 @@ def prep_metadata(mz_dicts, out_dir):
         List of dicts with keys "positive" and "negative" and values of lists of precursor mzs
     out_dir : Path
         Path to output directory
+    db_location : str
+        Path to lipid database
 
     Returns
     -------
@@ -339,6 +324,7 @@ def prep_metadata(mz_dicts, out_dir):
 
     if metadata["mzs"]["negative"] is not None:
         metabref_negative, lipidmetadata_negative = get_lipid_library(
+            db_location=db_location,
             mz_list=metadata["mzs"]["negative"],
             polarity="negative",
             mz_tol_ppm=5,
@@ -363,6 +349,7 @@ def prep_metadata(mz_dicts, out_dir):
     print("Preparing positive lipid library")
     if metadata["mzs"]["positive"] is not None:
         metabref_positive, lipidmetadata_positive = get_lipid_library(
+            db_location=db_location,
             mz_list=metadata["mzs"]["positive"],
             polarity="positive",
             mz_tol_ppm=5,
@@ -489,8 +476,11 @@ def run_lipid_ms2(out_path, metadata, scan_translator=None):
     """
     # Read in the intermediate results
     out_path_hdf5 = str(out_path) + ".corems/" + out_path.stem + ".hdf5"
-    parser = ReadCoreMSHDFMassSpectra(out_path_hdf5)
-    myLCMSobj = parser.get_lcms_obj()
+    # Catch known UserWarning from corems and ignore it
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        parser = ReadCoreMSHDFMassSpectra(out_path_hdf5)
+        myLCMSobj = parser.get_lcms_obj(load_raw=False)
 
     # Process ms2 spectra, perform spectral search, and export final results
     process_ms2(myLCMSobj, metadata, scan_translator=scan_translator)
@@ -501,7 +491,7 @@ def run_lcms_lipidomics_workflow(
     file_paths=None,
     output_directory=None,
     corems_toml_path=None,
-    metabref_token_path=None,
+    db_location=None,
     scan_translator_path=None,
     cores=None,
 ):
@@ -513,7 +503,7 @@ def run_lcms_lipidomics_workflow(
         lipid_workflow_params = LipidomicsWorkflowParameters(
             file_paths= file_paths.split(","),
             output_directory=output_directory,
-            metabref_token_path=metabref_token_path,
+            db_location=db_location,
             scan_translator_path=scan_translator_path,
             corems_toml_path=corems_toml_path,
             cores=cores,
@@ -565,7 +555,8 @@ def run_lcms_lipidomics_workflow(
     gc.collect() 
         
     # Prepare metadata for searching
-    metadata = prep_metadata(mz_dicts, out_dir)
+    click.echo("Preparing metadata for ms2 spectral search")
+    metadata = prep_metadata(mz_dicts, out_dir, lipid_workflow_params.db_location)
     del mz_dicts
     gc.collect()
     
@@ -573,7 +564,7 @@ def run_lcms_lipidomics_workflow(
     click.echo("Starting ms2 spectral search and exporting final results")
     if cores == 1 or len(files_list) == 1:
         for file_out in out_paths_list:
-            mz_dicts = run_lipid_ms2(
+            run_lipid_ms2(
                 file_out, metadata, scan_translator=scan_translator
             )
     elif cores > 1:
