@@ -1,8 +1,42 @@
 import requests
-from dataclasses import dataclass
+import json
+import logging
+
+class NMDCAPIInterface:
+    """
+    A genereric interface for the NMDC runtime API.
+    """
+
+    def __init__(self):
+        self.base_url = "https://api.microbiomedata.org"
+    
+    def validate_json(self) -> None:
+        """
+        Validates a json file using the NMDC json validate endpoint.
+
+        If the validation passes, the method returns without any side effects.
+
+        Raises
+        ------
+        Exception
+            If the validation fails.
+        """
+        with open(self.database_dump_json_path, 'r') as f:
+            data = json.load(f)
+
+        url = f"{self.base_url}/metadata/json:validate"
+        headers = {
+            'accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+        response = requests.post(url, headers=headers, json=data)
+        if response.status_code != 200:
+            logging.error(f"Request failed with status code {response.status_code}")
+            logging.error(response.text)
+            raise Exception("Validation failed")
 
 
-class ApiInfoRetriever:
+class ApiInfoRetriever(NMDCAPIInterface):
     """
     A class to retrieve API information from a specified collection.
 
@@ -29,6 +63,7 @@ class ApiInfoRetriever:
         collection_name : str
             The name of the collection to be used for API queries.
         """
+        super().__init__()
         self.collection_name = collection_name
 
     def get_id_by_name_from_collection(self, name_field_value: str) -> str:
@@ -62,7 +97,7 @@ class ApiInfoRetriever:
         filter_param = f'{{"name": "{name_field_value}"}}'
         field = "id"
 
-        og_url = f"https://api.microbiomedata.org/nmdcschema/{self.collection_name}?&filter={filter_param}&projection={field}"
+        og_url = f"{self.base_url}/nmdcschema/{self.collection_name}?&filter={filter_param}&projection={field}"
 
         try:
             resp = requests.get(og_url)
@@ -100,7 +135,7 @@ class ApiInfoRetriever:
         ids_test = [id.replace('"', "'") for id in ids_test]
         ids_test_str = ", ".join(f'"{id}"' for id in ids_test)
         filter_param = f'{{"id": {{"$in": [{ids_test_str}]}}}}'
-        og_url = f"https://api.microbiomedata.org/nmdcschema/{self.collection_name}?&filter={filter_param}&projection=id"
+        og_url = f"{self.base_url}/nmdcschema/{self.collection_name}?&filter={filter_param}&projection=id"
 
         try:
             resp = requests.get(og_url)
