@@ -28,8 +28,8 @@ export_profile_spectra = false
 export_eics = false
 export_unprocessed_ms1 = false
 verbose_processing = false
-ph_inten_min_rel = 0.0005
-ph_persis_min_rel = 0.0005
+ph_inten_min_rel = 0.01
+ph_persis_min_rel = 0.01
 ph_smooth_it = 0
 
 [mass_spectrum.ms1.molecular_search]
@@ -57,7 +57,7 @@ adduct_atoms_neg = [ "Cl", "Br",]
 adduct_atoms_pos = [ "Na", "K",]
 score_methods = [ "S_P_lowest_error", "N_S_P_lowest_error", "lowest_error", "prob_score", "air_filter_error", "water_filter_error", "earth_filter_error",]
 score_method = "prob_score"
-output_min_score = 0.1
+output_min_score = 0.3
 output_score_method = "All Candidates"
 isRadical = false
 isProtonated = true
@@ -66,11 +66,12 @@ ion_types_excluded = []
 ionization_type = "ESI"
 min_ppm_error = -5.0
 max_ppm_error = 5.0
-min_abun_error = -100.0
-max_abun_error = 100.0
+min_abun_error = -50.0
+max_abun_error = 50.0
 mz_error_range = 1.5
 error_method = "None"
 mz_error_average = 0.0
+verbose_processing = false
 
 [mass_spectrum.ms1.mass_spectrum]
 noise_threshold_method = "log"
@@ -97,7 +98,7 @@ calibration_ref_match_method_implemented = [ "legacy", "merged",]
 calibration_ref_match_tolerance = 0.003
 calibration_ref_match_std_raw_error_limit = 1.5
 do_calibration = true
-verbose_processing = true
+verbose_processing = false
 
 [mass_spectrum.ms1.ms_peak]
 kendrick_rounding_method = "floor"
@@ -183,7 +184,7 @@ calibration_ref_match_method_implemented = [ "legacy", "merged",]
 calibration_ref_match_tolerance = 0.003
 calibration_ref_match_std_raw_error_limit = 1.5
 do_calibration = true
-verbose_processing = true
+verbose_processing = false
 
 [mass_spectrum.ms2.ms_peak]
 kendrick_rounding_method = "floor"
@@ -269,7 +270,7 @@ calibration_ref_match_method_implemented = [ "legacy", "merged",]
 calibration_ref_match_tolerance = 0.003
 calibration_ref_match_std_raw_error_limit = 1.5
 do_calibration = true
-verbose_processing = true
+verbose_processing = false
 
 [mass_spectrum.ms2_cid.ms_peak]
 kendrick_rounding_method = "floor"
