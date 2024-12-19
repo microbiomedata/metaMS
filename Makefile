@@ -17,14 +17,29 @@ mem:
 major:
 	
 	@bumpversion major --allow-dirty
+	@bumpversion major --allow-dirty --config-file .bumpversion_lipid.cfg
 
 minor:
 	
 	@bumpversion minor --allow-dirty
+	@bumpversion minor --allow-dirty --config-file .bumpversion_lipid.cfg
 
 patch:
 	
 	@bumpversion patch --allow-dirty
+	@bumpversion patch --allow-dirty --config-file .bumpversion_lipid.cfg
+
+bump_lipid_major:
+	
+	@bumpversion major --allow-dirty --config-file .bumpversion_lipid.cfg
+
+bump_lipid_minor:
+	
+	@bumpversion minor --allow-dirty --config-file .bumpversion_lipid.cfg
+
+bump_lipid_patch:
+	
+	@bumpversion patch --allow-dirty --config-file .bumpversion_lipid.cfg
 
 install:
 	@source venv/bin/activate
@@ -75,3 +90,9 @@ wdl-run-lipid :
 # update the docker image in the wdl file.  Good to rebuild for each run while in development
 	 make docker-build-local
 	 miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics.json --verbose --no-cache --copy-input-files
+
+convert_lipid_rst_to_md:
+    # convert the lipid documentation from rst to md
+	pandoc -f rst -t markdown -o docs/README_LCMS_LIPID.md docs/index_lipid.rst
+	# render the lipid documentation into html from the rst file
+	pandoc -f rst -t html -o docs/index_lipid.html docs/index_lipid.rst

@@ -8,7 +8,6 @@ import pandas as pd
 import gc
 
 from corems.mass_spectra.input.mzml import MZMLSpectraParser
-from corems.mass_spectra.input.rawFileReader import ImportMassSpectraThermoMSFileReader
 from corems.mass_spectra.input.corems_hdf5 import ReadCoreMSHDFMassSpectra
 from corems.mass_spectra.output.export import LipidomicsExport
 from corems.molecular_id.search.molecularFormulaSearch import SearchMolecularFormulasLC
@@ -98,6 +97,7 @@ def instantiate_lcms_obj(file_in):
     """
     # Instantiate parser based on binary file type
     if ".raw" in str(file_in):
+        from corems.mass_spectra.input.rawFileReader import ImportMassSpectraThermoMSFileReader
         parser = ImportMassSpectraThermoMSFileReader(file_in)
 
     if ".mzML" in str(file_in):

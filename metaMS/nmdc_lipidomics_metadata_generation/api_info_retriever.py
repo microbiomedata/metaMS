@@ -1,7 +1,57 @@
 import requests
-from dataclasses import dataclass
+import json
+import logging
 
-class ApiInfoRetriever:
+class NMDCAPIInterface:
+    """
+    A generic interface for the NMDC runtime API.
+
+    Attributes
+    ----------
+    base_url : str
+        The base URL for the NMDC runtime API.
+
+    Methods
+    -------
+    validate_json(json_path: str) -> None:
+        Validates a json file using the NMDC json validate endpoint.
+    """
+
+    def __init__(self):
+        self.base_url = "https://api.microbiomedata.org"
+    
+    def validate_json(self, json_path) -> None:
+        """
+        Validates a json file using the NMDC json validate endpoint.
+
+        If the validation passes, the method returns without any side effects.
+
+        Parameters
+        ----------
+        json_path : str
+            The path to the json file to be validated.
+
+        Raises
+        ------
+        Exception
+            If the validation fails.
+        """
+        with open(json_path, 'r') as f:
+            data = json.load(f)
+
+        url = f"{self.base_url}/metadata/json:validate"
+        headers = {
+            'accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+        response = requests.post(url, headers=headers, json=data)
+        if response.status_code != 200:
+            logging.error(f"Request failed with status code {response.status_code}")
+            logging.error(response.text)
+            raise Exception("Validation failed")
+
+
+class ApiInfoRetriever(NMDCAPIInterface):
     """
     A class to retrieve API information from a specified collection.
 
@@ -28,6 +78,7 @@ class ApiInfoRetriever:
         collection_name : str
             The name of the collection to be used for API queries.
         """
+        super().__init__()
         self.collection_name = collection_name
 
     def get_id_by_name_from_collection(self, name_field_value: str) -> str:
@@ -61,15 +112,53 @@ class ApiInfoRetriever:
         filter_param = f'{{"name": "{name_field_value}"}}'
         field = "id"
 
-        og_url = f'https://api.microbiomedata.org/nmdcschema/{self.collection_name}?&filter={filter_param}&projection={field}'
-        
+        og_url = f"{self.base_url}/nmdcschema/{self.collection_name}?&filter={filter_param}&projection={field}"
+
         try:
             resp = requests.get(og_url)
             resp.raise_for_status()  # Raises an HTTPError for bad responses
             data = resp.json()
-            identifier = data['resources'][0]['id']
+            identifier = data["resources"][0]["id"]
             return identifier
         except requests.RequestException as e:
             raise requests.RequestException(f"Error making API request: {e}")
         except (KeyError, IndexError) as e:
             raise IndexError(f"No matching entry found for '{name_field_value}': {e}")
+
+    def check_if_ids_exist(self, ids: list) -> bool:
+        """
+        Check if the IDs exist in the collection.
+
+        This method constructs a query to the API to filter the collection based on the given IDs, and checks if all IDs exist in the collection.
+
+        Parameters
+        ----------
+        ids : list
+            A list of IDs to check if they exist in the collection.
+
+        Returns
+        -------
+        bool
+            True if all IDs exist in the collection, False otherwise.
+
+        Raises
+        ------
+        requests.RequestException
+            If there's an error in making the API request.
+        """
+        ids_test = list(set(ids))
+        ids_test = [id.replace('"', "'") for id in ids_test]
+        ids_test_str = ", ".join(f'"{id}"' for id in ids_test)
+        filter_param = f'{{"id": {{"$in": [{ids_test_str}]}}}}'
+        og_url = f"{self.base_url}/nmdcschema/{self.collection_name}?&filter={filter_param}&projection=id"
+
+        try:
+            resp = requests.get(og_url)
+            resp.raise_for_status()  # Raises an HTTPError for bad responses
+            data = resp.json()
+            if len(data["resources"]) != len(ids_test):
+                return False
+        except requests.RequestException as e:
+            raise requests.RequestException(f"Error making API request: {e}")
+
+        return True

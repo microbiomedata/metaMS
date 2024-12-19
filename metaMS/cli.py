@@ -1,9 +1,7 @@
-from multiprocessing import Pool
 from pathlib import Path
 
 import click
 import toml
-
 from corems.encapsulation.output.parameter_to_json import dump_gcms_settings_toml
 
 from metaMS.gcmsWorkflow import (
@@ -12,6 +10,7 @@ from metaMS.gcmsWorkflow import (
     run_gcms_metabolomics_workflow_wdl,
     run_nmdc_metabolomics_workflow,
 )
+
 from metaMS.lcms_lipidomics_workflow import (
     LipidomicsWorkflowParameters,
     run_lcms_lipidomics_workflow,
@@ -32,6 +31,7 @@ def cli():
 @click.argument("output_type", required=True, type=str)
 @click.argument("corems_toml_path", required=True, type=str)
 @click.argument("nmdc_metadata_path", required=True, type=str)
+@click.argument("metabref_token_path", required=True, type=str)
 @click.option("--jobs", "-j", default=4, help="'cpu's'")
 def run_gcms_wdl_workflow(
     file_paths,
@@ -41,6 +41,7 @@ def run_gcms_wdl_workflow(
     output_type,
     corems_toml_path,
     nmdc_metadata_path,
+    metabref_token_path,
     jobs,
 ):
     """Run the GCMS workflow\n
@@ -57,6 +58,7 @@ def run_gcms_wdl_workflow(
         output_filename,
         output_type,
         corems_toml_path,
+        metabref_token_path,
         jobs,
     )
 
