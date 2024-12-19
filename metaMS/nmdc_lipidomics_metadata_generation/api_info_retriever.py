@@ -4,7 +4,7 @@ import logging
 
 class NMDCAPIInterface:
     """
-    A genereric interface for the NMDC runtime API.
+    A generic interface for the NMDC runtime API.
     """
 
     def __init__(self):
@@ -152,9 +152,3 @@ class ApiInfoRetriever(NMDCAPIInterface):
             raise requests.RequestException(f"Error making API request: {e}")
 
         return True
-
-biosample_ids = ["nmdc:bsm-11-q0bxzb10"]
-api_biosample_getter = ApiInfoRetriever(collection_name="biosample_set")
-
-if not api_biosample_getter.check_if_ids_exist(biosample_ids):
-    raise ValueError("Biosample IDs do not exist in the collection.")
