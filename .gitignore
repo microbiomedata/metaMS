@@ -39,3 +39,6 @@ share/python-wheels/
 
 # Raw thermo data
 *.raw
+
+# Metabref token
+*.token
