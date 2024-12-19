@@ -15,7 +15,7 @@ from tqdm import tqdm
 
 import nmdc_schema.nmdc as nmdc
 from linkml_runtime.dumpers import json_dumper
-from api_info_retriever import ApiInfoRetriever
+from api_info_retriever import ApiInfoRetriever, NMDCAPIInterface
 
 # Configure logging
 logging.basicConfig(
@@ -307,6 +307,7 @@ class MetadataGenerator:
                     raw_data_id=raw_data_object.id,
                     data_gen_id=mass_spec.id,
                     processed_data_id="nmdc:placeholder",
+                    parameter_data_id="nmdc:placeholder",
                     processing_institution=group_metadata_obj.processing_institution
                 )
             
@@ -329,7 +330,7 @@ class MetadataGenerator:
                                 was_generated_by=metab_analysis.id
                             )
                             nmdc_database_inst.data_object_set.append(processed_data_object)
-                            processed_data.append(processed_data_object.id)
+                            parameter_data_id = processed_data_object.id
 
                         elif file_type == 'csv':
                             processed_data_object = self.generate_data_object(
@@ -366,6 +367,7 @@ class MetadataGenerator:
                     mass_spec_obj=mass_spec,
                     analysis_obj=metab_analysis,
                     raw_data_obj=raw_data_object,
+                    parameter_data_id=parameter_data_id,
                     processed_data_id_list=processed_data
                 )
 
@@ -374,7 +376,8 @@ class MetadataGenerator:
                 nmdc_database_inst.workflow_execution_set.append(metab_analysis)
         
         self.dump_nmdc_database(nmdc_database=nmdc_database_inst)
-        self.validate_json()
+        api_interface = NMDCAPIInterface()
+        api_interface.validate_json(self.database_dump_json_path)
         logging.info("Metadata processing completed.")
 
     def load_metadata(self) -> pd.core.groupby.DataFrameGroupBy:
@@ -593,8 +596,6 @@ class MetadataGenerator:
         -----
         This method uses the ApiInfoRetriever to fetch IDs for the instrument
         and configurations. It also mints a new NMDC ID for the DataGeneration object.
-
-        TODO: Update docstring with new variables (e.g. analyte_category).
         """
         nmdc_id = self.mint_nmdc_id(nmdc_type=NmdcTypes.MassSpectrometry)[0]
 
@@ -710,6 +711,7 @@ class MetadataGenerator:
         raw_data_id: str,
         data_gen_id: str,
         processed_data_id: str,
+        parameter_data_id: str,
         processing_institution: str
         ) -> nmdc.MetabolomicsAnalysis:
         """
@@ -730,6 +732,8 @@ class MetadataGenerator:
             ID of the DataGeneration object that generated the raw data.
         processed_data_id : str
             ID of the processed data resulting from the analysis.
+        parameter_data_id : str
+            ID of the parameter data object used for the analysis.
         processing_institution : str
             Name of the institution where the analysis was performed.
 
@@ -756,7 +760,7 @@ class MetadataGenerator:
             'git_url': self.workflow_git_url,
             'version': self.workflow_version,
             'was_informed_by': data_gen_id,
-            'has_input': [raw_data_id],
+            'has_input': [raw_data_id, parameter_data_id],
             'has_output': [processed_data_id],
             'started_at_time': 'placeholder',
             'ended_at_time': 'placeholder',
@@ -772,6 +776,7 @@ class MetadataGenerator:
         mass_spec_obj: object,
         analysis_obj: object,
         raw_data_obj: object,
+        parameter_data_id: str,
         processed_data_id_list: list
         ) -> None:
         """
@@ -805,6 +810,7 @@ class MetadataGenerator:
         - Sets `analysis_obj.has_output` to `processed_data_id_list`.
         """
         mass_spec_obj.has_output = [raw_data_obj.id]
+        analysis_obj.has_input[1] = parameter_data_id
         analysis_obj.has_output = processed_data_id_list
 
     def start_nmdc_database(self) -> nmdc.Database:

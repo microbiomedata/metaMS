@@ -10,18 +10,23 @@ class NMDCAPIInterface:
     def __init__(self):
         self.base_url = "https://api.microbiomedata.org"
     
-    def validate_json(self) -> None:
+    def validate_json(self, json_path) -> None:
         """
         Validates a json file using the NMDC json validate endpoint.
 
         If the validation passes, the method returns without any side effects.
+
+        Parameters
+        ----------
+        json_path : str
+            The path to the json file to be validated.
 
         Raises
         ------
         Exception
             If the validation fails.
         """
-        with open(self.database_dump_json_path, 'r') as f:
+        with open(json_path, 'r') as f:
             data = json.load(f)
 
         url = f"{self.base_url}/metadata/json:validate"
@@ -141,9 +146,15 @@ class ApiInfoRetriever(NMDCAPIInterface):
             resp = requests.get(og_url)
             resp.raise_for_status()  # Raises an HTTPError for bad responses
             data = resp.json()
-            if not len(data["resources"]) != len(ids_test):
+            if len(data["resources"]) != len(ids_test):
                 return False
         except requests.RequestException as e:
             raise requests.RequestException(f"Error making API request: {e}")
 
         return True
+
+biosample_ids = ["nmdc:bsm-11-q0bxzb10"]
+api_biosample_getter = ApiInfoRetriever(collection_name="biosample_set")
+
+if not api_biosample_getter.check_if_ids_exist(biosample_ids):
+    raise ValueError("Biosample IDs do not exist in the collection.")
