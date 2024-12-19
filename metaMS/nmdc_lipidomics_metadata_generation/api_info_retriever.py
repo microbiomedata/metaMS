@@ -5,6 +5,16 @@ import logging
 class NMDCAPIInterface:
     """
     A generic interface for the NMDC runtime API.
+
+    Attributes
+    ----------
+    base_url : str
+        The base URL for the NMDC runtime API.
+
+    Methods
+    -------
+    validate_json(json_path: str) -> None:
+        Validates a json file using the NMDC json validate endpoint.
     """
 
     def __init__(self):
