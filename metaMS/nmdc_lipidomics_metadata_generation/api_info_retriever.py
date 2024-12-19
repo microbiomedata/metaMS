@@ -147,18 +147,20 @@ class ApiInfoRetriever(NMDCAPIInterface):
             If there's an error in making the API request.
         """
         ids_test = list(set(ids))
-        ids_test = [id.replace('"', "'") for id in ids_test]
-        ids_test_str = ", ".join(f'"{id}"' for id in ids_test)
-        filter_param = f'{{"id": {{"$in": [{ids_test_str}]}}}}'
-        og_url = f"{self.base_url}/nmdcschema/{self.collection_name}?&filter={filter_param}&projection=id"
+        for id in ids_test:
+            filter_param = f'{{"id": "{id}"}}'
+            field = "id"
 
-        try:
-            resp = requests.get(og_url)
-            resp.raise_for_status()  # Raises an HTTPError for bad responses
-            data = resp.json()
-            if len(data["resources"]) != len(ids_test):
-                return False
-        except requests.RequestException as e:
-            raise requests.RequestException(f"Error making API request: {e}")
+            og_url = f"{self.base_url}/nmdcschema/{self.collection_name}?&filter={filter_param}&projection={field}"
+
+            try:
+                resp = requests.get(og_url)
+                resp.raise_for_status()  # Raises an HTTPError for bad responses
+                data = resp.json()
+                if len(data["resources"]) == 0:
+                    print(f"ID {id} not found")
+                    return False
+            except requests.RequestException as e:
+                raise requests.RequestException(f"Error making API request: {e}")
 
         return True

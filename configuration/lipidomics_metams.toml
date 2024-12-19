@@ -1,6 +1,9 @@
-directory = "data/raw_data/lipid_data"
-output_directory = "output"
-corems_toml_path = "configuration/lipid_configs/emsl_lipidomics_corems_params.toml"
-metabref_token_path = "metabref.token"
-scan_translator_path = "configuration/lipid_configs/emsl_lipidomics_scan_translator.toml"
-cores = 1
+file_paths = [
+    "/Users/heal742/Library/CloudStorage/OneDrive-PNNL/Documents/_DMS_data/_NMDC/_blanchard_lipidomics/Blanch_Nat_Lip_H_34_AB_M_01_POS_23Jan18_Brandi-WCSH5801.raw",
+    "/Users/heal742/Library/CloudStorage/OneDrive-PNNL/Documents/_DMS_data/_NMDC/_blanchard_lipidomics/Blanch_Nat_Lip_H_34_AB_M_01_NEG_25Jan18_Brandi-WCSH5801.raw"
+]
+output_directory = "/Users/heal742/LOCAL/05_NMDC/02_MetaMS/data_processing/_blanchard_11_8ws97026/processed_20241218"
+corems_toml_path = "/Users/heal742/LOCAL/05_NMDC/02_MetaMS/data_processing/configurations/emsl_lipidomics_corems_params.toml"
+db_location = "/Users/heal742/LOCAL/05_NMDC/00_Lipid_Databse/lipid_db/lipid_ref.sqlite"
+scan_translator_path = "/Users/heal742/LOCAL/05_NMDC/02_MetaMS/data_processing/configurations/emsl_lipidomics_scan_translator.toml"
+cores = 4

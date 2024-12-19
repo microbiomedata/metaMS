@@ -73,13 +73,23 @@ docker-build:
 
 	docker build -t microbiomedata/metams:latest .
 
+docker-build-local:
+	docker build -t local-metams:latest .
+	
 docker-run:
 	@echo $(data_dir)
 	@echo $(config_dir)
 	@docker run -v $(data_dir):/metams/data -v $(config_dir):/metams/configuration microbiomedata/metams:latest metaMS run-gcms-workflow /metams/configuration/metams.toml
 
-wdl-run :
-	 miniwdl run wdl/metaMS.wdl -i wdl/metams_input.json --verbose --no-cache --copy-input-files
+wdl-run-gcms :
+ 	 
+	 miniwdl run wdl/metaMS_gcms.wdl -i wdl/metams_input_gcms.json --verbose --no-cache --copy-input-files
+
+wdl-run-lipid :
+#TODO KRH: remove the docker-build-local when the docker image is available in dockerhub and
+# update the docker image in the wdl file.  Good to rebuild for each run while in development
+	 make docker-build-local
+	 miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics.json --verbose --no-cache --copy-input-files
 
 convert_lipid_rst_to_md:
     # convert the lipid documentation from rst to md
