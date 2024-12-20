@@ -14,8 +14,8 @@
 
 ## Available Workflows
 
-- [GC/MS metabolomics workflow](docs/README_GCMS.md)
-- [LC/MS lipidomics workflow](docs/README_LCMS_LIPID.md)
+- [GC/MS metabolomics workflow](docs/gcms_metabolomics/README_GCMS.md)
+- [LC/MS lipidomics workflow](docs/lcms_lipidomics/README_LCMS_LIPID.md)
 
 For information about data input, output, and execution for the individual workflows, follow the linked readmes above.
 

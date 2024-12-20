@@ -37,7 +37,7 @@ Workflow Availability
 ---------------------
 
 The workflow is available in GitHub:
-https://github.com/microbiomedata/metaMS #TODO KRH: update with direct link to lipidomics wdl
+https://github.com/microbiomedata/metaMS/wdl/metaMS_lcmslipidomics.wdl
 
 The container is available at Docker Hub (microbiomedata/metaMS):
 https://hub.docker.com/r/microbiomedata/metams
@@ -64,12 +64,12 @@ Software Requirements
 Database
 ~~~~~~~~
 
--  PNNL Metabref Database
-   (https://metabref.emsl.pnnl.gov/)
+-  A local copy of the in silico lipid spectra.  See PNNL Metabref Database
+   (https://metabref.emsl.pnnl.gov/).
 
 The in-silico lipid spectra in PNNL's Metaref database are generated from the LipidBlast database (v68), found at https://systemsomicslab.github.io/compms/msdial/main.html.
 Note that there is no retention time in the PNNL version of the database and the workflow does not use retention time scoring.  
-Currently the workflow uses a local copy of the database, but the database is available by request.
+Currently the workflow uses a local copy of the database, and the database is available by request.
 
 Sample datasets
 ---------------
@@ -113,16 +113,16 @@ Outputs
 
 -  Lipidomics data
    -  Peak data table with annotated lipids (.csv)
-   -  HDF: CoreMS HDF5 format of CoreMS LCMS object for further analysis
+   -  CoreMS HDF5 format of CoreMS LCMS object for further analysis and exploration (.hdf5)
 -  Workflow Metadata
-   -  CoreMS Parameter file (.toml), the full set of parameters used in the workflow, some of which are set dynamically within the workflow.
+   -  The full set of CoreMS parameters used in the workflow, some of which are set dynamically within the workflow (.toml)
 
 Version History
 ---------------
 
-- v1.0.0: Initial release of the lipidomics workflow #TODO KRH: update wtih release date when available
+- v1.0.0: Initial release of the lipidomics workflow #TODO KRH: update with release date when available
 
 Point of contact
 ----------------
 
-Package maintainer: Katherine R. Heal <katherine.heal@pnnl.gov>
+Workflow maintainer: Katherine R. Heal <katherine.heal@pnnl.gov>

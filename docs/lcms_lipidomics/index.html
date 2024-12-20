@@ -28,8 +28,7 @@ the best match.</p>
 data-dependent acquisition for MS2 is supported at this time.</p>
 <h2 id="workflow-availability">Workflow Availability</h2>
 <p>The workflow is available in GitHub: <a
-href="https://github.com/microbiomedata/metaMS">https://github.com/microbiomedata/metaMS</a>
-#TODO KRH: update with direct link to lipidomics wdl</p>
+href="https://github.com/microbiomedata/metaMS/wdl/metaMS_lcmslipidomics.wdl">https://github.com/microbiomedata/metaMS/wdl/metaMS_lcmslipidomics.wdl</a></p>
 <p>The container is available at Docker Hub (microbiomedata/metaMS): <a
 href="https://hub.docker.com/r/microbiomedata/metams">https://hub.docker.com/r/microbiomedata/metams</a></p>
 <p>The database is available by request. Please contact NMDC (<a
@@ -51,15 +50,16 @@ href="https://pypi.org/project/miniwdl/">https://pypi.org/project/miniwdl/</a>)<
 docker with the required workflow dependencies.</em></p>
 <h3 id="database">Database</h3>
 <ul>
-<li>PNNL Metabref Database (<a
-href="https://metabref.emsl.pnnl.gov/">https://metabref.emsl.pnnl.gov/</a>)</li>
+<li>A local copy of the in silico lipid spectra. See PNNL Metabref
+Database (<a
+href="https://metabref.emsl.pnnl.gov/">https://metabref.emsl.pnnl.gov/</a>).</li>
 </ul>
 <p>The in-silico lipid spectra in PNNL's Metaref database are generated
 from the LipidBlast database (v68), found at <a
 href="https://systemsomicslab.github.io/compms/msdial/main.html">https://systemsomicslab.github.io/compms/msdial/main.html</a>.
 Note that there is no retention time in the PNNL version of the database
 and the workflow does not use retention time scoring. Currently the
-workflow uses a local copy of the database, but the database is
+workflow uses a local copy of the database, and the database is
 available by request.</p>
 <h2 id="sample-datasets">Sample datasets</h2>
 <ul>
@@ -103,21 +103,20 @@ file):</p>
 <li>Lipidomics data
 <ul>
 <li>Peak data table with annotated lipids (.csv)</li>
-<li>HDF: CoreMS HDF5 format of CoreMS LCMS object for further
-analysis</li>
+<li>CoreMS HDF5 format of CoreMS LCMS object for further analysis and
+exploration (.hdf5)</li>
 </ul></li>
 <li>Workflow Metadata
 <ul>
-<li>CoreMS Parameter file (.toml), the full set of parameters used in
-the workflow, some of which are set dynamically within the
-workflow.</li>
+<li>The full set of CoreMS parameters used in the workflow, some of
+which are set dynamically within the workflow (.toml)</li>
 </ul></li>
 </ul>
 <h2 id="version-history">Version History</h2>
 <ul>
 <li>v1.0.0: Initial release of the lipidomics workflow #TODO KRH: update
-wtih release date when available</li>
+with release date when available</li>
 </ul>
 <h2 id="point-of-contact">Point of contact</h2>
-<p>Package maintainer: Katherine R. Heal &lt;<a
+<p>Workflow maintainer: Katherine R. Heal &lt;<a
 href="mailto:katherine.heal@pnnl.gov">katherine.heal@pnnl.gov</a>&gt;</p>
