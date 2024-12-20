@@ -44,6 +44,6 @@ task runMetaMSGCMS {
 
     runtime {
         docker: "local-metams:latest"
-        #TODO KRH: Change to dockerhub version after we've pushed the updated image
+        #TODO KRH: Update to pushed version when available
     }
 }

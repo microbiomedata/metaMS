@@ -45,9 +45,8 @@ class NMDCAPIInterface:
             'Content-Type': 'application/json'
         }
         response = requests.post(url, headers=headers, json=data)
-        if response.status_code != 200:
-            logging.error(f"Request failed with status code {response.status_code}")
-            logging.error(response.text)
+        if response.text != '{"result":"All Okay!"}' or response.status_code != 200:
+            logging.error(f"Request failed with response {response.text}")
             raise Exception("Validation failed")
 
 

@@ -1,9 +1,6 @@
 import argparse
 from metadata_generator import MetadataGenerator
 
-# TODO: Consider combining --raw_data_url and --process_data_url into a single
-# base_url argument if they're often the same.
-
 def main():
     """
     Parse command-line arguments and run the LipidomicsMetadataGenerator.
