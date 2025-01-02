@@ -17,17 +17,20 @@ mem:
 major:
 	
 	@bumpversion major --allow-dirty
-	@bumpversion major --allow-dirty --config-file .bumpversion_lipid.cfg
+	@make bump_lipid_major
+	@make convert_lipid_rst_to_md
 
 minor:
 	
 	@bumpversion minor --allow-dirty
-	@bumpversion minor --allow-dirty --config-file .bumpversion_lipid.cfg
+	@make bump_lipid_minor
+	@make convert_lipid_rst_to_md
 
 patch:
 	
 	@bumpversion patch --allow-dirty
-	@bumpversion patch --allow-dirty --config-file .bumpversion_lipid.cfg
+	@make bump_lipid_patch
+	@make convert_lipid_rst_to_md
 
 bump_lipid_major:
 	
