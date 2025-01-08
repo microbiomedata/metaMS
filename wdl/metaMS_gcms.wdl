@@ -43,6 +43,6 @@ task runMetaMSGCMS {
     }
 
     runtime {
-        docker: "microbiomedata/metams:3.0.0"
+        docker: "katherineheal257/metams:3.0.0"
     }
 }
