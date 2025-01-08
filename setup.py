@@ -12,7 +12,7 @@ README = (HERE / "README.md").read_text()
 setup(
     name="metaMS",
     version="3.0.0",
-    description="Data processing, and annotation for metabolomics analysis by low-resolution GC-MS",
+    description="Data processing, and annotation for metabolomics analyses",
     long_description=README,
     long_description_content_type="text/markdown",
     url="https://github.com/EMSL-Computing/MetaMS",
@@ -23,8 +23,10 @@ setup(
     license="BSD",
     classifiers=[
         "License :: OSI Approved :: BSD License",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
     ],
 
     install_requires=['Click', 'CoreMS', 'requests'],

@@ -63,14 +63,20 @@ docker-push:
 	@docker push corilo/metams:$(version)
 	@docker image tag corilo/metams:$(version) corilo/metams:latest
 	@docker push corilo/metams:latest
+	
+docker-push-heal:
+	@echo katherineheal257/metams:$(version)
+	@docker buildx create --use
+	@docker buildx build --platform linux/amd64,linux/arm64 --no-cache -t katherineheal257/metams:$(version) --push .
+	@docker buildx imagetools create katherineheal257/metams:$(version) -t katherineheal257/metams:latest
+	@docker buildx imagetools inspect katherineheal257/metams:latest
 
 docker-nmdc:
-	
 	@echo microbiomedata/metams:$(version)
-	@docker build --no-cache -t microbiomedata/metams:$(version) .
-	@docker push microbiomedata/metams:$(version)
-	@docker image tag microbiomedata/metams:$(version) microbiomedata/metams:latest
-	@docker push microbiomedata/metams:latest
+	@docker buildx create --use
+	@docker buildx build --platform linux/amd64,linux/arm64 --no-cache -t microbiomedata/metams:$(version) --push .
+	@docker buildx imagetools create microbiomedata/metams:$(version) -t microbiomedata/metams:latest
+	@docker buildx imagetools inspect microbiomedata/metams:latest
 
 echo-version:
 	@echo $(version)
