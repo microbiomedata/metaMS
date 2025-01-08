@@ -36,7 +36,7 @@ This guide provides instructions for developers working on the project. It cover
 The following steps should be followed in order
 
 ### Bump Version Numbers
-The versioning of the repo, docker image and the GC/MS workflow are currently 2.2.3.
+The versioning of the repo, docker image and the GC/MS workflow are currently 3.0.0.
 The version of the lipid workflow is currently 1.0.0.
 
 To bump *both* the repo and the lipid workflow, run one of the following commands.

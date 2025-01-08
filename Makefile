@@ -72,6 +72,9 @@ docker-nmdc:
 	@docker image tag microbiomedata/metams:$(version) microbiomedata/metams:latest
 	@docker push microbiomedata/metams:latest
 
+echo-version:
+	@echo $(version)
+
 docker-build:
 
 	docker build -t microbiomedata/metams:latest .
@@ -89,9 +92,6 @@ wdl-run-gcms :
 	 miniwdl run wdl/metaMS_gcms.wdl -i wdl/metams_input_gcms.json --verbose --no-cache --copy-input-files
 
 wdl-run-lipid :
-#TODO KRH: remove the docker-build-local when the docker image is available in dockerhub and
-# update the docker image in the wdl file.  Good to rebuild for each run while in development
-	 make docker-build-local
 	 miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics.json --verbose --no-cache --copy-input-files
 
 convert_lipid_rst_to_md:

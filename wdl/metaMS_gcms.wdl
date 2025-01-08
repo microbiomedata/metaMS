@@ -43,7 +43,6 @@ task runMetaMSGCMS {
     }
 
     runtime {
-        docker: "local-metams:latest"
-        #TODO KRH: Update to pushed version when available
+        docker: "microbiomedata/metams:3.0.0"
     }
 }
