@@ -35,6 +35,6 @@ task runMetaMSLCMSLipidomics {
     }
 
     runtime {
-        docker: "katherineheal257/metams:3.0.0"
+        docker: "microbiomedata/metams:3.0.0"
     }
 }

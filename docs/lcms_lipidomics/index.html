@@ -28,7 +28,7 @@ the best match.</p>
 data-dependent acquisition for MS2 is supported at this time.</p>
 <h2 id="workflow-availability">Workflow Availability</h2>
 <p>The workflow is available in GitHub: <a
-href="https://github.com/microbiomedata/metaMS/wdl/metaMS_lcmslipidomics.wdl">https://github.com/microbiomedata/metaMS/wdl/metaMS_lcmslipidomics.wdl</a></p>
+href="https://github.com/microbiomedata/metaMS/blob/master/wdl/metaMS_lcmslipidomics.wdl">https://github.com/microbiomedata/metaMS/blob/master/wdl/metaMS_lcmslipidomics.wdl</a></p>
 <p>The container is available at Docker Hub (microbiomedata/metaMS): <a
 href="https://hub.docker.com/r/microbiomedata/metams">https://hub.docker.com/r/microbiomedata/metams</a></p>
 <p>The database is available by request. Please contact NMDC (<a
@@ -82,21 +82,33 @@ example input json file in wdl/metaMS_lipidomics.wdl.</p>
 <p>The following inputs are required (declared in the input json
 file):</p>
 <ul>
-<li>LC-MS/MS data file locations in one of the following formats
+<li><dl>
+<dt>LC-MS/MS data file locations in one of the following formats:</dt>
+<dd>
 <ul>
 <li>ThermoFisher mass spectrometry data files (.raw)</li>
 <li>mzML mass spectrometry data files (.mzml)</li>
-</ul></li>
-<li>Workflow inputs
+</ul>
+</dd>
+</dl></li>
+<li><dl>
+<dt>Workflow inputs (all three required):</dt>
+<dd>
 <ul>
 <li>CoreMS Parameter file (.toml)</li>
 <li>Scan Translator Parameter file (.toml)</li>
 <li>Path to local MetabRef database (.sqlite)</li>
-</ul></li>
-<li>Cores (optional input)
+</ul>
+</dd>
+</dl></li>
+<li><dl>
+<dt>Cores (optional input):</dt>
+<dd>
 <ul>
 <li>How many cores to use for processing. Default is 1.</li>
-</ul></li>
+</ul>
+</dd>
+</dl></li>
 </ul>
 <h3 id="outputs">Outputs</h3>
 <ul>
@@ -114,8 +126,7 @@ which are set dynamically within the workflow (.toml)</li>
 </ul>
 <h2 id="version-history">Version History</h2>
 <ul>
-<li>v1.0.0: Initial release of the lipidomics workflow #TODO KRH: update
-with release date when available</li>
+<li>v1.0.0: Initial release of the lipidomics workflow Jan 9, 2025</li>
 </ul>
 <h2 id="point-of-contact">Point of contact</h2>
 <p>Workflow maintainer: Katherine R. Heal &lt;<a
