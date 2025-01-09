@@ -128,8 +128,7 @@ The following inputs are required (declared in the input json file):
 
 ## Version History
 
--   v1.0.0: Initial release of the lipidomics workflow #TODO KRH: update
-    with release date when available
+-   v1.0.0: Initial release of the lipidomics workflow Jan 9, 2025
 
 ## Point of contact
 
