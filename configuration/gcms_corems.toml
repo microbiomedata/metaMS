@@ -1,12 +1,25 @@
 [MolecularSearch]
-url_database = "sqlite:////metams/db/pnnl_lowres_gcms_compounds.sqlite"
-ri_search_range = 35
+ri_search_range = 35.0
 rt_search_range = 1.0
 correlation_threshold = 0.5
 score_threshold = 0.0
 ri_spacing = 200.0
 ri_std = 3.0
-ri_calibration_compound_names = [ " [C8] Methyl Caprylate [7.812]", " [C10] Methyl Caprate [10.647]", " [C9] Methyl Pelargonate [9.248]", " [C12] Methyl Laurate [13.250]", " [C14] Methyl Myristate [15.597]", " [C16] Methyl Palmitate [17.723]", " [C18] Methyl Stearate [19.663]", " [C20] Methyl Eicosanoate [21.441]", " [C22] Methyl Docosanoate [23.082]", " [C24] Methyl Linocerate [24.603]", " [C26] Methyl Hexacosanoate [26.023]", " [C28] Methyl Octacosanoate [27.349]", " [C30] Methyl Triacontanoate [28.72]",]
+ri_calibration_compound_names = [
+    "Methyl Caprylate",
+    "Methyl Caprate",
+    "Methyl Pelargonate",
+    "Methyl Laurate",
+    "Methyl Myristate", 
+    "Methyl Palmitate", 
+    "Methyl Stearate", 
+    "Methyl Eicosanoate", 
+    "Methyl Docosanoate", 
+    "Methyl Linocerate", 
+    "Methyl Hexacosanoate", 
+    "Methyl Octacosanoate", 
+    "Methyl Triacontanoate",
+]
 exploratory_mode = false
 score_methods = [ "highest_sim_score", "highest_ss",]
 output_score_method = "All"
@@ -17,12 +30,13 @@ implemented_smooth_method = [ "savgol", "hanning", "blackman", "bartlett", "flat
 smooth_window = 5
 smooth_method = "savgol"
 savgol_pol_order = 2
+peak_derivative_threshold = 0.0005
 peak_height_max_percent = 10.0
 peak_max_prominence_percent = 1.0
 min_peak_datapoints = 5.0
 max_peak_width = 0.1
 noise_threshold_method = "manual_relative_abundance"
-implemented_noise_threshold_methods = [ "auto_relative_abundance", "manual_relative_abundance", "second_derivative",]
+noise_threshold_methods_implemented = [ "auto_relative_abundance", "manual_relative_abundance", "second_derivative",]
 std_noise_threshold = 3
 peak_height_min_percent = 0.1
 peak_min_prominence_percent = 0.1

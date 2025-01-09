@@ -1,0 +1,26 @@
+FROM jcarr87/corems-base-py3.10
+
+# set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONNET_RUNTIME=coreclr
+
+# set working directory
+WORKDIR /metams
+
+# Set up the directory structure
+COPY metaMS/ /metams/metaMS/
+COPY README.md disclaimer.txt Makefile requirements.txt setup.py /metams/
+COPY db/ /metams/db/
+
+# install dependencies
+RUN pip install --upgrade pip
+RUN apt-get update && apt-get install -y libgomp1
+
+# Install the requirements
+#RUN pip install pythonnet
+RUN pip install -r requirements.txt
+
+# Install the MetaMS package in editable mode
+RUN pip install --editable .
+

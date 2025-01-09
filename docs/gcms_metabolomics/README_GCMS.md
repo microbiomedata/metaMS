@@ -1,26 +1,22 @@
-
-__version__ = '3.0.0'
-__doc__ = '''
 # Table of Contents  
 - Introduction
-  - [MetaMS](#MetaMS)  
-  - [Version](#current-version)  
-  - [Data Input](#data-input-formats)  
-  - [Data Output](#data-output-formats)  
-  - [Data Structure](#data-structure-types)  
-  - [Features](#available-features)  
-  - [Code Documentation](https://emsl-computing.github.io/MetaMS/)  
+  - [MetaMS's GC/MS Metabolomics Workflow](#metamss-gcms-metabolomics-workflow)  
+    - [Version](#current-version)  
+    - [Data Input](#data-input-formats)  
+    - [Data Output](#data-output-formats)  
+    - [Data Structure](#data-structure-types)  
+    - [Features](#available-features)  
+    - [Code Documentation](https://emsl-computing.github.io/MetaMS/)  
 
 - Installation
   - [PyPi](#metams-installation)  
 
 - Execution:  
   - [CLI](#execution)  
-  - [MiniWDL](#MiniWDL)  
+  - [MiniWDL](#miniwdl)  
   - [Docker Container](#metams-docker-container)  
-# MetaMS
 
-**MetaMS** is a workflow for metabolomics data processing and annotation
+# MetaMS's GC/MS Metabolomics Workflow
 
 ## Current Version
 
@@ -66,6 +62,8 @@ __doc__ = '''
 
 ## MetaMS Installation
 
+Make sure you have python 3.9.13 installed before continue
+
 - PyPi:     
 ```bash
 pip3 install metams
@@ -91,23 +89,28 @@ To be able to open chemstation files a installation of pythonnet is needed:
 ## Execution
 
 ```bash
-metaMS dump_json_template MetamsFile.json
+metaMS dump-gcms-toml-template gcms_metams.toml
 ```
 ```bash
-metaMS dump_corems_json_template CoremsFile.json
+metaMS dump-gcms-corems-toml-template gcms_corems.toml
 ```
 
- Modify the MetamsFile.json and CoremsFile.json accordingly to your dataset and workflow parameters
-make sure to include CoremsFile.json path inside the MetamsFile.json: "corems_json_path": "path_to_CoremsFile.json" 
+ Modify the gcms_metams.toml and gcms_corems.toml accordingly to your dataset and workflow parameters
+make sure to include gcms_corems.json path inside the gcms_metams.toml: "corems_toml_path": "path_to_corems.toml" 
 
 ```bash
-metaMS run-gcms-workflow path_to_MetamsFile.json
+metaMS run-gcms-workflow path_to_gcms_metams.toml
 ```
 
 ## MiniWDL 
-- Change wdl/metams_input.json to specify the data location
 
-- Change data/CoremsFile.json to specify the workflow parameters
+Make sure you have python 3.9.13 installed before continue
+
+MiniWDL uses the microbiome/metaMS image so there is not need to install metaMS
+
+- Change wdl/gcms_metams_input.json to specify the data location
+
+- Change data/gcms_corems.toml to specify the workflow parameters
 
 Install miniWDL:
 ```bash
@@ -116,41 +119,41 @@ pip3 install miniwdl
 
 Call:
 ```bash
-miniwdl run wdl/metaMS.wdl -i wdl/metams_input.json --verbose --no-cache --copy-input-files
+miniwdl run wdl/metaMS_gcms.wdl -i wdl/metams_input_gcms.json --verbose --no-cache --copy-input-files
 ```
 ## MetaMS Docker Container
 
-A docker image containing the MetaMS command line as the entry point
+You will need docker and docker compose: 
 
-If you don't have docker installed, the easiest way is to [install docker for desktop](https://hub.docker.com/?overlay=onboarding)
+If you don't have it installed, the easiest way is to [install docker for desktop](https://www.docker.com/products/docker-desktop/)
 
 - Pull from Docker Registry:
 
     ```bash
-    docker pull corilo/metams:latest
+    docker pull microbiomedata/metams:latest
     
     ```
 - or Build the image from source:
 
     ```bash
-    docker build -t metams:latest .
+    docker build -t microbiomedata/metams:latest .
     ```
 - Run Workflow from Container:
 
-    $(data_dir) = full path of directory containing the gcms data, MetamsFile.json and CoremsFile.json
-    
+    $(data_dir) = full path of directory containing the gcms data
+    $(config_dir) = full path of directory containing configuration and parameters metams.toml and corems.toml
     ```bash
-    docker run -v $(data_dir):/metaB/data corilo/metams:latest metaMS run-gcms-workflow /metaB/data/MetamsFile.json
+    docker run -v $(data_dir):/metaB/data -v $(config_dir):/metaB/configuration microbiomedata/metams:latest metaMS run-gcms-workflow /metaB/configuration/metams.toml
     ```
 
 - Getting the parameters templates:
     
     ```bash
-    docker run -v $(data_dir):/metaB/data corilo/metams:latest metaMS dump_json_template /metaB/data/MetamsFile.json
+    docker run -v $(config_dir):/metaB/configuration microbiomedata/metams:latest metaMS dump-json-template /metaB/configuration/metams.toml
     ```
     
     ```bash
-    docker run -v $(data_dir):/metaB/data corilo/metams:latest metaMS dump_corems_json_template /metaB/data/CoremsFile.json
+    docker run -v $(config_dir):/metaB/configuration microbiomedata/metams:latest metaMS dump-corems-json-template /metaB/configuration/corems.toml
     ```
 
 ## Disclaimer
@@ -177,5 +180,3 @@ reflect those of the United States Government or any agency thereof.
                                 for the
                    UNITED STATES DEPARTMENT OF ENERGY
                     under Contract DE-AC05-76RL01830
-
-'''

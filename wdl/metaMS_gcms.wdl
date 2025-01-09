@@ -1,16 +1,16 @@
 version 1.0
 
 workflow gcmsMetabolomics {
-    call runMetaMS
+    call runMetaMSGCMS
 
     output {
-        String out = runMetaMS.out
-        File output_file = runMetaMS.output_file
-        File output_metafile = runMetaMS.output_metafile
+        String out = runMetaMSGCMS.out
+        File output_file = runMetaMSGCMS.output_file
+        File output_metafile = runMetaMSGCMS.output_metafile
     }
 }
 
-task runMetaMS {
+task runMetaMSGCMS {
     input {
         Array[File] file_paths
         File calibration_file_path
@@ -19,6 +19,7 @@ task runMetaMS {
         String output_type
         File corems_toml_path
         File nmdc_metadata_path
+        File metabref_token_path
         Int jobs_count
     }
 
@@ -31,6 +32,7 @@ task runMetaMS {
             ${output_type} \
             ${corems_toml_path} \
             ${nmdc_metadata_path} \
+            ${metabref_token_path} \
             --jobs ${jobs_count}
     }
 
@@ -41,6 +43,6 @@ task runMetaMS {
     }
 
     runtime {
-        docker: "microbiomedata/metams:2.2.2"
+        docker: "katherineheal257/metams:3.0.0"
     }
 }

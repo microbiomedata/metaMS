@@ -1,0 +1,11 @@
+{
+    "lcmsLipidomics.runMetaMSLCMSLipidomics.file_paths": [
+        "/Users/heal742/Library/CloudStorage/OneDrive-PNNL/Documents/_DMS_data/_NMDC/_blanchard_lipidomics/raw/Blanch_Nat_Lip_C_4_AB_M_08_NEG_25Jan18_Brandi-WCSH5801.raw",
+        "/Users/heal742/Library/CloudStorage/OneDrive-PNNL/Documents/_DMS_data/_NMDC/_blanchard_lipidomics/raw/Blanch_Nat_Lip_C_4_AB_M_08_POS_23Jan18_Brandi-WCSH5801.raw"
+    ],
+    "lcmsLipidomics.runMetaMSLCMSLipidomics.output_directory": "output",
+    "lcmsLipidomics.runMetaMSLCMSLipidomics.corems_toml_path": "/Users/heal742/LOCAL/05_NMDC/02_MetaMS/data_processing/configurations/emsl_lipidomics_corems_params.toml",
+    "lcmsLipidomics.runMetaMSLCMSLipidomics.db_location": "/Users/heal742/LOCAL/05_NMDC/00_Lipid_Databse/lipid_db/lipid_ref.sqlite",
+    "lcmsLipidomics.runMetaMSLCMSLipidomics.scan_translator_path": "./configuration/lipid_configs/emsl_lipidomics_scan_translator.toml",
+    "lcmsLipidomics.runMetaMSLCMSLipidomics.cores": 1
+}
