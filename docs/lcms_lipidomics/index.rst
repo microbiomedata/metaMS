@@ -99,12 +99,16 @@ input json file in wdl/metaMS_lipidomics.wdl.
 The following inputs are required (declared in the input json file):
 
 -  LC-MS/MS data file locations in one of the following formats:
+
    -  ThermoFisher mass spectrometry data files (.raw)
    -  mzML mass spectrometry data files (.mzml)
+
 -  Workflow inputs (all three required):
+
    -  CoreMS Parameter file (.toml)
    -  Scan Translator Parameter file (.toml)
    -  Path to local MetabRef database (.sqlite)
+   
 -  Cores (optional input):
    -  How many cores to use for processing. Default is 1.
 
