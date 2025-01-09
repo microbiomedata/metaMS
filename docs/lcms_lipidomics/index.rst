@@ -37,7 +37,7 @@ Workflow Availability
 ---------------------
 
 The workflow is available in GitHub:
-https://github.com/microbiomedata/metaMS/wdl/metaMS_lcmslipidomics.wdl
+https://github.com/microbiomedata/metaMS/blob/master/wdl/metaMS_lcmslipidomics.wdl
 
 The container is available at Docker Hub (microbiomedata/metaMS):
 https://hub.docker.com/r/microbiomedata/metams
@@ -98,14 +98,14 @@ input json file in wdl/metaMS_lipidomics.wdl.
 
 The following inputs are required (declared in the input json file):
 
--  LC-MS/MS data file locations in one of the following formats
+-  LC-MS/MS data file locations in one of the following formats:
    -  ThermoFisher mass spectrometry data files (.raw)
    -  mzML mass spectrometry data files (.mzml)
--  Workflow inputs
+-  Workflow inputs (all three required):
    -  CoreMS Parameter file (.toml)
    -  Scan Translator Parameter file (.toml)
    -  Path to local MetabRef database (.sqlite)
--  Cores (optional input)
+-  Cores (optional input):
    -  How many cores to use for processing. Default is 1.
 
 Outputs
