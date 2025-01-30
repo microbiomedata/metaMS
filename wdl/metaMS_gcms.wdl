@@ -43,6 +43,7 @@ task runMetaMSGCMS {
     }
 
     runtime {
+        #TODO KRH: update to pushed image when available
         docker: "local-metams:latest"
     }
 }
