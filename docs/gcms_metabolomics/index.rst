@@ -65,9 +65,7 @@ Software
 
 Database
 ~~~~~~~~~~~~~~~~
-- PNNL Internal Metabolomics GC-MS Spectral Database, version 20191015
-- Test database provided at db/EMSL_lowres_gcms_test_database.sqlite
-- Database will be provided via an API in FY25
+- Available at https://metabref.emsl.pnnl.gov/
 
 Test datasets
 -------------
@@ -92,8 +90,6 @@ Outputs
     - CSV, TAB-SEPARATED TXT
     - HDF: CoreMS HDF5 format
     - XLSX : Microsoft Excel
-- Workflow Metadata:
-    - JSON
 
 
 Version History
