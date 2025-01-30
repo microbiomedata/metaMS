@@ -30,7 +30,7 @@ def cli():
 @click.argument("output_filename", required=True, type=str)
 @click.argument("output_type", required=True, type=str)
 @click.argument("corems_toml_path", required=True, type=str)
-@click.argument("nmdc_metadata_path", required=True, type=str)
+@click.option("--nmdc_metadata_path", default=None, type=str)
 @click.option("--metabref_token_path", type=str, default=None, help="Path to the metabref token file")
 @click.option("--jobs", "-j", default=4, help="'cpu's'")
 def run_gcms_wdl_workflow(

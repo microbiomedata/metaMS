@@ -18,7 +18,7 @@ task runMetaMSGCMS {
         String output_filename
         String output_type
         File corems_toml_path
-        File nmdc_metadata_path
+        String? nmdc_metadata_path
         String? metabref_token_path
         Int jobs_count
     }
@@ -31,7 +31,7 @@ task runMetaMSGCMS {
             ${output_filename} \
             ${output_type} \
             ${corems_toml_path} \
-            ${nmdc_metadata_path} \
+            ~{if defined(nmdc_metadata_path) then "--nmdc_metadata_path" + nmdc_metadata_path else ""} \
             ~{if defined(metabref_token_path) then "--metabref_token_path " + metabref_token_path else ""} \
             --jobs ${jobs_count}
     }
