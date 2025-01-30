@@ -31,7 +31,7 @@ def cli():
 @click.argument("output_type", required=True, type=str)
 @click.argument("corems_toml_path", required=True, type=str)
 @click.argument("nmdc_metadata_path", required=True, type=str)
-@click.argument("metabref_token_path", required=True, type=str)
+@click.option("--metabref_token_path", type=str, default=None, help="Path to the metabref token file")
 @click.option("--jobs", "-j", default=4, help="'cpu's'")
 def run_gcms_wdl_workflow(
     file_paths,
@@ -50,6 +50,7 @@ def run_gcms_wdl_workflow(
     corems_toml_path = toml file with corems parameters\n
     --jobs = number of processes to run in parallel\n
     """
+    metabref_token_path = ""
     click.echo("Running gcms workflow")
     run_gcms_metabolomics_workflow_wdl(
         file_paths,

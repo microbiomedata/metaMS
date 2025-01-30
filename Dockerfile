@@ -21,5 +21,12 @@ COPY metaMS/ /metams/metaMS/
 COPY README.md disclaimer.txt Makefile requirements.txt setup.py /metams/
 COPY db/ /metams/db/
 
+#TODO KRH: Remove this section once the CoreMS package is available on PyPI and installable via the requirements.txt file
+# Copy the CoreMS tar.gz file into the Docker image
+COPY CoreMS-3.3.0.tar.gz /metams/
+
+# Install the CoreMS package from the tar.gz file
+RUN pip install /metams/CoreMS-3.3.0.tar.gz
+
 # Install the MetaMS package in editable mode
 RUN pip3 install --editable .
