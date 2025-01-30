@@ -9,6 +9,5 @@
 "gcmsMetabolomics.runMetaMSGCMS.output_type": "csv",
 "gcmsMetabolomics.runMetaMSGCMS.corems_toml_path": "./configuration/gcms_corems.toml",
 "gcmsMetabolomics.runMetaMSGCMS.nmdc_metadata_path": "./configuration/nmdc_metadata.json",
-"gcmsMetabolomics.runMetaMSGCMS.metabref_token_path": "./configuration/metabref.token",
 "gcmsMetabolomics.runMetaMSGCMS.jobs_count": 4
 }
