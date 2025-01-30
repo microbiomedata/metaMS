@@ -134,7 +134,6 @@ def run_gcms_metabolomics_workflow_wdl(
     )
 
     # Load FAMEs calibration reference
-    click.echo("Using metabRef token")
     fames_ref_sql = MetabRefGCInterface().get_fames(format="sql")
 
     # Compute RT:RI pairs
