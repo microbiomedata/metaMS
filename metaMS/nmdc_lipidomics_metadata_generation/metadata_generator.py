@@ -222,22 +222,29 @@ class NMDCMetadataGenerator(ABC):
 
         # Check for uniqueness in specified columns
         columns_to_check = [
-            'Raw Data File',
-            'Processed Data Directory'
+            'raw_data_file',
+            'processed_data_directory'
         ]
         for column in columns_to_check:
             if not metadata_df[column].is_unique:
                 raise ValueError(f"Duplicate values found in column '{column}'.")
             
         # Check that all biosamples exist
-        biosample_ids = metadata_df['Biosample Id'].unique()
+        biosample_ids = metadata_df['biosample_id'].unique()
         api_biosample_getter = ApiInfoRetriever(collection_name="biosample_set")
 
         if not api_biosample_getter.check_if_ids_exist(biosample_ids):
             raise ValueError("Biosample IDs do not exist in the collection.")
+        
+        # Check that all studies exist
+        study_ids = metadata_df['associated_study'].unique()
+        api_study_getter = ApiInfoRetriever(collection_name="study_set")
+
+        if not api_study_getter.check_if_ids_exist(study_ids):
+            raise ValueError("Study IDs do not exist in the collection.")
 
         # Group by Biosample
-        grouped = metadata_df.groupby('Biosample Id')
+        grouped = metadata_df.groupby('biosample_id')
 
         return grouped
 
@@ -653,10 +660,10 @@ class LCMSLipidomicsMetadataGenerator(NMDCMetadataGenerator):
         )
 
         self.grouped_columns = [
-            'Biosample Id',
-            'Associated Study',
-            'Processing Type',
-            'processing institution'
+            'biosample_id',
+            'associated_study',
+            'material_processing_type',
+            'processing_institution'
         ]
 
         # Data Generation attributes
@@ -769,9 +776,25 @@ class LCMSLipidomicsMetadataGenerator(NMDCMetadataGenerator):
                     parameter_data_id="nmdc:placeholder",
                     processing_institution=group_metadata_obj.processing_institution
                 )
-            
+
+                # list all paths in the processed data directory                  
                 processed_data_paths = Path(
                     workflow_metadata_obj.processed_data_dir).glob('**/*')
+                
+                # Add a check that the processed data directory is not empty
+                if not any(processed_data_paths):
+                    raise FileNotFoundError(
+                        f"No files found in processed data directory: "
+                        f"{workflow_metadata_obj.processed_data_dir}"
+                    )
+                
+                # Check that there is a .csv, .hdf5, and .toml file in the processed data directory and no other files
+                processed_data_files = [x for x in processed_data_paths]
+                if len(processed_data_paths) != 3:
+                    raise ValueError(
+                        f"Expected 3 files in the processed data directory, found {len(processed_data_paths)}."
+                    )
+
                 processed_data = []
 
                 for file in processed_data_paths:
@@ -894,14 +917,14 @@ class LCMSLipidomicsMetadataGenerator(NMDCMetadataGenerator):
         'execution resource'.
         """
         return WorkflowMetadata(
-            processed_data_dir=row['Processed Data Directory'],
-            raw_data_file=row['Raw Data File'],
-            mass_spec_config_name=row['mass spec configuration name'],
-            lc_config_name=row['lc config name'],
-            instrument_used=row['instrument used'],
-            instrument_analysis_start_date=row['instrument analysis start date'],
-            instrument_analysis_end_date=row['instrument analysis end date'],
-            execution_resource=row['execution resource']
+            processed_data_dir=row['processed_data_directory'],
+            raw_data_file=row['raw_data_file'],
+            mass_spec_config_name=row['mass_spec_configuration_name'],
+            lc_config_name=row['chromat_configuration_name'],
+            instrument_used=row['instrument_used'],
+            instrument_analysis_start_date=row['instrument_analysis_start_date'],
+            instrument_analysis_end_date=row['instrument_analysis_end_date'],
+            execution_resource=row['execution_resource']
         )
 
 class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
@@ -1076,7 +1099,7 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
             self,
             calibration_object: str,
             fames: bool
-            ) -> nmdc.Calibration:
+            ) -> nmdc.CalibrationInformation:
         """
         #TODO KRH: Add docstring for generate_calibration
         """
