@@ -464,6 +464,128 @@ class NMDCMetadataGenerator(ABC):
 
         return metab_analysis
 
+    def update_outputs(
+        self,
+        mass_spec_obj: object,
+        analysis_obj: object,
+        raw_data_obj: object,
+        parameter_data_id: str,
+        processed_data_id_list: list
+        ) -> None:
+        """
+        Update output references for Mass Spectrometry and Workflow Analysis objects.
+
+        This method assigns the output references for a Mass Spectrometry object
+        and a Workflow Execution Analysis object. It sets `mass_spec_obj.has_output`
+        to the ID of `raw_data_obj` and `analysis_obj.has_output` to a list of
+        processed data IDs.
+
+        Parameters
+        ----------
+        mass_spec_obj : object
+            The Mass Spectrometry object to update.
+        analysis_obj : object
+            The Workflow Execution Analysis object to update
+            (e.g., MetabolomicsAnalysis).
+        parameter_data_id : str
+            ID of the data object representing the parameter data used for the analysis.
+        raw_data_obj : object
+            The Raw Data Object associated with the Mass Spectrometry.
+        processed_data_id_list : list
+            List of IDs representing processed data objects associated with
+            the Workflow Execution.
+
+        Returns
+        -------
+        None
+
+        Side Effects
+        ------------
+        - Sets `mass_spec_obj.has_output` to [raw_data_obj.id].
+        - Sets `analysis_obj.has_output` to `processed_data_id_list`.
+        """
+        mass_spec_obj.has_output = [raw_data_obj.id]
+        analysis_obj.has_input[1] = parameter_data_id
+        analysis_obj.has_output = processed_data_id_list
+
+    def dump_nmdc_database(self, nmdc_database: nmdc.Database) -> None:
+        """
+        Dump the NMDC database to a JSON file.
+
+        This method serializes the NMDC Database instance to a JSON file
+        at the specified path.
+
+        Parameters
+        ----------
+        nmdc_database : nmdc.Database
+            The NMDC Database instance to dump.
+
+        Returns
+        -------
+        None
+
+        Side Effects
+        ------------
+        Writes the database content to the file specified by
+        `self.database_dump_json_path`.
+        """
+        json_dumper.dump(nmdc_database, self.database_dump_json_path)
+        logging.info(
+            "Database successfully dumped in %s",
+            self.database_dump_json_path
+        )
+
+    def mint_nmdc_id(self, nmdc_type: str) -> list[str]:
+        """
+        Mint new NMDC IDs of the specified type using the NMDC ID minting API.
+
+        Parameters
+        ----------
+        nmdc_type : str
+            The type of NMDC ID to mint (e.g., 'nmdc:MassSpectrometry',
+            'nmdc:DataObject').
+
+        Returns
+        -------
+        list[str]
+            A list containing one newly minted NMDC ID.
+
+        Raises
+        ------
+        requests.exceptions.RequestException
+            If there is an error during the API request.
+
+        Notes
+        -----
+        This method relies on a YAML configuration file for authentication
+        details. The file should contain 'client_id' and 'client_secret' keys.
+
+        """
+        config = yaml.safe_load(open(self.minting_client_config_path))
+        client = oauthlib.oauth2.BackendApplicationClient(
+            client_id=config['client_id']
+        )
+        oauth = requests_oauthlib.OAuth2Session(client=client)
+
+        api_base_url = 'https://api.microbiomedata.org'
+
+        token = oauth.fetch_token(
+            token_url=f'{api_base_url}/token',
+            client_id=config['client_id'],
+            client_secret=config['client_secret']
+        )
+
+        nmdc_mint_url = f'{api_base_url}/pids/mint'
+
+        payload = {
+            "schema_class": {"id": nmdc_type},
+            "how_many": 1
+        }
+
+        response = oauth.post(nmdc_mint_url, data=json.dumps(payload))
+        list_ids = response.json()
+
+        return list_ids
 class LCMSLipidomicsMetadataGenerator(NMDCMetadataGenerator):
     """
     A class for generating NMDC metadata objects using provided metadata files and configuration
@@ -782,127 +904,6 @@ class LCMSLipidomicsMetadataGenerator(NMDCMetadataGenerator):
             execution_resource=row['execution resource']
         )
 
-    def mint_nmdc_id(self, nmdc_type: str) -> list[str]:
-        """
-        Mint new NMDC IDs of the specified type using the NMDC ID minting API.
-
-        Parameters
-        ----------
-        nmdc_type : str
-            The type of NMDC ID to mint (e.g., 'nmdc:MassSpectrometry',
-            'nmdc:DataObject').
-
-        Returns
-        -------
-        list[str]
-            A list containing one newly minted NMDC ID.
-
-        Raises
-        ------
-        requests.exceptions.RequestException
-            If there is an error during the API request.
-
-        Notes
-        -----
-        This method relies on a YAML configuration file for authentication
-        details. The file should contain 'client_id' and 'client_secret' keys.
-
-        """
-        config = yaml.safe_load(open(self.minting_client_config_path))
-        client = oauthlib.oauth2.BackendApplicationClient(
-            client_id=config['client_id']
-        )
-        oauth = requests_oauthlib.OAuth2Session(client=client)
-
-        api_base_url = 'https://api.microbiomedata.org'
-
-        token = oauth.fetch_token(
-            token_url=f'{api_base_url}/token',
-            client_id=config['client_id'],
-            client_secret=config['client_secret']
-        )
-
-        nmdc_mint_url = f'{api_base_url}/pids/mint'
-
-        payload = {
-            "schema_class": {"id": nmdc_type},
-            "how_many": 1
-        }
-
-        response = oauth.post(nmdc_mint_url, data=json.dumps(payload))
-        list_ids = response.json()
-
-        return list_ids
-
-    def update_outputs(
-        self,
-        mass_spec_obj: object,
-        analysis_obj: object,
-        raw_data_obj: object,
-        parameter_data_id: str,
-        processed_data_id_list: list
-        ) -> None:
-        """
-        Update output references for Mass Spectrometry and Workflow Analysis objects.
-
-        This method assigns the output references for a Mass Spectrometry object
-        and a Workflow Execution Analysis object. It sets `mass_spec_obj.has_output`
-        to the ID of `raw_data_obj` and `analysis_obj.has_output` to a list of
-        processed data IDs.
-
-        Parameters
-        ----------
-        mass_spec_obj : object
-            The Mass Spectrometry object to update.
-        analysis_obj : object
-            The Workflow Execution Analysis object to update
-            (e.g., MetabolomicsAnalysis).
-        raw_data_obj : object
-            The Raw Data Object associated with the Mass Spectrometry.
-        processed_data_id_list : list
-            List of IDs representing processed data objects associated with
-            the Workflow Execution.
-
-        Returns
-        -------
-        None
-
-        Side Effects
-        ------------
-        - Sets `mass_spec_obj.has_output` to [raw_data_obj.id].
-        - Sets `analysis_obj.has_output` to `processed_data_id_list`.
-        """
-        mass_spec_obj.has_output = [raw_data_obj.id]
-        analysis_obj.has_input[1] = parameter_data_id
-        analysis_obj.has_output = processed_data_id_list
-
-    def dump_nmdc_database(self, nmdc_database: nmdc.Database) -> None:
-        """
-        Dump the NMDC database to a JSON file.
-
-        This method serializes the NMDC Database instance to a JSON file
-        at the specified path.
-
-        Parameters
-        ----------
-        nmdc_database : nmdc.Database
-            The NMDC Database instance to dump.
-
-        Returns
-        -------
-        None
-
-        Side Effects
-        ------------
-        Writes the database content to the file specified by
-        `self.database_dump_json_path`.
-        """
-        json_dumper.dump(nmdc_database, self.database_dump_json_path)
-        logging.info(
-            "Database successfully dumped in %s",
-            self.database_dump_json_path
-        )
-
 class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
     """
     #TODO KRH: Add docstring for GCMSMetabolomicsMetadataGenerator
@@ -956,6 +957,9 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
         grouped_data = self.load_metadata()
         total_groups = len(grouped_data)
 
+        #TODO KRH: Get parameter for corems config file
+        parameter_data_id = None
+
         # TODO KRH: Add steps and save creation of calibration objects
         # Make raw data objects and calibrations objects
         # get names of calibration files and make a dictionary of these objects by name?
@@ -969,13 +973,14 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
                 description=self.raw_data_obj_desc,
                 base_url=self.raw_data_url
             )
+            nmdc_database_inst.data_object_set.append(calibration_data_object)
 
             calibration = self.generate_calibration(
                 calibration_object=calibration_data_object.id,
                 fames=True
             )
+            nmdc_database_inst.calibration_set.append(calibration)
         
-
         # Get rid of these groupings, it's not helpful
         for group, data in tqdm(grouped_data, total=total_groups,
                                 desc="Processing biosamples"):
@@ -1016,8 +1021,17 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
                     was_generated_by=mass_spec.id,
                 )
 
+                # TODO: Build out Generate has_metabolite_identifications - I believe it will go here, or add a placeholder
+                # to the metabolite_identifications field in the metab_analysis step and add them later. Will need to add a method
+                # to get the metabolite_identifcations from the data. This method just creates the metadata for 1 instance
+                # of the metabolite identifications, will need to append them to a list and add ot eh metab_analysis step as a list:
+                metabolite_identification = self.generate_metab_identifications(highest_similarity_score="",
+                                                                        alt_ids="")
+
+
                 #TODO KRH: Add calibration information to "uses_calibration", add "workflow_category" here
                 #TODO KRH: Add configuation file as "has_input" after loading it to minio
+                #TODO KRH: Add has_metabolite_identifications information
                 metab_analysis = self.generate_metabolomics_analysis(
                     cluster_name=workflow_metadata_obj.execution_resource,
                     raw_data_name=Path(workflow_metadata_obj.raw_data_file).name,
@@ -1038,6 +1052,26 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
                     base_url=self.process_data_url,
                     was_generated_by=metab_analysis.id
                 )
+
+        self.update_outputs(
+            mass_spec_obj=mass_spec,
+            analysis_obj=metab_analysis,
+            raw_data_obj=raw_data_object,
+            parameter_data_id=parameter_data_id,
+            processed_data_id_list=[processed_data_object.id]
+        )
+
+        nmdc_database_inst.data_generation_set.append(mass_spec)
+        nmdc_database_inst.data_object_set.append(raw_data_object)
+        nmdc_database_inst.data_object_set.append(processed_data_object)
+        nmdc_database_inst.workflow_execution_set.append(metab_analysis)
+
+        self.dump_nmdc_database(nmdc_database=nmdc_database_inst)
+        api_interface = NMDCAPIInterface()
+        api_interface.validate_json(self.database_dump_json_path)
+        logging.info("Metadata processing completed.")
+
+        
     def generate_calibration(
             self,
             calibration_object: str,
