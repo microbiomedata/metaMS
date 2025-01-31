@@ -697,7 +697,8 @@ class LCMSLipidomicsMetadataGenerator(NMDCMetadataGenerator):
         self.csv_process_data_description = (
             "Lipid annotations as a result of a lipidomics workflow activity."
         )
-        self.hdf5_process_data_obj_type = "LC-MS Lipidomics Processed Data"
+        # TODO KRH: Switch to "LC-MS Lipidomics Processed Data" when the type is added to the schema with release of 11.4
+        self.hdf5_process_data_obj_type = "LC-MS Lipidomics Results"
         self.hdf5_process_data_description = (
             "CoreMS hdf5 file representing a lipidomics data file including annotations."
         )
@@ -789,7 +790,7 @@ class LCMSLipidomicsMetadataGenerator(NMDCMetadataGenerator):
                     )
                 
                 # Check that there is a .csv, .hdf5, and .toml file in the processed data directory and no other files
-                processed_data_files = [x for x in processed_data_paths]
+                processed_data_paths = [x for x in processed_data_paths if x.is_file()]
                 if len(processed_data_paths) != 3:
                     raise ValueError(
                         f"Expected 3 files in the processed data directory, found {len(processed_data_paths)}."
@@ -803,7 +804,8 @@ class LCMSLipidomicsMetadataGenerator(NMDCMetadataGenerator):
                         file_type = file_type[0].lstrip('.')
 
                         if file_type == 'toml':
-                            processed_data_object = self.generate_data_object(
+                            # Generate a data object for the parameter data
+                            processed_data_object_config = self.generate_data_object(
                                 file_path=file,
                                 data_category=self.wf_config_process_data_category,
                                 data_object_type=self.wf_config_process_data_obj_type,
@@ -811,11 +813,12 @@ class LCMSLipidomicsMetadataGenerator(NMDCMetadataGenerator):
                                 base_url=self.process_data_url,
                                 was_generated_by=metab_analysis.id
                             )
-                            nmdc_database_inst.data_object_set.append(processed_data_object)
-                            parameter_data_id = processed_data_object.id
+                            nmdc_database_inst.data_object_set.append(processed_data_object_config)
+                            parameter_data_id = processed_data_object_config.id
 
                         elif file_type == 'csv':
-                            processed_data_object = self.generate_data_object(
+                            # Generate a data object for the annotated data
+                            processed_data_object_annot = self.generate_data_object(
                                 file_path=file,
                                 data_category=self.no_config_process_data_category,
                                 data_object_type=self.no_config_process_data_obj_type,
@@ -823,10 +826,11 @@ class LCMSLipidomicsMetadataGenerator(NMDCMetadataGenerator):
                                 base_url=self.process_data_url,
                                 was_generated_by=metab_analysis.id
                             )
-                            nmdc_database_inst.data_object_set.append(processed_data_object)
-                            processed_data.append(processed_data_object.id)
+                            nmdc_database_inst.data_object_set.append(processed_data_object_annot)
+                            processed_data.append(processed_data_object_annot.id)
 
                         elif file_type == 'hdf5':
+                            # Generate a data object for the HDF5 processed data
                             processed_data_object = self.generate_data_object(
                                 file_path=file,
                                 data_category=self.no_config_process_data_category,
@@ -835,7 +839,6 @@ class LCMSLipidomicsMetadataGenerator(NMDCMetadataGenerator):
                                 base_url=self.process_data_url,
                                 was_generated_by=metab_analysis.id
                             )
-                            
                             nmdc_database_inst.data_object_set.append(processed_data_object)
                             processed_data.append(processed_data_object.id)
 
@@ -844,6 +847,17 @@ class LCMSLipidomicsMetadataGenerator(NMDCMetadataGenerator):
                                 file.stat().st_ctime).strftime("%Y-%m-%d %H:%M:%S")
                             metab_analysis.ended_at_time = datetime.fromtimestamp(
                                 file.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
+                        
+                        else:
+                            raise ValueError(
+                                f"Unexpected file type found for file {file}."
+                            )
+                        
+                # Check that all processed data objects were created
+                if processed_data_object_config is None or processed_data_object_annot is None or processed_data_object is None:
+                    raise ValueError(
+                        f"Not all processed data objects were created for {workflow_metadata_obj.processed_data_dir}."
+                    )
 
                 self.update_outputs(
                     mass_spec_obj=mass_spec,
@@ -856,6 +870,9 @@ class LCMSLipidomicsMetadataGenerator(NMDCMetadataGenerator):
                 nmdc_database_inst.data_generation_set.append(mass_spec)
                 nmdc_database_inst.data_object_set.append(raw_data_object)
                 nmdc_database_inst.workflow_execution_set.append(metab_analysis)
+
+                # Set processed data objects to none for next iteration
+                processed_data_object_config, processed_data_object_annot, processed_data_object = None, None, None
         
         self.dump_nmdc_database(nmdc_database=nmdc_database_inst)
         api_interface = NMDCAPIInterface()
