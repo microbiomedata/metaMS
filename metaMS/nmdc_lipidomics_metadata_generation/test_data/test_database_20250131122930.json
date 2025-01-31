@@ -1,0 +1,389 @@
+{
+  "data_generation_set": [
+    {
+      "id": "nmdc:dgms-11-hkh6qm58",
+      "type": "nmdc:MassSpectrometry",
+      "name": "sample_1_positive",
+      "description": "Generation of mass spectrometry data for the analysis of lipids.",
+      "has_input": [
+        "nmdc:bsm-11-002vgm56"
+      ],
+      "has_output": [
+        "nmdc:dobj-11-81zf6833"
+      ],
+      "processing_institution": "EMSL",
+      "start_date": "1/22/23",
+      "end_date": "3/4/24",
+      "analyte_category": "lipidome",
+      "associated_studies": [
+        "nmdc:sty-11-34xj1150"
+      ],
+      "add_date": "2025-01-31",
+      "instrument_used": [
+        "nmdc:inst-14-njkx0e66"
+      ],
+      "eluent_introduction_category": "liquid_chromatography",
+      "has_chromatography_configuration": "nmdc:chrcon-14-pjbw3m78",
+      "has_mass_spectrometry_configuration": "nmdc:mscon-14-e1vant42"
+    },
+    {
+      "id": "nmdc:dgms-11-4vkg9310",
+      "type": "nmdc:MassSpectrometry",
+      "name": "sample_1_negative",
+      "description": "Generation of mass spectrometry data for the analysis of lipids.",
+      "has_input": [
+        "nmdc:bsm-11-002vgm56"
+      ],
+      "has_output": [
+        "nmdc:dobj-11-y014q483"
+      ],
+      "processing_institution": "EMSL",
+      "start_date": "1/22/23",
+      "end_date": "3/4/24",
+      "analyte_category": "lipidome",
+      "associated_studies": [
+        "nmdc:sty-11-34xj1150"
+      ],
+      "add_date": "2025-01-31",
+      "instrument_used": [
+        "nmdc:inst-14-njkx0e66"
+      ],
+      "eluent_introduction_category": "liquid_chromatography",
+      "has_chromatography_configuration": "nmdc:chrcon-14-pjbw3m78",
+      "has_mass_spectrometry_configuration": "nmdc:mscon-14-pqgtpa49"
+    },
+    {
+      "id": "nmdc:dgms-11-zt9egg39",
+      "type": "nmdc:MassSpectrometry",
+      "name": "sample_2_positive",
+      "description": "Generation of mass spectrometry data for the analysis of lipids.",
+      "has_input": [
+        "nmdc:bsm-11-006pnx90"
+      ],
+      "has_output": [
+        "nmdc:dobj-11-m7g71987"
+      ],
+      "processing_institution": "EMSL",
+      "start_date": "1/22/23",
+      "end_date": "3/4/24",
+      "analyte_category": "lipidome",
+      "associated_studies": [
+        "nmdc:sty-11-e4yb9z58"
+      ],
+      "add_date": "2025-01-31",
+      "instrument_used": [
+        "nmdc:inst-14-njkx0e66"
+      ],
+      "eluent_introduction_category": "liquid_chromatography",
+      "has_chromatography_configuration": "nmdc:chrcon-14-pjbw3m78",
+      "has_mass_spectrometry_configuration": "nmdc:mscon-14-e1vant42"
+    },
+    {
+      "id": "nmdc:dgms-11-cbfrgv30",
+      "type": "nmdc:MassSpectrometry",
+      "name": "sample_2_negative",
+      "description": "Generation of mass spectrometry data for the analysis of lipids.",
+      "has_input": [
+        "nmdc:bsm-11-006pnx90"
+      ],
+      "has_output": [
+        "nmdc:dobj-11-92p5ng79"
+      ],
+      "processing_institution": "EMSL",
+      "start_date": "1/22/23",
+      "end_date": "3/4/24",
+      "analyte_category": "lipidome",
+      "associated_studies": [
+        "nmdc:sty-11-e4yb9z58"
+      ],
+      "add_date": "2025-01-31",
+      "instrument_used": [
+        "nmdc:inst-14-njkx0e66"
+      ],
+      "eluent_introduction_category": "liquid_chromatography",
+      "has_chromatography_configuration": "nmdc:chrcon-14-pjbw3m78",
+      "has_mass_spectrometry_configuration": "nmdc:mscon-14-pqgtpa49"
+    }
+  ],
+  "data_object_set": [
+    {
+      "id": "nmdc:dobj-11-8qkwe213",
+      "type": "nmdc:DataObject",
+      "name": "sample_1_positive.csv",
+      "description": "Lipid annotations as a result of a lipidomics workflow activity.",
+      "data_category": "processed_data",
+      "data_object_type": "LC-MS Lipidomics Results",
+      "file_size_bytes": 55,
+      "md5_checksum": "b4e738c1be7b6074a139ca09c512d228",
+      "url": "https://example_processed_data_url/sample_1_positive.csv",
+      "was_generated_by": "nmdc:wfmb-11-c3aft677.1"
+    },
+    {
+      "id": "nmdc:dobj-11-dramwy86",
+      "type": "nmdc:DataObject",
+      "name": "sample_1_positive.hdf5.toml",
+      "description": "CoreMS hdf5 file representing a lipidomics data file including annotations.",
+      "data_category": "processed_data",
+      "data_object_type": "LC-MS Lipidomics Results",
+      "file_size_bytes": 55,
+      "md5_checksum": "b4e738c1be7b6074a139ca09c512d228",
+      "url": "https://example_processed_data_url/sample_1_positive.hdf5.toml",
+      "was_generated_by": "nmdc:wfmb-11-c3aft677.1"
+    },
+    {
+      "id": "nmdc:dobj-11-2dq4mq33",
+      "type": "nmdc:DataObject",
+      "name": "sample_1_positive.toml",
+      "description": "CoreMS parameters used for Lipidomics workflow.",
+      "data_category": "workflow_parameter_data",
+      "data_object_type": "Configuration toml",
+      "file_size_bytes": 55,
+      "md5_checksum": "b4e738c1be7b6074a139ca09c512d228",
+      "url": "https://example_processed_data_url/sample_1_positive.toml",
+      "was_generated_by": "nmdc:wfmb-11-c3aft677.1"
+    },
+    {
+      "id": "nmdc:dobj-11-81zf6833",
+      "type": "nmdc:DataObject",
+      "name": "sample_1_positive.raw",
+      "description": "LC-DDA-MS/MS raw data for lipidomics data acquisition.",
+      "data_category": "instrument_data",
+      "data_object_type": "LC-DDA-MS/MS Raw Data",
+      "file_size_bytes": 55,
+      "md5_checksum": "b4e738c1be7b6074a139ca09c512d228",
+      "url": "https://example_raw_data_url/sample_1_positive.raw",
+      "was_generated_by": "nmdc:dgms-11-hkh6qm58"
+    },
+    {
+      "id": "nmdc:dobj-11-0e9fxv81",
+      "type": "nmdc:DataObject",
+      "name": "sample_1_negative.csv",
+      "description": "Lipid annotations as a result of a lipidomics workflow activity.",
+      "data_category": "processed_data",
+      "data_object_type": "LC-MS Lipidomics Results",
+      "file_size_bytes": 55,
+      "md5_checksum": "b4e738c1be7b6074a139ca09c512d228",
+      "url": "https://example_processed_data_url/sample_1_negative.csv",
+      "was_generated_by": "nmdc:wfmb-11-6q40xv78.1"
+    },
+    {
+      "id": "nmdc:dobj-11-4sw97s46",
+      "type": "nmdc:DataObject",
+      "name": "sample_1_negative.toml",
+      "description": "CoreMS parameters used for Lipidomics workflow.",
+      "data_category": "workflow_parameter_data",
+      "data_object_type": "Configuration toml",
+      "file_size_bytes": 55,
+      "md5_checksum": "b4e738c1be7b6074a139ca09c512d228",
+      "url": "https://example_processed_data_url/sample_1_negative.toml",
+      "was_generated_by": "nmdc:wfmb-11-6q40xv78.1"
+    },
+    {
+      "id": "nmdc:dobj-11-nzzva953",
+      "type": "nmdc:DataObject",
+      "name": "sample_2_positive.hdf5.toml",
+      "description": "CoreMS hdf5 file representing a lipidomics data file including annotations.",
+      "data_category": "processed_data",
+      "data_object_type": "LC-MS Lipidomics Results",
+      "file_size_bytes": 55,
+      "md5_checksum": "b4e738c1be7b6074a139ca09c512d228",
+      "url": "https://example_processed_data_url/sample_2_positive.hdf5.toml",
+      "was_generated_by": "nmdc:wfmb-11-6q40xv78.1"
+    },
+    {
+      "id": "nmdc:dobj-11-y014q483",
+      "type": "nmdc:DataObject",
+      "name": "sample_1_negative.raw",
+      "description": "LC-DDA-MS/MS raw data for lipidomics data acquisition.",
+      "data_category": "instrument_data",
+      "data_object_type": "LC-DDA-MS/MS Raw Data",
+      "file_size_bytes": 55,
+      "md5_checksum": "b4e738c1be7b6074a139ca09c512d228",
+      "url": "https://example_raw_data_url/sample_1_negative.raw",
+      "was_generated_by": "nmdc:dgms-11-4vkg9310"
+    },
+    {
+      "id": "nmdc:dobj-11-7vqtzv29",
+      "type": "nmdc:DataObject",
+      "name": "sample_2_positive.csv",
+      "description": "Lipid annotations as a result of a lipidomics workflow activity.",
+      "data_category": "processed_data",
+      "data_object_type": "LC-MS Lipidomics Results",
+      "file_size_bytes": 55,
+      "md5_checksum": "b4e738c1be7b6074a139ca09c512d228",
+      "url": "https://example_processed_data_url/sample_2_positive.csv",
+      "was_generated_by": "nmdc:wfmb-11-fwgp9a67.1"
+    },
+    {
+      "id": "nmdc:dobj-11-7y487b46",
+      "type": "nmdc:DataObject",
+      "name": "sample_2_positive.toml",
+      "description": "CoreMS parameters used for Lipidomics workflow.",
+      "data_category": "workflow_parameter_data",
+      "data_object_type": "Configuration toml",
+      "file_size_bytes": 55,
+      "md5_checksum": "b4e738c1be7b6074a139ca09c512d228",
+      "url": "https://example_processed_data_url/sample_2_positive.toml",
+      "was_generated_by": "nmdc:wfmb-11-fwgp9a67.1"
+    },
+    {
+      "id": "nmdc:dobj-11-b7g3zx69",
+      "type": "nmdc:DataObject",
+      "name": "sample_2_positive.hdf5.toml",
+      "description": "CoreMS hdf5 file representing a lipidomics data file including annotations.",
+      "data_category": "processed_data",
+      "data_object_type": "LC-MS Lipidomics Results",
+      "file_size_bytes": 55,
+      "md5_checksum": "b4e738c1be7b6074a139ca09c512d228",
+      "url": "https://example_processed_data_url/sample_2_positive.hdf5.toml",
+      "was_generated_by": "nmdc:wfmb-11-fwgp9a67.1"
+    },
+    {
+      "id": "nmdc:dobj-11-m7g71987",
+      "type": "nmdc:DataObject",
+      "name": "sample_2_positive.raw",
+      "description": "LC-DDA-MS/MS raw data for lipidomics data acquisition.",
+      "data_category": "instrument_data",
+      "data_object_type": "LC-DDA-MS/MS Raw Data",
+      "file_size_bytes": 55,
+      "md5_checksum": "b4e738c1be7b6074a139ca09c512d228",
+      "url": "https://example_raw_data_url/sample_2_positive.raw",
+      "was_generated_by": "nmdc:dgms-11-zt9egg39"
+    },
+    {
+      "id": "nmdc:dobj-11-sp93v364",
+      "type": "nmdc:DataObject",
+      "name": "sample_2_positive.hdf5.toml",
+      "description": "CoreMS hdf5 file representing a lipidomics data file including annotations.",
+      "data_category": "processed_data",
+      "data_object_type": "LC-MS Lipidomics Results",
+      "file_size_bytes": 55,
+      "md5_checksum": "b4e738c1be7b6074a139ca09c512d228",
+      "url": "https://example_processed_data_url/sample_2_positive.hdf5.toml",
+      "was_generated_by": "nmdc:wfmb-11-rxpjqk92.1"
+    },
+    {
+      "id": "nmdc:dobj-11-8x0kqj07",
+      "type": "nmdc:DataObject",
+      "name": "sample_2_negative.toml",
+      "description": "CoreMS parameters used for Lipidomics workflow.",
+      "data_category": "workflow_parameter_data",
+      "data_object_type": "Configuration toml",
+      "file_size_bytes": 55,
+      "md5_checksum": "b4e738c1be7b6074a139ca09c512d228",
+      "url": "https://example_processed_data_url/sample_2_negative.toml",
+      "was_generated_by": "nmdc:wfmb-11-rxpjqk92.1"
+    },
+    {
+      "id": "nmdc:dobj-11-659y1327",
+      "type": "nmdc:DataObject",
+      "name": "sample_2_negative.csv",
+      "description": "Lipid annotations as a result of a lipidomics workflow activity.",
+      "data_category": "processed_data",
+      "data_object_type": "LC-MS Lipidomics Results",
+      "file_size_bytes": 55,
+      "md5_checksum": "b4e738c1be7b6074a139ca09c512d228",
+      "url": "https://example_processed_data_url/sample_2_negative.csv",
+      "was_generated_by": "nmdc:wfmb-11-rxpjqk92.1"
+    },
+    {
+      "id": "nmdc:dobj-11-92p5ng79",
+      "type": "nmdc:DataObject",
+      "name": "sample_2_negative.raw",
+      "description": "LC-DDA-MS/MS raw data for lipidomics data acquisition.",
+      "data_category": "instrument_data",
+      "data_object_type": "LC-DDA-MS/MS Raw Data",
+      "file_size_bytes": 55,
+      "md5_checksum": "b4e738c1be7b6074a139ca09c512d228",
+      "url": "https://example_raw_data_url/sample_2_negative.raw",
+      "was_generated_by": "nmdc:dgms-11-cbfrgv30"
+    }
+  ],
+  "workflow_execution_set": [
+    {
+      "id": "nmdc:wfmb-11-c3aft677.1",
+      "type": "nmdc:MetabolomicsAnalysis",
+      "name": "Lipidomics analysis for sample_1_positive.raw",
+      "description": "Analysis of raw mass spectrometry data for the annotation of lipids.",
+      "has_input": [
+        "nmdc:dobj-11-81zf6833",
+        "nmdc:dobj-11-2dq4mq33"
+      ],
+      "has_output": [
+        "nmdc:dobj-11-8qkwe213",
+        "nmdc:dobj-11-dramwy86"
+      ],
+      "processing_institution": "EMSL",
+      "execution_resource": "EMSL-RZR",
+      "git_url": "https://github.com/microbiomedata/metaMS/wdl/metaMS_lipidomics.wdl",
+      "started_at_time": "2025-01-31 11:43:36",
+      "was_informed_by": "nmdc:dgms-11-hkh6qm58",
+      "ended_at_time": "2025-01-31 10:15:24",
+      "version": "1.0.0"
+    },
+    {
+      "id": "nmdc:wfmb-11-6q40xv78.1",
+      "type": "nmdc:MetabolomicsAnalysis",
+      "name": "Lipidomics analysis for sample_1_negative.raw",
+      "description": "Analysis of raw mass spectrometry data for the annotation of lipids.",
+      "has_input": [
+        "nmdc:dobj-11-y014q483",
+        "nmdc:dobj-11-4sw97s46"
+      ],
+      "has_output": [
+        "nmdc:dobj-11-0e9fxv81",
+        "nmdc:dobj-11-nzzva953"
+      ],
+      "processing_institution": "EMSL",
+      "execution_resource": "EMSL-RZR",
+      "git_url": "https://github.com/microbiomedata/metaMS/wdl/metaMS_lipidomics.wdl",
+      "started_at_time": "2025-01-31 11:52:29",
+      "was_informed_by": "nmdc:dgms-11-4vkg9310",
+      "ended_at_time": "2025-01-31 10:15:24",
+      "version": "1.0.0"
+    },
+    {
+      "id": "nmdc:wfmb-11-fwgp9a67.1",
+      "type": "nmdc:MetabolomicsAnalysis",
+      "name": "Lipidomics analysis for sample_2_positive.raw",
+      "description": "Analysis of raw mass spectrometry data for the annotation of lipids.",
+      "has_input": [
+        "nmdc:dobj-11-m7g71987",
+        "nmdc:dobj-11-7y487b46"
+      ],
+      "has_output": [
+        "nmdc:dobj-11-7vqtzv29",
+        "nmdc:dobj-11-b7g3zx69"
+      ],
+      "processing_institution": "EMSL",
+      "execution_resource": "EMSL-RZR",
+      "git_url": "https://github.com/microbiomedata/metaMS/wdl/metaMS_lipidomics.wdl",
+      "started_at_time": "2025-01-31 11:19:44",
+      "was_informed_by": "nmdc:dgms-11-zt9egg39",
+      "ended_at_time": "2025-01-31 10:15:24",
+      "version": "1.0.0"
+    },
+    {
+      "id": "nmdc:wfmb-11-rxpjqk92.1",
+      "type": "nmdc:MetabolomicsAnalysis",
+      "name": "Lipidomics analysis for sample_2_negative.raw",
+      "description": "Analysis of raw mass spectrometry data for the annotation of lipids.",
+      "has_input": [
+        "nmdc:dobj-11-92p5ng79",
+        "nmdc:dobj-11-8x0kqj07"
+      ],
+      "has_output": [
+        "nmdc:dobj-11-sp93v364",
+        "nmdc:dobj-11-659y1327"
+      ],
+      "processing_institution": "EMSL",
+      "execution_resource": "EMSL-RZR",
+      "git_url": "https://github.com/microbiomedata/metaMS/wdl/metaMS_lipidomics.wdl",
+      "started_at_time": "2025-01-31 11:19:50",
+      "was_informed_by": "nmdc:dgms-11-cbfrgv30",
+      "ended_at_time": "2025-01-31 10:15:24",
+      "version": "1.0.0"
+    }
+  ],
+  "@type": "Database"
+}

@@ -48,9 +48,9 @@ class GroupedMetadata:
     nmdc_study: float
 
 @dataclass
-class WorkflowMetadata:
+class LCMSLipidWorkflowMetadata():
     """
-    Data class for holding workflow metadata information.
+    Data class for holding LC-MS lipidomics workflow metadata information.
 
     Attributes
     ----------
@@ -81,6 +81,45 @@ class WorkflowMetadata:
     execution_resource: float
 
 @dataclass
+class GCMSMetabWorkflowMetadata():
+    """
+    Data class for holding LC-MS lipidomics workflow metadata information.
+
+    Attributes
+    ----------
+    processed_data_file : str
+        Path or name of the processed data file.
+    raw_data_file : str
+        Path or name of the raw data file.
+    mass_spec_config_name : str
+        Name of the mass spectrometry configuration used.
+    chromat_config_name : str
+        Name of the chromatography configuration used.
+    instrument_used : str
+        Name of the instrument used for analysis.
+    instrument_analysis_start_date : str
+        Start date of the instrument analysis.
+    instrument_analysis_end_date : str
+        End date of the instrument analysis.
+    execution_resource : float
+        Identifier for the execution resource.
+    calibration_id : str
+        Identifier for the calibration information used.
+    """
+    biosample_id: str
+    nmdc_study: str
+    processing_institution: str
+    processed_data_file: str
+    raw_data_file: str
+    mass_spec_config_name: str
+    chromat_config_name: str
+    instrument_used: str
+    instrument_analysis_start_date: str
+    instrument_analysis_end_date: str
+    execution_resource: float
+    calibration_id: str
+
+@dataclass
 class NmdcTypes:
     """
     Data class holding NMDC type constants.
@@ -100,7 +139,7 @@ class NmdcTypes:
     MassSpectrometry: str = "nmdc:MassSpectrometry"
     MetabolomicsAnalysis: str = "nmdc:MetabolomicsAnalysis"
     DataObject: str = "nmdc:DataObject"
-    Calibration: str = "nmdc:CalibrationInformation"
+    CalibrationInformation: str = "nmdc:CalibrationInformation"
 
 class NMDCMetadataGenerator(ABC):
     """
@@ -221,10 +260,7 @@ class NMDCMetadataGenerator(ABC):
             raise FileNotFoundError(f"Metadata file not found: {self.metadata_file}")
 
         # Check for uniqueness in specified columns
-        columns_to_check = [
-            'raw_data_file',
-            'processed_data_directory'
-        ]
+        columns_to_check = self.unique_columns
         for column in columns_to_check:
             if not metadata_df[column].is_unique:
                 raise ValueError(f"Duplicate values found in column '{column}'.")
@@ -244,7 +280,7 @@ class NMDCMetadataGenerator(ABC):
             raise ValueError("Study IDs do not exist in the collection.")
 
         # Group by Biosample
-        grouped = metadata_df.groupby('biosample_id')
+        grouped = metadata_df.groupby(self.grouped_columns)
 
         return grouped
 
@@ -259,7 +295,8 @@ class NMDCMetadataGenerator(ABC):
         mass_spec_config_name: str,
         lc_config_name: str,
         start_date: str,
-        end_date: str
+        end_date: str,
+        calibration_id: str = None,
         ) -> nmdc.DataGeneration:
         """
         Create an NMDC DataGeneration object for mass spectrometry and mint an NMDC ID.
@@ -286,6 +323,9 @@ class NMDCMetadataGenerator(ABC):
             Start date of the data generation.
         end_date : str
             End date of the data generation.
+        calibration_id : str, optional
+            ID of the calibration information generated with the data.
+            Default is None, indicating no calibration information.
 
         Returns
         -------
@@ -331,6 +371,9 @@ class NMDCMetadataGenerator(ABC):
             "end_date": end_date,
             "type": NmdcTypes.MassSpectrometry
         }
+
+        if calibration_id is not None:
+            data_dict["generates_calibration"] = calibration_id
 
         mass_spectrometry = nmdc.DataGeneration(**data_dict)
 
@@ -666,6 +709,11 @@ class LCMSLipidomicsMetadataGenerator(NMDCMetadataGenerator):
             'processing_institution'
         ]
 
+        self.unique_columns = [
+            'raw_data_file',
+            'processed_data_directory'
+        ]
+
         # Data Generation attributes
         self.mass_spec_desc = (
             "Generation of mass spectrometry data for the analysis of lipids."
@@ -910,9 +958,9 @@ class LCMSLipidomicsMetadataGenerator(NMDCMetadataGenerator):
         self, 
         row: 
         dict[str, str]
-        ) -> WorkflowMetadata:
+        ) -> LCMSLipidWorkflowMetadata:
         """
-        Create a WorkflowMetadata object from a dictionary of workflow metadata.
+        Create a LCMSLipidWorkflowMetadata object from a dictionary of workflow metadata.
 
         Parameters
         ----------
@@ -922,8 +970,8 @@ class LCMSLipidomicsMetadataGenerator(NMDCMetadataGenerator):
 
         Returns
         -------
-        WorkflowMetadata
-            A WorkflowMetadata object populated with data from the input dictionary.
+        LCMSLipidWorkflowMetadata
+            A LCMSLipidWorkflowMetadata object populated with data from the input dictionary.
 
         Notes
         -----
@@ -933,7 +981,7 @@ class LCMSLipidomicsMetadataGenerator(NMDCMetadataGenerator):
         'instrument analysis start date', 'instrument analysis end date',
         'execution resource'.
         """
-        return WorkflowMetadata(
+        return LCMSLipidWorkflowMetadata(
             processed_data_dir=row['processed_data_directory'],
             raw_data_file=row['raw_data_file'],
             mass_spec_config_name=row['mass_spec_configuration_name'],
@@ -964,13 +1012,28 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
             minting_config_creds=minting_config_creds
         )
 
+        # Grouping columns
+        self.grouped_columns = [
+            'biosample_id',
+            'associated_study',
+            'material_processing_type',
+            'processing_institution'
+        ]
+
+        # Metadata attributes
+        self.unique_columns = [
+            'raw_data_file',
+            'processed_data_file'
+        ]
+
         # Data Generation attributes
         self.mass_spec_desc = (
             "Generation of mass spectrometry data by GC/MS for the analysis of metabolites."
         )
         self.mass_spec_eluent_intro = "gas_chromatography"
         self.analyte_category = "metabolome"
-        self.raw_data_obj_type = "GC/MS Low Resolution Raw Data"
+        #TODO KRH: Update to new enum value when available
+        self.raw_data_obj_type = "LC-DDA-MS/MS Raw Data"
         self.raw_data_obj_desc = (
             "GC/MS low resolution raw data for metabolomics data acquisition."
         )
@@ -995,116 +1058,109 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
         """
         nmdc_database_inst = self.start_nmdc_database()
         grouped_data = self.load_metadata()
-        total_groups = len(grouped_data)
+        # ungroup the grouped data so we can just interate over each row
+        metadata_df = grouped_data.apply(lambda x: x.reset_index(drop=True))
+        total_samps = len(metadata_df)
 
-        #TODO KRH: Get parameter for corems config file
-        parameter_data_id = None
+        #TODO KRH: Get parameter for corems config file and add to metadata_df
+        parameter_data_id = "placehold data object id"
+        metadata_df['corems_config_file'] = parameter_data_id
 
-        # TODO KRH: Add steps and save creation of calibration objects
-        # Make raw data objects and calibrations objects
-        # get names of calibration files and make a dictionary of these objects by name?
-        # leave was_generated_by blank for now on the calibration runs?
-        calibrations = []
-        for calibration in calibrations:
+        # Get unique calibration files and create data object and Calibration information for each
+        calibration_files = metadata_df['calibration_file'].unique()
+        for calibration_file in tqdm(calibration_files, desc="Generating calibrations"):
             calibration_data_object = self.generate_data_object(
-                file_path=Path(calibration.file_path),
+                file_path=Path(calibration_file),
                 data_category=self.raw_data_category,
                 data_object_type=self.raw_data_obj_type,
                 description=self.raw_data_obj_desc,
-                base_url=self.raw_data_url
+                base_url=self.raw_data_url,
+                was_generated_by="nmdc:placeholder"
             )
             nmdc_database_inst.data_object_set.append(calibration_data_object)
 
             calibration = self.generate_calibration(
-                calibration_object=calibration_data_object.id,
-                fames=True
+                calibration_object=calibration_data_object,
+                fames=True,
+                internal=False
             )
             nmdc_database_inst.calibration_set.append(calibration)
-        
+
+            # Add calibration information id to metadata_df
+            metadata_df.loc[metadata_df['calibration_file'] == calibration_file, 'calibration_id'] = calibration.id
+
+
         # Get rid of these groupings, it's not helpful
-        for group, data in tqdm(grouped_data, total=total_groups,
-                                desc="Processing biosamples"):
-            grouped_df = data[self.grouped_columns].drop_duplicates()
-            group_metadata_obj = grouped_df.apply(
-                lambda row: self.create_grouped_metadata(row), axis=1).iloc[0]
+        workflow_metadata = metadata_df.apply(
+            lambda row: self.create_workflow_metadata(row), axis=1)
+        
+        for workflow_metadata_obj in workflow_metadata:
+            mass_spec = self.generate_mass_spectrometry(
+                file_path=Path(workflow_metadata_obj.raw_data_file),
+                instrument_name=workflow_metadata_obj.instrument_used,
+                sample_id=workflow_metadata_obj.biosample_id,
+                raw_data_id="nmdc:placeholder",
+                study_id=workflow_metadata_obj.nmdc_study,
+                processing_institution=workflow_metadata_obj.processing_institution,
+                mass_spec_config_name=workflow_metadata_obj.mass_spec_config_name,
+                lc_config_name=workflow_metadata_obj.chromat_config_name,
+                start_date=workflow_metadata_obj.instrument_analysis_start_date,
+                end_date=workflow_metadata_obj.instrument_analysis_end_date,
+                calibration_id=workflow_metadata_obj.calibration_id
+            )
 
-            workflow_df = data.drop(columns=self.grouped_columns)
-            workflow_metadata = workflow_df.apply(
-                lambda row: self.create_workflow_metadata(row), axis=1)
-            
-            for workflow_metadata_obj in tqdm(
-                workflow_metadata, 
-                desc=f"Processing mass spec metadata for biosample "
-                    f"{group_metadata_obj.biosample_id}",
-                leave=False
-            ):
-                #TODO KRH: Add calibration to "generates_calibration" to mass spec object as needed
-                mass_spec = self.generate_mass_spectrometry(
-                    file_path=Path(workflow_metadata_obj.raw_data_file),
-                    instrument_name=workflow_metadata_obj.instrument_used,
-                    sample_id=group_metadata_obj.biosample_id,
-                    raw_data_id="nmdc:placeholder",
-                    study_id=group_metadata_obj.nmdc_study,
-                    processing_institution=group_metadata_obj.processing_institution,
-                    mass_spec_config_name=workflow_metadata_obj.mass_spec_config_name,
-                    lc_config_name=workflow_metadata_obj.lc_config_name,
-                    start_date=workflow_metadata_obj.instrument_analysis_start_date,
-                    end_date=workflow_metadata_obj.instrument_analysis_end_date
-                )
+            raw_data_object = self.generate_data_object(
+                file_path=Path(workflow_metadata_obj.raw_data_file),
+                data_category=self.raw_data_category,
+                data_object_type=self.raw_data_obj_type,
+                description=self.raw_data_obj_desc,
+                base_url=self.raw_data_url,
+                was_generated_by=mass_spec.id,
+            )
 
-                raw_data_object = self.generate_data_object(
-                    file_path=Path(workflow_metadata_obj.raw_data_file),
-                    data_category=self.raw_data_category,
-                    data_object_type=self.raw_data_obj_type,
-                    description=self.raw_data_obj_desc,
-                    base_url=self.raw_data_url,
-                    was_generated_by=mass_spec.id,
-                )
+            # TODO: Build out Generate has_metabolite_identifications - I believe it will go here, or add a placeholder
+            # to the metabolite_identifications field in the metab_analysis step and add them later. Will need to add a method
+            # to get the metabolite_identifcations from the data. This method just creates the metadata for 1 instance
+            # of the metabolite identifications, will need to append them to a list and add ot eh metab_analysis step as a list:
+            metabolite_identification = self.generate_metab_identifications(highest_similarity_score="",
+                                                                    alt_ids="")
 
-                # TODO: Build out Generate has_metabolite_identifications - I believe it will go here, or add a placeholder
-                # to the metabolite_identifications field in the metab_analysis step and add them later. Will need to add a method
-                # to get the metabolite_identifcations from the data. This method just creates the metadata for 1 instance
-                # of the metabolite identifications, will need to append them to a list and add ot eh metab_analysis step as a list:
-                metabolite_identification = self.generate_metab_identifications(highest_similarity_score="",
-                                                                        alt_ids="")
+            #TODO KRH: Add calibration information to "uses_calibration", add "workflow_category" here
+            #TODO KRH: Add configuation file as "has_input" after loading it to minio
+            #TODO KRH: Add has_metabolite_identifications information
+            metab_analysis = self.generate_metabolomics_analysis(
+                cluster_name=workflow_metadata_obj.execution_resource,
+                raw_data_name=Path(workflow_metadata_obj.raw_data_file).name,
+                raw_data_id=raw_data_object.id,
+                data_gen_id=mass_spec.id,
+                processed_data_id="nmdc:placeholder",
+                parameter_data_id="nmdc:placeholder",
+                processing_institution=group_metadata_obj.processing_institution
+            )
 
+            #TODO KRH: Add processed_file_path
+            processed_file_path = "FIX ME"
+            processed_data_object = self.generate_data_object(
+                file_path=processed_file_path,
+                data_category=self.processed_data_category,
+                data_object_type=self.pocessed_data_object_type,
+                description=self.pocessed_data_object_description,
+                base_url=self.process_data_url,
+                was_generated_by=metab_analysis.id
+            )
 
-                #TODO KRH: Add calibration information to "uses_calibration", add "workflow_category" here
-                #TODO KRH: Add configuation file as "has_input" after loading it to minio
-                #TODO KRH: Add has_metabolite_identifications information
-                metab_analysis = self.generate_metabolomics_analysis(
-                    cluster_name=workflow_metadata_obj.execution_resource,
-                    raw_data_name=Path(workflow_metadata_obj.raw_data_file).name,
-                    raw_data_id=raw_data_object.id,
-                    data_gen_id=mass_spec.id,
-                    processed_data_id="nmdc:placeholder",
-                    parameter_data_id="nmdc:placeholder",
-                    processing_institution=group_metadata_obj.processing_institution
-                )
+            self.update_outputs(
+                mass_spec_obj=mass_spec,
+                analysis_obj=metab_analysis,
+                raw_data_obj=raw_data_object,
+                parameter_data_id=parameter_data_id,
+                processed_data_id_list=[processed_data_object.id]
+            )
 
-                #TODO KRH: Add processed_file_path
-                processed_file_path = "FIX ME"
-                processed_data_object = self.generate_data_object(
-                    file_path=processed_file_path,
-                    data_category=self.processed_data_category,
-                    data_object_type=self.pocessed_data_object_type,
-                    description=self.pocessed_data_object_description,
-                    base_url=self.process_data_url,
-                    was_generated_by=metab_analysis.id
-                )
-
-        self.update_outputs(
-            mass_spec_obj=mass_spec,
-            analysis_obj=metab_analysis,
-            raw_data_obj=raw_data_object,
-            parameter_data_id=parameter_data_id,
-            processed_data_id_list=[processed_data_object.id]
-        )
-
-        nmdc_database_inst.data_generation_set.append(mass_spec)
-        nmdc_database_inst.data_object_set.append(raw_data_object)
-        nmdc_database_inst.data_object_set.append(processed_data_object)
-        nmdc_database_inst.workflow_execution_set.append(metab_analysis)
+            nmdc_database_inst.data_generation_set.append(mass_spec)
+            nmdc_database_inst.data_object_set.append(raw_data_object)
+            nmdc_database_inst.data_object_set.append(processed_data_object)
+            nmdc_database_inst.workflow_execution_set.append(metab_analysis)
 
         self.dump_nmdc_database(nmdc_database=nmdc_database_inst)
         api_interface = NMDCAPIInterface()
@@ -1114,12 +1170,70 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
         
     def generate_calibration(
             self,
-            calibration_object: str,
-            fames: bool
+            calibration_object: dict,
+            fames: bool = True,
+            internal: bool = False
             ) -> nmdc.CalibrationInformation:
         """
         #TODO KRH: Add docstring for generate_calibration
         """
-        pass
+        if fames:
+            nmdc_id = self.mint_nmdc_id(nmdc_type=NmdcTypes.CalibrationInformation)[0]
+            data_dict = {
+                "id": nmdc_id,
+                "type": NmdcTypes.CalibrationInformation,
+                "name": f"GC/MS FAMES calibration ({calibration_object.name})",
+                "description": f"Full scan GC/MS FAMES calibration run ({calibration_object.name}).",
+                "internal_calibration": False,
+                "calibration_target":"retention_index",
+                "calibration_standard": "fames",
+                "calibration_object": calibration_object.id
+            }
 
+            calibration_information = nmdc.CalibrationInformation(**data_dict)
 
+            return calibration_information
+        else: 
+            raise ValueError("Calibration type not implemented, only external FAMES calibration is currently supported.")
+
+    def create_workflow_metadata(
+        self, 
+        row: 
+        dict[str, str]
+        ) -> GCMSMetabWorkflowMetadata:
+        """
+        Create a LCMSLipidWorkflowMetadata object from a dictionary of workflow metadata.
+
+        Parameters
+        ----------
+        row : dict[str, str]
+            Dictionary containing metadata for a workflow. This is typically
+            a row from the input metadata CSV file.
+
+        Returns
+        -------
+        LCMSLipidWorkflowMetadata
+            A LCMSLipidWorkflowMetadata object populated with data from the input dictionary.
+
+        Notes
+        -----
+        The input dictionary is expected to contain the following keys:
+        'Processed Data Directory', 'Raw Data File', 'Raw Data Object Alt Id',
+        'mass spec configuration name', 'lc config name', 'instrument used',
+        'instrument analysis start date', 'instrument analysis end date',
+        'execution resource'.
+        """
+        return GCMSMetabWorkflowMetadata(
+            biosample_id=row['biosample_id'],
+            nmdc_study=row['associated_study'],
+            processing_institution=row['processing_institution'],
+            processed_data_file=row['processed_data_file'],
+            raw_data_file=row['raw_data_file'],
+            mass_spec_config_name=row['mass_spec_configuration_name'],
+            chromat_config_name=row['chromat_configuration_name'],
+            instrument_used=row['instrument_used'],
+            instrument_analysis_start_date=row['instrument_analysis_start_date'],
+            instrument_analysis_end_date=row['instrument_analysis_end_date'],
+            execution_resource=row['execution_resource'],
+            calibration_id=row['calibration_id']
+        )
