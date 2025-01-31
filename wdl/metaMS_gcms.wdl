@@ -1,7 +1,14 @@
 version 1.0
 
 workflow gcmsMetabolomics {
-    call runMetaMSGCMS
+    input {
+        String? docker_image  # Optional input for Docker image
+    }
+
+    call runMetaMSGCMS {
+        input:
+            docker_image = docker_image
+    }
 
     output {
         String out = runMetaMSGCMS.out
@@ -21,6 +28,7 @@ task runMetaMSGCMS {
         String? nmdc_metadata_path
         String? metabref_token_path
         Int jobs_count
+        String? docker_image
     }
 
     command {
@@ -44,6 +52,6 @@ task runMetaMSGCMS {
 
     runtime {
         #TODO KRH: update to pushed image when available
-        docker: "local-metams:latest"
+        docker: "~{if defined(docker_image) then docker_image else 'microbiomedata/metams:3.0.0'}"
     }
 }

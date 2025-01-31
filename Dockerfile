@@ -19,7 +19,6 @@ RUN pip install pycparser \
 WORKDIR /metams
 COPY metaMS/ /metams/metaMS/
 COPY README.md disclaimer.txt Makefile requirements.txt setup.py /metams/
-COPY db/ /metams/db/
 
 #TODO KRH: Remove this section once the CoreMS package is available on PyPI and installable via the requirements.txt file
 # Copy the CoreMS tar.gz file into the Docker image

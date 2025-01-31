@@ -94,9 +94,11 @@ docker-run:
 	@docker run -v $(data_dir):/metams/data -v $(config_dir):/metams/configuration microbiomedata/metams:latest metaMS run-gcms-workflow /metams/configuration/metams.toml
 
 wdl-run-gcms :
-    #TODO KRH: remove the docker build once we have a new image
-	@make docker-build-local
 	@miniwdl run wdl/metaMS_gcms.wdl -i wdl/metams_input_gcms.json --verbose --no-cache --copy-input-files
+
+wdl-run-gcms-local:
+	@make docker-build-local
+	@miniwdl run wdl/metaMS_gcms.wdl -i wdl/metams_input_gcms_local_docker.json --verbose --no-cache --copy-input-files
 
 wdl-run-lipid :
 	miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics.json --verbose --no-cache --copy-input-files

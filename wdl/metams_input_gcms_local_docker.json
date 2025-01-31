@@ -1,0 +1,13 @@
+{
+    "gcmsMetabolomics.docker_image": "local-metams:latest",
+    "gcmsMetabolomics.runMetaMSGCMS.file_paths": [
+    "./data/raw_data/GCMS_FAMES_01_GCMS-01_20191023.cdf",
+    "./data/raw_data/GCMS_FAMES_01_GCMS-01_20191023.cdf"
+],
+"gcmsMetabolomics.runMetaMSGCMS.calibration_file_path": "./data/raw_data/GCMS_FAMES_01_GCMS-01_20191023.cdf",
+"gcmsMetabolomics.runMetaMSGCMS.output_directory": "test_output",
+"gcmsMetabolomics.runMetaMSGCMS.output_filename": "test_dataset",
+"gcmsMetabolomics.runMetaMSGCMS.output_type": "csv",
+"gcmsMetabolomics.runMetaMSGCMS.corems_toml_path": "./configuration/gcms_corems.toml",
+"gcmsMetabolomics.runMetaMSGCMS.jobs_count": 4
+}
