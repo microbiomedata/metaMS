@@ -505,6 +505,7 @@ class NMDCMetadataGenerator(ABC):
         nmdc_id = self.mint_nmdc_id(nmdc_type=NmdcTypes.MetabolomicsAnalysis)[0]+".1"
         #TODO: Update the minting to handle versioning in the future
 
+        #TODO KRH: Add workflow category to the generation of the workflow object when schema is updated
         data_dict = {
             'id': nmdc_id,
             'name': f'{self.workflow_analysis_name} for {raw_data_name}',
@@ -1012,7 +1013,44 @@ class LCMSLipidomicsMetadataGenerator(NMDCMetadataGenerator):
 
 class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
     """
-    #TODO KRH: Add docstring for GCMSMetabolomicsMetadataGenerator
+    A class for generating NMDC metadata objects related to GC/MS metabolomics data.
+
+    This class processes input metadata files, generates various NMDC objects, and produces
+    a database dump in JSON format.
+
+    Attributes
+    ----------
+    calibration_standard : str
+        Name of the calibration standard used for the data.
+    grouped_columns : List[str]
+        List of columns used for grouping metadata. No affect on the metadata generation for this subclass.
+    unique_columns : List[str]
+        List of columns used to check for uniqueness in the metadata before processing.
+    mass_spec_desc : str
+        Description of the mass spectrometry analysis.
+    mass_spec_eluent_intro : str
+        Eluent introduction category for mass spectrometry. 
+    analyte_category : str
+        Category of the analyte.
+    raw_data_obj_type : str
+        Type of the raw data object.
+    raw_data_obj_desc : str
+        Description of the raw data object.
+    workflow_analysis_name : str
+        Name of the workflow analysis.
+    workflow_description : str
+        Description of the workflow.
+    workflow_git_url : str
+        URL of the workflow's Git repository.
+    workflow_version : str
+        Version of the workflow.
+    workflow_category : str
+        Category of the workflow.
+    processed_data_category : str
+        Category of the processed data.
+    processed_data_object_type : str
+        Type of the processed data object.
+    processed_data_object_description : str
     """
     def __init__(
         self,
@@ -1071,8 +1109,8 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
 
         # Processed data attributes
         self.processed_data_category =  "processed_data"
-        self.pocessed_data_object_type = "GC-MS Metabolomics Results"
-        self.pocessed_data_object_description = "Metabolomics annotations as a result of a GC/MS metabolomics workflow activity."
+        self.processed_data_object_type = "GC-MS Metabolomics Results"
+        self.processed_data_object_description = "Metabolomics annotations as a result of a GC/MS metabolomics workflow activity."
     
     def run(self):
         """
@@ -1124,7 +1162,7 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
 
             calibration = self.generate_calibration(
                 calibration_object=calibration_data_object,
-                fames=True,
+                fames=self.calibration_standard,
                 internal=False
             )
             nmdc_database_inst.calibration_set.append(calibration)
@@ -1187,8 +1225,8 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
             processed_data_object = self.generate_data_object(
                 file_path=Path(workflow_metadata_obj.processed_data_file),
                 data_category=self.processed_data_category,
-                data_object_type=self.pocessed_data_object_type,
-                description=self.pocessed_data_object_description,
+                data_object_type=self.processed_data_object_type,
+                description=self.processed_data_object_description,
                 base_url=self.process_data_url,
                 was_generated_by=metab_analysis.id
             )
@@ -1216,7 +1254,6 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
         api_interface.validate_json(self.database_dump_json_path)
         logging.info("Metadata processing completed.")
 
-        
     def generate_calibration(
             self,
             calibration_object: dict,
@@ -1224,9 +1261,33 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
             internal: bool = False
             ) -> nmdc.CalibrationInformation:
         """
-        #TODO KRH: Add docstring for generate_calibration
+        Generate a CalibrationInformation object for the NMDC Database.
+
+        Parameters
+        ----------
+        calibration_object : dict
+            The calibration data object.
+        fames : bool, optional
+            Whether the calibration is for FAMES. Default is True.
+        internal : bool, optional
+            Whether the calibration is internal. Default is False.
+
+        Returns
+        -------
+        nmdc.CalibrationInformation
+            A CalibrationInformation object for the NMDC Database.
+
+        Notes
+        -----
+        This method generates a CalibrationInformation object based on the calibration data object
+        and the calibration type.
+
+        Raises
+        ------
+        ValueError
+            If the calibration type is not supported.
         """
-        if fames:
+        if fames and not internal:
             nmdc_id = self.mint_nmdc_id(nmdc_type=NmdcTypes.CalibrationInformation)[0]
             data_dict = {
                 "id": nmdc_id,
@@ -1290,9 +1351,24 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
     def generate_metab_identifications(
             self,
             processed_data_file
-    ):
+    ) -> List[nmdc.MetaboliteIdentification]:
         """
-        #TODO KRH: Add docstring for generate_metab_identifications
+        Generate MetaboliteIdentification objects from processed data file.
+
+        Parameters
+        ----------
+        processed_data_file : str
+            Path to the processed data file.
+
+        Returns
+        -------
+        List[nmdc.MetaboliteIdentification]
+            List of MetaboliteIdentification objects generated from the processed data file.
+
+        Notes
+        -----
+        This method reads in the processed data file and generates MetaboliteIdentification objects,
+        pulling out the best hit for each peak based on the highest "Similarity Score".
         """
         # Open the file and read in the data as a pandas dataframe
         processed_data = pd.read_csv(processed_data_file)
