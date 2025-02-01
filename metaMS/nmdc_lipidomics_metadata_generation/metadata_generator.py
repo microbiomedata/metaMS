@@ -140,6 +140,7 @@ class NmdcTypes:
     MetabolomicsAnalysis: str = "nmdc:MetabolomicsAnalysis"
     DataObject: str = "nmdc:DataObject"
     CalibrationInformation: str = "nmdc:CalibrationInformation"
+    MetaboliteIdentification: str = "nmdc:MetaboliteIdentification"
 
 class NMDCMetadataGenerator(ABC):
     """
@@ -455,7 +456,9 @@ class NMDCMetadataGenerator(ABC):
         data_gen_id: str,
         processed_data_id: str,
         parameter_data_id: str,
-        processing_institution: str
+        processing_institution: str,
+        calibration_id: str = None,
+        metabolite_identifications: List[nmdc.MetaboliteIdentification] = None
         ) -> nmdc.MetabolomicsAnalysis:
         """
         Create an NMDC MetabolomicsAnalysis object with metadata for a workflow analysis.
@@ -479,6 +482,12 @@ class NMDCMetadataGenerator(ABC):
             ID of the parameter data object used for the analysis.
         processing_institution : str
             Name of the institution where the analysis was performed.
+        calibration_id : str, optional
+            ID of the calibration information used for the analysis.
+            Default is None, indicating no calibration information.
+        metabolite_identifications : List[nmdc.MetaboliteIdentification], optional
+            List of MetaboliteIdentification objects associated with the analysis.
+            Default is None, which indicates no metabolite identifications.
 
         Returns
         -------
@@ -509,6 +518,12 @@ class NMDCMetadataGenerator(ABC):
             'ended_at_time': 'placeholder',
             'type': NmdcTypes.MetabolomicsAnalysis,
         }
+
+        if calibration_id is not None:
+            data_dict['uses_calibration'] = calibration_id
+
+        if metabolite_identifications is not None:
+            data_dict['has_metabolite_identifications'] = metabolite_identifications
 
         metab_analysis = nmdc.MetabolomicsAnalysis(**data_dict)
 
@@ -1063,10 +1078,10 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
         total_samps = len(metadata_df)
 
         #TODO KRH: Get parameter for corems config file and add to metadata_df
-        parameter_data_id = "placehold data object id"
+        parameter_data_id = "nmcd:placeholder"
         metadata_df['corems_config_file'] = parameter_data_id
 
-        # Get unique calibration files and create data object and Calibration information for each
+        # Get unique calibration file, create data object and Calibration information for each and attach associated ids to metadata_df
         calibration_files = metadata_df['calibration_file'].unique()
         for calibration_file in tqdm(calibration_files, desc="Generating calibrations"):
             calibration_data_object = self.generate_data_object(
@@ -1090,11 +1105,12 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
             metadata_df.loc[metadata_df['calibration_file'] == calibration_file, 'calibration_id'] = calibration.id
 
 
-        # Get rid of these groupings, it's not helpful
+        # Prepare the metadata for each workflow
         workflow_metadata = metadata_df.apply(
             lambda row: self.create_workflow_metadata(row), axis=1)
         
         for workflow_metadata_obj in workflow_metadata:
+            # Generate data generation / mass spectrometry object
             mass_spec = self.generate_mass_spectrometry(
                 file_path=Path(workflow_metadata_obj.raw_data_file),
                 instrument_name=workflow_metadata_obj.instrument_used,
@@ -1109,6 +1125,7 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
                 calibration_id=workflow_metadata_obj.calibration_id
             )
 
+            # Generate raw data object
             raw_data_object = self.generate_data_object(
                 file_path=Path(workflow_metadata_obj.raw_data_file),
                 data_category=self.raw_data_category,
@@ -1118,30 +1135,27 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
                 was_generated_by=mass_spec.id,
             )
 
-            # TODO: Build out Generate has_metabolite_identifications - I believe it will go here, or add a placeholder
-            # to the metabolite_identifications field in the metab_analysis step and add them later. Will need to add a method
-            # to get the metabolite_identifcations from the data. This method just creates the metadata for 1 instance
-            # of the metabolite identifications, will need to append them to a list and add ot eh metab_analysis step as a list:
-            metabolite_identification = self.generate_metab_identifications(highest_similarity_score="",
-                                                                    alt_ids="")
+            # Generate metabolite identifications
+            metabolite_identifications = self.generate_metab_identifications(
+                processed_data_file= workflow_metadata_obj.processed_data_file
+            )
 
-            #TODO KRH: Add calibration information to "uses_calibration", add "workflow_category" here
-            #TODO KRH: Add configuation file as "has_input" after loading it to minio
-            #TODO KRH: Add has_metabolite_identifications information
+            # Generate metabolomics analysis object with metabolite identifications
             metab_analysis = self.generate_metabolomics_analysis(
                 cluster_name=workflow_metadata_obj.execution_resource,
                 raw_data_name=Path(workflow_metadata_obj.raw_data_file).name,
                 raw_data_id=raw_data_object.id,
                 data_gen_id=mass_spec.id,
                 processed_data_id="nmdc:placeholder",
-                parameter_data_id="nmdc:placeholder",
-                processing_institution=group_metadata_obj.processing_institution
+                parameter_data_id=parameter_data_id,
+                processing_institution=workflow_metadata_obj.processing_institution,
+                calibration_id=workflow_metadata_obj.calibration_id,
+                metabolite_identifications=metabolite_identifications
             )
 
-            #TODO KRH: Add processed_file_path
-            processed_file_path = "FIX ME"
+            # Generate processed data object
             processed_data_object = self.generate_data_object(
-                file_path=processed_file_path,
+                file_path=Path(workflow_metadata_obj.processed_data_file),
                 data_category=self.processed_data_category,
                 data_object_type=self.pocessed_data_object_type,
                 description=self.pocessed_data_object_description,
@@ -1237,3 +1251,43 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
             execution_resource=row['execution_resource'],
             calibration_id=row['calibration_id']
         )
+    
+    def generate_metab_identifications(
+            self,
+            processed_data_file
+    ):
+        """
+        #TODO KRH: Add docstring for generate_metab_identifications
+        """
+        # Open the file and read in the data as a pandas dataframe
+        processed_data = pd.read_csv(processed_data_file)
+
+        # Drop any rows with missing similarity scores
+        processed_data = processed_data.dropna(subset=['Similarity Score'])
+        # Group by "Peak Index" and find the best hit for each peak based on the highest "Similarity Score"
+        best_hits = processed_data.groupby("Peak Index").apply(lambda x: x.loc[x['Similarity Score'].idxmax()])
+
+        metabolite_identifications = []
+        for index, best_hit in best_hits.iterrows():
+            # Check if the best hit has a Chebi ID, if not, do not create a MetaboliteIdentification object
+            if pd.isna(best_hit['Chebi ID']):
+                continue
+            chebi_id = "chebi:" + str(int(best_hit['Chebi ID']))
+            
+            # Prepare KEGG Compound ID as an alternative identifier
+            alt_ids = []
+            if not pd.isna(best_hit['Kegg Compound ID']):
+                alt_ids.append("kegg:" + best_hit['Kegg Compound ID'])
+            alt_ids = list(set(alt_ids))
+
+            data_dict = {
+                "metabolite_identified": chebi_id,
+                "alternative_identifiers": alt_ids,
+                "type": NmdcTypes.MetaboliteIdentification,
+                "highest_similarity_score": best_hit['Similarity Score'],
+            }
+
+            metabolite_identification = nmdc.MetaboliteIdentification(**data_dict)
+            metabolite_identifications.append(metabolite_identification)
+        
+        return metabolite_identifications
