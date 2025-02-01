@@ -1020,7 +1020,8 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
         database_dump_json_path: str,
         raw_data_url: str,
         process_data_url: str,
-        minting_config_creds: str
+        minting_config_creds: str,
+        calibration_standard: str = "fames"
         ):
         super().__init__(
             metadata_file=metadata_file,
@@ -1029,6 +1030,9 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
             process_data_url=process_data_url,
             minting_config_creds=minting_config_creds
         )
+
+        # Calibration attributes
+        self.calibration_standard = calibration_standard
 
         # Grouping columns
         self.grouped_columns = [
@@ -1093,12 +1097,13 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
         This method uses tqdm to display progress bars for the processing of calibration information and
         mass spectrometry metadata.
         """
-        
+        if self.calibration_standard != "fames":
+            raise ValueError("Only FAMES calibration is supported at this time.")
+
         nmdc_database_inst = self.start_nmdc_database()
         grouped_data = self.load_metadata()
         # ungroup the grouped data so we can just interate over each row
         metadata_df = grouped_data.apply(lambda x: x.reset_index(drop=True))
-        total_samps = len(metadata_df)
 
         #TODO KRH: Get parameter for corems config file and add to metadata_df, this is a random data object id for now for testing with validation
         parameter_data_id = "nmdc:dobj-13-2p2qmv12"
@@ -1106,7 +1111,8 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
 
         # Get unique calibration file, create data object and Calibration information for each and attach associated ids to metadata_df
         calibration_files = metadata_df['calibration_file'].unique()
-        for calibration_file in tqdm(calibration_files, desc="Generating calibrations"):
+        for calibration_file in tqdm(calibration_files, total=len(calibration_files), 
+                                     desc="Generating calibration information and data objects"):
             calibration_data_object = self.generate_data_object(
                 file_path=Path(calibration_file),
                 data_category=self.raw_data_category,
@@ -1131,7 +1137,9 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
         workflow_metadata = metadata_df.apply(
             lambda row: self.create_workflow_metadata(row), axis=1)
         
-        for workflow_metadata_obj in workflow_metadata:
+        for workflow_metadata_obj in tqdm(workflow_metadata, 
+                                          total=len(workflow_metadata),
+                                            desc="Processing Remaining Metadata"):
             # Generate data generation / mass spectrometry object
             mass_spec = self.generate_mass_spectrometry(
                 file_path=Path(workflow_metadata_obj.raw_data_file),
@@ -1184,6 +1192,11 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
                 base_url=self.process_data_url,
                 was_generated_by=metab_analysis.id
             )
+
+            # Update MetabolomicsAnalysis times based on processed data file
+            processed_file = Path(workflow_metadata_obj.processed_data_file)
+            metab_analysis.started_at_time = datetime.fromtimestamp(processed_file.stat().st_ctime).strftime("%Y-%m-%d %H:%M:%S")
+            metab_analysis.ended_at_time = datetime.fromtimestamp(processed_file.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
 
             self.update_outputs(
                 mass_spec_obj=mass_spec,

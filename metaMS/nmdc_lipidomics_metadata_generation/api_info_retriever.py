@@ -39,6 +39,10 @@ class NMDCAPIInterface:
         with open(json_path, 'r') as f:
             data = json.load(f)
 
+        # Check that the term "placeholder" is not present anywhere in the json
+        if "placeholder" in json.dumps(data):
+            raise Exception("Placeholder values found in json!")
+
         url = f"{self.base_url}/metadata/json:validate"
         headers = {
             'accept': 'application/json',
