@@ -387,7 +387,7 @@ class NMDCMetadataGenerator(ABC):
         data_object_type: str,
         description: str,
         base_url: str,
-        was_generated_by: str,
+        was_generated_by: str = None,
         alternative_id: str = None
         ) -> nmdc.DataObject:
         """
@@ -411,7 +411,7 @@ class NMDCMetadataGenerator(ABC):
         base_url : str
             Base URL for accessing the data object, to which the file name is
             appended to form the complete URL.
-        was_generated_by : str
+        was_generated_by : str, optional
             ID of the process or entity that generated the data object
             (e.g., the DataGeneration id or the MetabolomicsAnalysis id).
         alternative_id : str, optional
@@ -437,9 +437,11 @@ class NMDCMetadataGenerator(ABC):
             'file_size_bytes': file_path.stat().st_size,
             'md5_checksum': hashlib.md5(file_path.open('rb').read()).hexdigest(),
             'url': base_url + str(file_path.name),
-            'was_generated_by': was_generated_by,
             'type': NmdcTypes.DataObject
         }
+
+        if was_generated_by is not None:
+            data_dict['was_generated_by'] = was_generated_by
 
         if alternative_id is not None and isinstance(alternative_id, str):
             data_dict['alternative_identifiers'] = [alternative_id]
@@ -778,6 +780,7 @@ class LCMSLipidomicsMetadataGenerator(NMDCMetadataGenerator):
         4. Update outputs for Mass Spectrometry and Metabolomics Analysis objects.
         5. Append generated objects to the NMDC Database.
         6. Dump the NMDC Database to a JSON file.
+        7. Validate the JSON file using the NMDC API.
 
         Returns
         -------
@@ -1059,7 +1062,7 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
             "Analysis of raw mass spectrometry data for the annotation of metabolites."
         )
         self.workflow_git_url = "https://github.com/microbiomedata/metaMS/wdl/metaMS_gcms.wdl"
-        self.workflow_version = "3.0.0" #TODO KRH: add to bump config file
+        self.workflow_version = "3.0.0"
         self.workflow_category = "gc_ms_metaboloimcs"
 
         # Processed data attributes
@@ -1069,16 +1072,36 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
     
     def run(self):
         """
-        #TODO KRH: Add docstring for run
+        Execute the metadata generation process for GC/MS metabolomics data.
+
+        This method performs the following steps:
+        1. Initialize an NMDC Database instance.
+        2. Generate calibration information and data objects for each calibration file.
+        3. Load and process metadata to create NMDC objects.
+        4. Generate Mass Spectrometry (including metabolite identifications), Raw Data, Metabolomics Analysis, and
+        Processed Data objects.
+        5. Update outputs for Mass Spectrometry and Metabolomics Analysis objects.
+        6. Append generated objects to the NMDC Database.
+        7. Dump the NMDC Database to a JSON file.
+        8. Validate the JSON file using the NMDC API.
+
+        Returns
+        -------
+
+        Notes
+        -----
+        This method uses tqdm to display progress bars for the processing of calibration information and
+        mass spectrometry metadata.
         """
+        
         nmdc_database_inst = self.start_nmdc_database()
         grouped_data = self.load_metadata()
         # ungroup the grouped data so we can just interate over each row
         metadata_df = grouped_data.apply(lambda x: x.reset_index(drop=True))
         total_samps = len(metadata_df)
 
-        #TODO KRH: Get parameter for corems config file and add to metadata_df
-        parameter_data_id = "nmcd:placeholder"
+        #TODO KRH: Get parameter for corems config file and add to metadata_df, this is a random data object id for now for testing with validation
+        parameter_data_id = "nmdc:dobj-13-2p2qmv12"
         metadata_df['corems_config_file'] = parameter_data_id
 
         # Get unique calibration file, create data object and Calibration information for each and attach associated ids to metadata_df
@@ -1089,8 +1112,7 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
                 data_category=self.raw_data_category,
                 data_object_type=self.raw_data_obj_type,
                 description=self.raw_data_obj_desc,
-                base_url=self.raw_data_url,
-                was_generated_by="nmdc:placeholder"
+                base_url=self.raw_data_url
             )
             nmdc_database_inst.data_object_set.append(calibration_data_object)
 
