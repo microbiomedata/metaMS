@@ -4,16 +4,20 @@ from metadata_generator import GCMSMetabolomicsMetadataGenerator
 
 if __name__ == "__main__":
     # Set up output file with datetime stame
-    output_file = 'metaMS/nmdc_lipidomics_metadata_generation/test_data/test_database_gcms_' + datetime.now().strftime("%Y%m%d%H%M%S") + '.json'
+    output_file = (
+        "metaMS/nmdc_lipidomics_metadata_generation/test_data/test_database_gcms_"
+        + datetime.now().strftime("%Y%m%d%H%M%S")
+        + ".json"
+    )
 
     # Start the metadata generation setup
     generator = GCMSMetabolomicsMetadataGenerator(
-        metadata_file = 'metaMS/nmdc_lipidomics_metadata_generation/test_data/test_metadata_file_gcms.csv',
-        database_dump_json_path = output_file,
-        raw_data_url = 'https://example_raw_data_url/',
-        process_data_url = 'https://example_processed_data_url/',
-        minting_config_creds = 'metaMS/nmdc_lipidomics_metadata_generation/.config.yaml'
+        metadata_file="metaMS/nmdc_lipidomics_metadata_generation/test_data/test_metadata_file_gcms.csv",
+        database_dump_json_path=output_file,
+        raw_data_url="https://example_raw_data_url/",
+        process_data_url="https://example_processed_data_url/",
+        minting_config_creds="metaMS/nmdc_lipidomics_metadata_generation/.config.yaml",
     )
-    
+
     # Run the metadata generation process
     generator.run()
