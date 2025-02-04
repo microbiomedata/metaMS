@@ -139,90 +139,30 @@ def run_gcms_metabolomics_workflow_wdl(
     # Compute RT:RI pairs
     rt_ri_pairs = get_rt_ri_pairs(gcms_cal_obj, sql_obj=fames_ref_sql)
 
-    # Prepare worker arguments
+    # Prepare worker arguments with output directory and type
     worker_args = [
         (
             file_path,
             rt_ri_pairs,
             workflow_params.corems_toml_path,
             workflow_params.calibration_file_path,
+            workflow_params.output_type,
+            workflow_params.output_directory,
         )
         for file_path in workflow_params.file_paths
     ]
 
-    # Create multiprocess pool
-    with Pool(int(jobs)) as pool:
-        # Map workflow over inputs
-        for i, gcms in enumerate(pool.imap_unordered(workflow_worker, worker_args), 1):
-            eval("gcms.to_" + workflow_params.output_type + "(output_path)")
-
-
-def run_nmdc_metabolomics_workflow(workflow_params_file, jobs):
-    """
-    NMDC metabolomics workflow.
-
-    Parameters
-    ----------
-    workflow_params_file : str
-        Path to workflow parameters file.
-    jobs : int
-        Number of concurrent jobs.
-
-    """
-
-    import click
-
-    # [HARDCODED, UNUSED] Path to DMS file path?
-    dms_file_path = "db/GC-MS Metabolomics Experiments to Process Final.xlsx"
-
-    # Load workflow settings
-    click.echo("Loading search settings from %s" % workflow_params_file)
-    workflow_params = load_workflow_parameters(workflow_params_file)
-
-    # Create output directory
-    dirloc = Path(workflow_params.output_directory)
-    dirloc.mkdir(exist_ok=True)
-
-    # Load FAMEs calibration data
-    gcms_cal_obj = get_gcms(
-        workflow_params.calibration_file_path, workflow_params.corems_toml_path
-    )
-
-    # Load FAMEs calibration reference
-    MetabRefGCInterface().set_token(workflow_params.metabref_token_path)
-    fames_ref_sql = MetabRefGCInterface().get_fames(format='sql')
-
-    # Compute RT:RI pairs
-    rt_ri_pairs = get_rt_ri_pairs(gcms_cal_obj, sql_obj=fames_ref_sql)
-
-    # Prepare worker arguments
-    worker_args = [
-        (
-            file_path,
-            rt_ri_pairs,
-            workflow_params.corems_toml_path,
-            workflow_params.calibration_file_path,
-        )
-        for file_path in workflow_params.file_paths
-    ]
-
-    # Create multiprocess pool
-    with Pool(jobs) as pool:
-        # Map workflow over inputs
-        for i, gcms in enumerate(pool.imap_unordered(workflow_worker, worker_args)):
-            # Determine output path
-            input_path = Path(workflow_params.file_paths[i])
-            output_path = Path(workflow_params.output_directory) / input_path.name
-
-            eval(
-                "gcms.to_"
-                + workflow_params.output_type
-                + "(output_path, write_metadata=False)"
-            )
-
-            # nmdc = NMDC_Metadata(in_file_path, workflow_params.calibration_file_path, output_path, dms_file_path)
-            # nmdc.create_nmdc_metadata(gcms)
-
+    # Run the remaining workflow and write outputs
+    # If jobs == 1, run the workflow without multiprocessing as a loop
+    if jobs == 1:
+        for args in worker_args:
+            run_workflow_worker_and_write(args)
+        return
+    
+    else:
+        # Create pool of workers and run the workflow
+        with Pool(jobs) as pool:
+            pool.map(run_workflow_worker_and_write, worker_args)
 
 def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
     """
@@ -271,15 +211,23 @@ def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
             rt_ri_pairs,
             workflow_params.corems_toml_path,
             workflow_params.calibration_file_path,
+            workflow_params.output_type,
+            workflow_params.output_directory,
         )
         for file_path in workflow_params.file_paths
     ]
 
-    # Create multiprocess pool
-    with Pool(jobs) as pool:
-        # Map workflow over inputs
-        for i, gcms in enumerate(pool.imap_unordered(workflow_worker, worker_args), 1):
-            eval("gcms.to_" + workflow_params.output_type + "(output_path)")
+    # Run the remaining workflow and write outputs
+    # If jobs == 1, run the workflow without multiprocessing as a loop
+    if jobs == 1:
+        for args in worker_args:
+            run_workflow_worker_and_write(args)
+        return
+    
+    else:
+        # Create pool of workers and run the workflow
+        with Pool(jobs) as pool:
+            pool.map(run_workflow_worker_and_write, worker_args)
 
 
 def read_toml(path):
@@ -338,6 +286,40 @@ def load_corems_parameters(path):
     """
 
     return read_toml(path)
+
+
+# Function for running the workflow_worker and writing out the output
+def run_workflow_worker_and_write(
+        args
+):
+    """
+    Function for running the workflow_worker and writing out the output.
+
+    Parameters
+    ----------
+    args : tuple
+        Arguments fed to worker.
+        args = (file_path, rt_ri_pairs, corems_params_file, cal_file_path, output_type, output_directory)
+
+    Returns
+    -------
+    None, but writes out the output to the specified directory.
+    """
+    # Unpack arguments
+    file_path, rt_ri_pairs, corems_params_file, cal_file_path, output_type, output_directory = args
+
+    # Repack arguments for workflow_worker
+    wrk_args = (file_path, rt_ri_pairs, corems_params_file, cal_file_path)
+
+    # Run workflow
+    gcms = workflow_worker(wrk_args)
+
+    # Determine output path
+    input_path = Path(file_path)
+    # if output_directory doesn't exist, create it
+    Path(output_directory).mkdir(parents=True, exist_ok=True)
+    output_path = Path(output_directory) / input_path.name
+    eval("gcms.to_" + output_type + "(output_path)")
 
 
 def workflow_worker(args):
@@ -404,30 +386,3 @@ def get_gcms(file_path, corems_params):
     gcms.process_chromatogram()
 
     return gcms
-
-
-# def run_gcms_mpi(workflow_params_file, replicas, rt_ri_pairs):
-
-#     import os, sys
-#     sys.path.append(os.getcwd())
-#     from mpi4py import MPI
-
-#     workflow_params = load_workflow_parameters(workflow_params_file)
-
-#     gcms_cal_obj = get_gcms(workflow_params.calibration_file_path,
-#                             workflow_params.corems_toml_path)
-#     sql_obj = EI_LowRes_SQLite(url="sqlite:///db/MetabRef_FAMEs_EILowRes_20240816.db")
-#     rt_ri_pairs = get_rt_ri_pairs(gcms_cal_obj, sql_obj=sql_obj)
-
-#     worker_args = [(file_path, rt_ri_pairs, workflow_params.corems_toml_path, workflow_params.calibration_file_path) for file_path in workflow_params.file_paths]
-
-#     comm = MPI.COMM_WORLD
-#     rank = comm.Get_rank()
-#     size = comm.Get_size()
-
-#     # will only run tasks up to the number of files paths selected in the EnviroMS File
-#     if rank < len(worker_args):
-#         workflow_worker(worker_args[rank])
-
-
-# if

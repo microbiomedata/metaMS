@@ -8,7 +8,6 @@ from metaMS.gcmsWorkflow import (
     WorkflowParameters,
     run_gcms_metabolomics_workflow,
     run_gcms_metabolomics_workflow_wdl,
-    run_nmdc_metabolomics_workflow,
 )
 
 from metaMS.lcms_lipidomics_workflow import (
@@ -53,39 +52,15 @@ def run_gcms_wdl_workflow(
     metabref_token_path = ""
     click.echo("Running gcms workflow")
     run_gcms_metabolomics_workflow_wdl(
-        file_paths,
-        calibration_file_path,
-        output_directory,
-        output_filename,
-        output_type,
-        corems_toml_path,
-        metabref_token_path,
-        jobs,
+        file_paths=file_paths,
+        calibration_file_path=calibration_file_path,
+        output_directory=output_directory,
+        output_filename=output_filename,
+        output_type=output_type,
+        corems_toml_path=corems_toml_path,
+        metabref_token_path=metabref_token_path,
+        jobs=jobs,
     )
-
-
-@cli.command()
-@click.argument("gcms_workflow_paramaters_file", required=True, type=str)
-@click.option("--jobs", "-j", default=4, help="'cpu's'")
-@click.option(
-    "--nmdc",
-    "-n",
-    is_flag=True,
-    help="Creates NMDC metadata mapping and save each result individually",
-)
-def run_gcms_workflow(gcms_workflow_paramaters_file, jobs, nmdc):
-    """Run the GCMS workflow\n
-    gcms_workflow_paramaters_toml_file = toml file with workflow parameters\n
-    output_types = csv, excel, pandas, toml set on the parameter file\n
-    corems_toml_path = toml file with corems parameters\n
-    --jobs = number of processes to run in parallel\n
-    """
-    click.echo("Running gcms workflow")
-    if nmdc:
-        run_nmdc_metabolomics_workflow(gcms_workflow_paramaters_file, jobs)
-    else:
-        run_gcms_metabolomics_workflow(gcms_workflow_paramaters_file, jobs)
-
 
 @cli.command(name="dump-gcms-toml-template")
 @click.argument("toml_file_name", required=True, type=str)
