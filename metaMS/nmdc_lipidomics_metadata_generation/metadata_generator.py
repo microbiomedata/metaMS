@@ -765,8 +765,7 @@ class LCMSLipidomicsMetadataGenerator(NMDCMetadataGenerator):
         self.csv_process_data_description = (
             "Lipid annotations as a result of a lipidomics workflow activity."
         )
-        # TODO KRH: Switch to "LC-MS Lipidomics Processed Data" when the type is added to the schema with release of 11.4
-        self.hdf5_process_data_obj_type = "LC-MS Lipidomics Results"
+        self.hdf5_process_data_obj_type = "LC-MS Lipidomics Processed Data"
         self.hdf5_process_data_description = "CoreMS hdf5 file representing a lipidomics data file including annotations."
 
     def run(self):

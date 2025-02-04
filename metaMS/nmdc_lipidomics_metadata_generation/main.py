@@ -1,5 +1,5 @@
 import argparse
-from metadata_generator import MetadataGenerator
+from metadata_generator import LCMSLipidomicsMetadataGenerator
 
 def main():
     """
@@ -61,7 +61,7 @@ def main():
 
     args = parser.parse_args()
 
-    generator = MetadataGenerator(
+    generator = LCMSLipidomicsMetadataGenerator(
         args.metadata_file,
         args.database_dump_json_path,
         args.raw_data_url,
