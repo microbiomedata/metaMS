@@ -90,7 +90,8 @@ Outputs
     - CSV, TAB-SEPARATED TXT
     - HDF: CoreMS HDF5 format
     - XLSX : Microsoft Excel
-
+- Workflow Metadata:
+    - JSON
 
 Version History
 ---------------

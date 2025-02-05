@@ -62,6 +62,28 @@ def run_gcms_wdl_workflow(
         jobs=jobs,
     )
 
+@cli.command()
+@click.argument("gcms_workflow_paramaters_file", required=True, type=str)
+@click.option("--jobs", "-j", default=4, help="'cpu's'")
+@click.option(
+    "--nmdc",
+    "-n",
+    is_flag=True,
+    help="Creates NMDC metadata mapping and save each result individually",
+)
+def run_gcms_workflow(gcms_workflow_paramaters_file, jobs, nmdc):
+    """Run the GCMS workflow\n
+    gcms_workflow_paramaters_toml_file = toml file with workflow parameters\n
+    output_types = csv, excel, pandas, toml set on the parameter file\n
+    corems_toml_path = toml file with corems parameters\n
+    --jobs = number of processes to run in parallel\n
+    """
+    click.echo("Running gcms workflow")
+    if nmdc:
+        raise NotImplementedError("NMDC flag mo longer supported, metadata is now generated separately")
+    else:
+        run_gcms_metabolomics_workflow(gcms_workflow_paramaters_file, jobs)
+
 @cli.command(name="dump-gcms-toml-template")
 @click.argument("toml_file_name", required=True, type=str)
 def dump_gcms_toml_template(toml_file_name):

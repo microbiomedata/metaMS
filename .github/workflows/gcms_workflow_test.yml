@@ -36,6 +36,6 @@ jobs:
       run: |
         miniwdl run wdl/metaMS_gcms.wdl -i wdl/metams_input_gcms.json --verbose --no-cache --copy-input-files
     
-    - name: Run GCMS WDL with local Docker Image
+    - name: Run GCMS WDL with local Docker Image based on Dockerfile
       run: |
         miniwdl run wdl/metaMS_gcms.wdl -i wdl/metams_input_gcms_local_docker.json --verbose --no-cache --copy-input-files
