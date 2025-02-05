@@ -1079,6 +1079,7 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
         process_data_url: str,
         minting_config_creds: str,
         calibration_standard: str = "fames",
+        configuration_file_name: str = "emsl_gcms_corems_params.toml",
     ):
         super().__init__(
             metadata_file=metadata_file,
@@ -1090,6 +1091,9 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
 
         # Calibration attributes
         self.calibration_standard = calibration_standard
+
+        # Workflow Configuration attributes
+        self.configuration_file_name = configuration_file_name
 
         # Grouping columns
         self.grouped_columns = [
@@ -1159,9 +1163,12 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
         # ungroup the grouped data so we can just interate over each row
         metadata_df = grouped_data.apply(lambda x: x.reset_index(drop=True))
 
-        # TODO KRH: Get parameter for corems config file and add to metadata_df, this is a random data object id for now for testing with validation
+        api_data_object_getter = ApiInfoRetriever(collection_name="data_object_set")
+        config_do_id = api_data_object_getter.get_id_by_name_from_collection(
+            name_field_value=self.configuration_file_name
+        )
         parameter_data_id = "nmdc:dobj-13-2p2qmv12"
-        metadata_df["corems_config_file"] = parameter_data_id
+        metadata_df["corems_config_file"] = config_do_id
 
         # Get unique calibration file, create data object and Calibration information for each and attach associated ids to metadata_df
         calibration_files = metadata_df["calibration_file"].unique()
