@@ -7,7 +7,6 @@ import toml
 from corems.encapsulation.input import parameter_from_json
 from corems.mass_spectra.calc.GC_RI_Calibration import get_rt_ri_pairs
 from corems.mass_spectra.input.andiNetCDF import ReadAndiNetCDF
-from corems.molecular_id.factory.EI_SQL import EI_LowRes_SQLite
 from corems.molecular_id.search.compoundSearch import LowResMassSpectralMatch
 from corems.molecular_id.search.database_interfaces import MetabRefGCInterface
 

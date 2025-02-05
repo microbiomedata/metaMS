@@ -12,8 +12,7 @@ workflow gcmsMetabolomics {
 
     output {
         String out = runMetaMSGCMS.out
-        File output_file = runMetaMSGCMS.output_file
-        File output_metafile = runMetaMSGCMS.output_metafile
+        Array[File] output_files = runMetaMSGCMS.output_files
     }
 }
 
@@ -46,12 +45,10 @@ task runMetaMSGCMS {
 
     output {
         String out = read_string(stdout())
-        File output_file = "${output_directory}/${output_filename}.${output_type}"
-        File output_metafile = "${output_directory}/${output_filename}.json"
+        Array[File] output_files = glob('${output_directory}/*')
     }
 
     runtime {
-        #TODO KRH: update to pushed image when available
         docker: "~{if defined(docker_image) then docker_image else 'microbiomedata/metams:3.0.0'}"
     }
 }
