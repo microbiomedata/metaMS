@@ -3,6 +3,8 @@ venv/
 .vscode
 *.csv
 !example_metadata_file.csv
+!metaMS/nmdc_lipidomics_metadata_generation/test_data/test_metadata_file_gcms.csv
+!metaMS/nmdc_lipidomics_metadata_generation/test_data/test_metadata_file_lipid.csv
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
