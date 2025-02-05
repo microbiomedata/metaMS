@@ -447,13 +447,12 @@ class NMDCMetadataGenerator(ABC):
             "md5_checksum": hashlib.md5(file_path.open("rb").read()).hexdigest(),
             "url": base_url + str(file_path.name),
             "type": NmdcTypes.DataObject,
+            "was_generated_by": was_generated_by,
+            "alternative_identifiers": alternative_id,
         }
 
-        if was_generated_by is not None:
-            data_dict["was_generated_by"] = was_generated_by
-
-        if alternative_id is not None and isinstance(alternative_id, str):
-            data_dict["alternative_identifiers"] = [alternative_id]
+        # If any of the data_dict values are None or empty strings, remove them
+        data_dict = {k: v for k, v in data_dict.items() if v not in [None, ""]}
 
         data_object = nmdc.DataObject(**data_dict)
 
@@ -1036,6 +1035,23 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
     This class processes input metadata files, generates various NMDC objects, and produces
     a database dump in JSON format.
 
+    Parameters
+    ----------
+    metadata_file : str
+        Path to the metadata CSV file.
+    database_dump_json_path : str
+        Path to the output JSON file for the NMDC database dump.
+    raw_data_url : str
+        Base URL for the raw data files.
+    process_data_url : str
+        Base URL for the processed data files.
+    minting_config_creds : str
+        Path to the minting configuration credentials file.
+    calibration_standard : str, optional
+        Calibration standard used for the data. Default is "fames".
+    configuration_file_name : str, optional
+        Name of the configuration file. Default is "emsl_gcms_corems_params.toml".
+
     Attributes
     ----------
     calibration_standard : str
@@ -1111,7 +1127,7 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
         self.mass_spec_eluent_intro = "gas_chromatography"
         self.analyte_category = "metabolome"
         # TODO KRH: Update to new enum value when available
-        self.raw_data_obj_type = "LC-DDA-MS/MS Raw Data"
+        self.raw_data_obj_type = None
         self.raw_data_obj_desc = (
             "GC/MS low resolution raw data for metabolomics data acquisition."
         )
@@ -1158,11 +1174,12 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
         if self.calibration_standard != "fames":
             raise ValueError("Only FAMES calibration is supported at this time.")
 
+        # Start NMDC database and make metadata dataframe
         nmdc_database_inst = self.start_nmdc_database()
         grouped_data = self.load_metadata()
-        # ungroup the grouped data so we can just interate over each row
         metadata_df = grouped_data.apply(lambda x: x.reset_index(drop=True))
 
+        # Get the configuration file data object id and add it to the metadata_df
         api_data_object_getter = ApiInfoRetriever(collection_name="data_object_set")
         config_do_id = api_data_object_getter.get_id_by_name_from_collection(
             name_field_value=self.configuration_file_name
