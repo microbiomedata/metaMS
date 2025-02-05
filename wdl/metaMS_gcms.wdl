@@ -49,6 +49,6 @@ task runMetaMSGCMS {
     }
 
     runtime {
-        docker: "~{if defined(docker_image) then docker_image else 'microbiomedata/metams:3.0.0'}"
+        docker: "~{if defined(docker_image) then docker_image else 'microbiomedata/metams:3.1.0'}"
     }
 }

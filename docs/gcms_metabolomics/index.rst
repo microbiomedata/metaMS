@@ -95,7 +95,7 @@ Outputs
 Version History
 ---------------
 
-- 3.0.0
+- 3.1.0
 
 Point of contact
 ----------------
