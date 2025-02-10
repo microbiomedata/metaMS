@@ -1,12 +1,18 @@
 version 1.0
 
 workflow gcmsMetabolomics {
-    call runMetaMSGCMS
+    input {
+        String? docker_image  # Optional input for Docker image
+    }
+
+    call runMetaMSGCMS {
+        input:
+            docker_image = docker_image
+    }
 
     output {
         String out = runMetaMSGCMS.out
-        File output_file = runMetaMSGCMS.output_file
-        File output_metafile = runMetaMSGCMS.output_metafile
+        Array[File] output_files = runMetaMSGCMS.output_files
     }
 }
 
@@ -18,9 +24,10 @@ task runMetaMSGCMS {
         String output_filename
         String output_type
         File corems_toml_path
-        File nmdc_metadata_path
-        File metabref_token_path
+        String? nmdc_metadata_path
+        String? metabref_token_path
         Int jobs_count
+        String? docker_image
     }
 
     command {
@@ -31,18 +38,17 @@ task runMetaMSGCMS {
             ${output_filename} \
             ${output_type} \
             ${corems_toml_path} \
-            ${nmdc_metadata_path} \
-            ${metabref_token_path} \
+            ~{if defined(nmdc_metadata_path) then "--nmdc_metadata_path" + nmdc_metadata_path else ""} \
+            ~{if defined(metabref_token_path) then "--metabref_token_path " + metabref_token_path else ""} \
             --jobs ${jobs_count}
     }
 
     output {
         String out = read_string(stdout())
-        File output_file = "${output_directory}/${output_filename}.${output_type}"
-        File output_metafile = "${output_directory}/${output_filename}.json"
+        Array[File] output_files = glob('${output_directory}/*')
     }
 
     runtime {
-        docker: "microbiomedata/metams:3.0.0"
+        docker: "~{if defined(docker_image) then docker_image else 'microbiomedata/metams:3.1.0'}"
     }
 }

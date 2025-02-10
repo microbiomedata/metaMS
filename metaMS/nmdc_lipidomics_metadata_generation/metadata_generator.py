@@ -220,7 +220,7 @@ class MetadataGenerator:
             "Analysis of raw mass spectrometry data for the annotation of lipids."
         )
         self.workflow_git_url = "https://github.com/microbiomedata/metaMS/wdl/metaMS_lipidomics.wdl"
-        self.workflow_version = "1.0.0"
+        self.workflow_version = "1.1.0"
         self.wf_config_process_data_category = "workflow_parameter_data"
         self.wf_config_process_data_obj_type = "Configuration toml"
         self.wf_config_process_data_description = (

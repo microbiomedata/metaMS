@@ -2,7 +2,7 @@
 ri_search_range = 35.0
 rt_search_range = 1.0
 correlation_threshold = 0.5
-score_threshold = 0.0
+score_threshold = 0.3
 ri_spacing = 200.0
 ri_std = 3.0
 ri_calibration_compound_names = [
