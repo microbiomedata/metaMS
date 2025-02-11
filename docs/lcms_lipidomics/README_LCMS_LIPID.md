@@ -2,7 +2,7 @@ github_url
 
 :   <https://github.com/microbiomedata/metaMS/blob/master/docs/index_lipid.rst>
 
-# Lipidomics Workflow (v1.0.0)
+# Lipidomics Workflow (v1.1.0)
 
 ![](lipid_workflow_v1.svg)
 
@@ -128,7 +128,7 @@ The following inputs are required (declared in the input json file):
 
 ## Version History
 
--   v1.0.0: Initial release of the lipidomics workflow Jan 9, 2025
+-   v1.1.0: Initial release of the lipidomics workflow Jan 9, 2025
 
 ## Point of contact
 

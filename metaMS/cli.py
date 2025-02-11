@@ -8,7 +8,6 @@ from metaMS.gcmsWorkflow import (
     WorkflowParameters,
     run_gcms_metabolomics_workflow,
     run_gcms_metabolomics_workflow_wdl,
-    run_nmdc_metabolomics_workflow,
 )
 
 from metaMS.lcms_lipidomics_workflow import (
@@ -30,8 +29,8 @@ def cli():
 @click.argument("output_filename", required=True, type=str)
 @click.argument("output_type", required=True, type=str)
 @click.argument("corems_toml_path", required=True, type=str)
-@click.argument("nmdc_metadata_path", required=True, type=str)
-@click.argument("metabref_token_path", required=True, type=str)
+@click.option("--nmdc_metadata_path", default=None, type=str)
+@click.option("--metabref_token_path", type=str, default=None, help="Path to the metabref token file")
 @click.option("--jobs", "-j", default=4, help="'cpu's'")
 def run_gcms_wdl_workflow(
     file_paths,
@@ -50,18 +49,18 @@ def run_gcms_wdl_workflow(
     corems_toml_path = toml file with corems parameters\n
     --jobs = number of processes to run in parallel\n
     """
+    metabref_token_path = ""
     click.echo("Running gcms workflow")
     run_gcms_metabolomics_workflow_wdl(
-        file_paths,
-        calibration_file_path,
-        output_directory,
-        output_filename,
-        output_type,
-        corems_toml_path,
-        metabref_token_path,
-        jobs,
+        file_paths=file_paths,
+        calibration_file_path=calibration_file_path,
+        output_directory=output_directory,
+        output_filename=output_filename,
+        output_type=output_type,
+        corems_toml_path=corems_toml_path,
+        metabref_token_path=metabref_token_path,
+        jobs=jobs,
     )
-
 
 @cli.command()
 @click.argument("gcms_workflow_paramaters_file", required=True, type=str)
@@ -81,10 +80,9 @@ def run_gcms_workflow(gcms_workflow_paramaters_file, jobs, nmdc):
     """
     click.echo("Running gcms workflow")
     if nmdc:
-        run_nmdc_metabolomics_workflow(gcms_workflow_paramaters_file, jobs)
+        raise NotImplementedError("NMDC flag mo longer supported, metadata is now generated separately")
     else:
         run_gcms_metabolomics_workflow(gcms_workflow_paramaters_file, jobs)
-
 
 @cli.command(name="dump-gcms-toml-template")
 @click.argument("toml_file_name", required=True, type=str)

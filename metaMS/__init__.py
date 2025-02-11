@@ -1,5 +1,5 @@
 
-__version__ = '3.0.0'
+__version__ = '3.1.0'
 __doc__ = '''
 # Table of Contents  
 - Introduction
@@ -24,7 +24,7 @@ __doc__ = '''
 
 ## Current Version
 
-### `3.0.0`
+### `3.1.0`
 
 ### Data input formats
 

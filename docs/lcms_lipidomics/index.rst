@@ -6,7 +6,7 @@
          site the file is incorporated into. You can learn more about the `github_url` field at:
          https://sphinx-rtd-theme.readthedocs.io/en/stable/configuring.html#confval-github_url
 
-Lipidomics Workflow (v1.0.0)
+Lipidomics Workflow (v1.1.0)
 ============================
 
 .. figure:: lipid_workflow_v1.svg
@@ -120,7 +120,7 @@ Outputs
 Version History
 ---------------
 
-- v1.0.0: Initial release of the lipidomics workflow Jan 9, 2025
+- v1.1.0: Initial release of the lipidomics workflow Jan 9, 2025
 
 Point of contact
 ----------------

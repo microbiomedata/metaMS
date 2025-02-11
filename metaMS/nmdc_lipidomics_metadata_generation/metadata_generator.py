@@ -750,7 +750,7 @@ class LCMSLipidomicsMetadataGenerator(NMDCMetadataGenerator):
         self.workflow_git_url = (
             "https://github.com/microbiomedata/metaMS/wdl/metaMS_lipidomics.wdl"
         )
-        self.workflow_version = "1.0.0"
+        self.workflow_version = "1.1.0"
         self.workflow_category = "lc_ms_lipidomics"
 
         # Processed data attributes
@@ -1140,7 +1140,7 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
         self.workflow_git_url = (
             "https://github.com/microbiomedata/metaMS/wdl/metaMS_gcms.wdl"
         )
-        self.workflow_version = "3.0.0"
+        self.workflow_version = "3.1.0"
         self.workflow_category = "gc_ms_metaboloimcs"
 
         # Processed data attributes

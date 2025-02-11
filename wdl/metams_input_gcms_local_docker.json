@@ -1,4 +1,5 @@
 {
+    "gcmsMetabolomics.docker_image": "local-metams:latest",
     "gcmsMetabolomics.runMetaMSGCMS.file_paths": [
     "./data/raw_data/GCMS_FAMES_01_GCMS-01_20191023.cdf",
     "./data/raw_data/GCMS_FAMES_01_GCMS-01_20191023.cdf"
