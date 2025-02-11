@@ -1437,7 +1437,9 @@ class GCMSMetabolomicsMetadataGenerator(NMDCMetadataGenerator):
             # Prepare KEGG Compound ID as an alternative identifier
             alt_ids = []
             if not pd.isna(best_hit["Kegg Compound ID"]):
-                alt_ids.append("kegg:" + best_hit["Kegg Compound ID"])
+                kegg_ids = best_hit["Kegg Compound ID"].split(" | ")
+                for kegg_id in kegg_ids:
+                    alt_ids.append("kegg:" + kegg_id)
             alt_ids = list(set(alt_ids))
 
             data_dict = {
