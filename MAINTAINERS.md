@@ -66,8 +66,9 @@ For the lipidomics workflow, edit only the `docs/lcms_lipidomics/index.rst` file
     make convert_lipid_rst_to_md
     ```
 
-API documentation can be found in the docs/metaMS file.  We use [pdoc](https://github.com/mitmproxy/pdoc) to generate the API documentation.  To update the API documentation, run the following command.
+API documentation can be found in the docs/metaMS file. We use [pdoc](https://github.com/mitmproxy/pdoc) to generate the API documentation.  To regenerate the API documentation, run the following command.  Note that **this happens automatically with bumping versions if using the `make major` commands (or similar) above.**
+
 
     ```sh
-    make generate_api_docs
+    make docu
     ```

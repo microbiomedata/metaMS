@@ -19,18 +19,21 @@ major:
 	@bumpversion major --allow-dirty
 	@make bump_lipid_major
 	@make convert_lipid_rst_to_md
+	@make docu
 
 minor:
 	
 	@bumpversion minor --allow-dirty
 	@make bump_lipid_minor
 	@make convert_lipid_rst_to_md
+	@make docu
 
 patch:
 	
 	@bumpversion patch --allow-dirty
 	@make bump_lipid_patch
 	@make convert_lipid_rst_to_md
+	@make docu
 
 bump_lipid_major:
 	
