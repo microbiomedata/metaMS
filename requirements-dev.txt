@@ -6,3 +6,4 @@ memory_profiler
 twine
 bumpversion
 pandoc
+pdoc~=14.1.0

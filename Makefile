@@ -108,3 +108,7 @@ convert_lipid_rst_to_md:
 	pandoc -f rst -t markdown -o docs/lcms_lipidomics/README_LCMS_LIPID.md docs/lcms_lipidomics/index.rst
 	# render the lipid documentation into html from the rst file
 	pandoc -f rst -t html -o docs/lcms_lipidomics/index.html docs/lcms_lipidomics/index.rst
+
+docu:
+	# Make documentation, but ignore teh nmdc_lipidomics_metadata_generation folder within metaMS
+	pdoc --output-dir docs --docformat numpy metaMS !metaMS.nmdc_lipidomics_metadata_generation
