@@ -53,6 +53,17 @@ class LipidomicsWorkflowParameters:
     cores: int = 1
 
 def check_lipidomics_workflow_params(lipid_workflow_params):
+    """Check that all parameters are valid and exist
+
+    Parameters
+    ----------
+    lipid_workflow_params : LipidomicsWorkflowParameters
+        Parameters for the lipidomics workflow
+
+    Returns
+    -------
+    None, raises errors if parameters are not valid or do not exist
+    """
     # Check that corems_toml_path exists
     if not Path(lipid_workflow_params.corems_toml_path).exists():
         raise FileNotFoundError("Corems toml file not found, exiting workflow")
@@ -93,7 +104,7 @@ def instantiate_lcms_obj(file_in):
     Returns
     -------
     myLCMSobj : corems LCMS object
-        LCMS object with ms1 spectra in dataframe
+        LCMS object with unprocessed ms1 spectra included as an attribute
     """
     # Instantiate parser based on binary file type
     if ".raw" in str(file_in):
@@ -142,8 +153,10 @@ def load_scan_translator(scan_translator=None):
 
     Returns
     -------
-    scan_dict : dict
-        Dict with keys as parameter keys and values as lists of scans
+    scan_dict : dict, optional
+        Dict with keys as parameter keys and values as lists of scans.
+        Default is None, which will use the default scan translator
+        of "{"ms2": {"scan_filter": "", "resolution": "high"}}"
     """
     # Convert the scan translator to a dictionary
     if scan_translator is None:
@@ -161,7 +174,19 @@ def load_scan_translator(scan_translator=None):
     return scan_translator_dict
 
 def check_scan_translator(myLCMSobj, scan_translator):
-    """Check if scan translator is provided and that it maps correctly to scans and parameters"""
+    """Check if scan translator is provided and that it maps correctly to scans and parameters
+    
+    Parameters
+    ----------
+    myLCMSobj : corems LCMS object
+        LCMS object to process
+    scan_translator : str or Path
+        Path to scan translator yaml file
+    
+    Returns
+    -------
+    None, raises errors if scan translator does not map correctly to scans and parameters
+    """
     scan_translator_dict = load_scan_translator(scan_translator)
     # Check that the scan translator maps correctly to scans and parameters
     scan_df = myLCMSobj.scan_df
@@ -193,8 +218,9 @@ def add_mass_features(myLCMSobj, scan_translator):
     """Process ms1 spectra and perform molecular search
 
     This includes peak picking, adding and processing associated ms1 spectra,
-    integration of mass features, annotation of c13 mass features, deconvolution of ms1 mass features,
-    and adding of peak shape metrics of mass features to the mass feature dataframe.
+    integration of mass features, annotation of C13 mass features, deconvolution of ms1 mass features,
+    adding of peak shape metrics of mass features and adding associated ms2 spectra to mass features for
+    DDA data to myLCMSobj.
 
     Parameters
     ----------
@@ -205,7 +231,7 @@ def add_mass_features(myLCMSobj, scan_translator):
 
     Returns
     -------
-    None, processes the LCMS object
+    None, but populates the mass_features attribute of myLCMSobj
     """
     # Process ms1 spectra
     myLCMSobj.find_mass_features()
@@ -228,7 +254,7 @@ def add_mass_features(myLCMSobj, scan_translator):
         )
 
 def molecular_formula_search(myLCMSobj):
-    """Perform molecular search on ms1 spectra
+    """Perform molecular search on mass features within the LCMS object
 
     Parameters
     ----------
@@ -252,9 +278,9 @@ def export_results(myLCMSobj, out_path, molecular_metadata=None, final=False):
         LCMS object to process
     out_path : str or Path
         Path to output file
-    molecular_metadata : dict
+    molecular_metadata : dict, optional
         Dict with molecular metadata
-    final : bool
+    final : bool, optional
         Whether to export final results
 
     Returns
@@ -271,6 +297,28 @@ def export_results(myLCMSobj, out_path, molecular_metadata=None, final=False):
             exporter.report_to_csv()
 
 def run_lipid_sp_ms1(file_in, out_path, params_toml, scan_translator):
+    """Run signal processing and associated mass feature generation for a lipidomics LCMS file
+    
+    Run signal processing, get associated ms1, add associated ms2, do ms1 molecular search, 
+    and export intermediate results from an input LCMS file
+
+    Parameters
+    ----------
+    file_in : str or Path
+        Path to input file (raw or mzML)
+    out_path : str or Path
+        Path to output file
+    params_toml : str or Path
+        Path to toml file with parameters
+    scan_translator : str or Path
+        Path to scan translator file
+
+    Returns
+    -------
+    mz_dict : dict
+        Dict with keys "positive" and "negative" and values of lists of precursor mzs
+    """  
+
     myLCMSobj = instantiate_lcms_obj(file_in)           
     set_params_on_lcms_obj(myLCMSobj, params_toml)
     check_scan_translator(myLCMSobj, scan_translator)
@@ -495,6 +543,30 @@ def run_lcms_lipidomics_workflow(
     scan_translator_path=None,
     cores=None,
 ):
+    """Run the lipidomics workflow
+    
+    Parameters
+    ----------
+    lipidomics_workflow_paramaters_file : str or Path
+        Path to toml file with parameters
+    file_paths : str
+        Comma-separated string of file paths
+    output_directory : str
+        Path to output directory
+    corems_toml_path : str
+        Path to corems toml file
+    db_location : str
+        Path to lipid database
+    scan_translator_path : str
+        Path to scan translator file
+    cores : int
+        Number of cores to use for processing
+
+    Returns
+    -------
+    None, runs the lipidomics workflow        
+    """
+
     if lipidomics_workflow_paramaters_file is not None:
         # Set the parameters from the toml file
         with open(lipidomics_workflow_paramaters_file, "r") as infile:
@@ -573,8 +645,3 @@ def run_lcms_lipidomics_workflow(
             pool.starmap(run_lipid_ms2, args)
 
     gc.collect()
-
-if __name__ == "__main__":
-    run_lcms_lipidomics_workflow(
-        lipidomics_workflow_paramaters_file="configuration/lipidomics_metams.toml"
-    )

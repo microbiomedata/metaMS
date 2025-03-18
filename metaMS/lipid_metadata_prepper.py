@@ -204,7 +204,34 @@ def get_lipid_library(
         normalize=True,
         fe_kwargs={},
 ):
+    """
+    Get lipid library from database.
 
+    Parameters
+    ----------
+    db_location : str
+        Path to the database.
+    mz_list : :obj:`~numpy.array`
+        Array of observed m/z values.
+    polarity : str
+        Polarity of the MS2 spectra.
+    mz_tol_ppm : float
+        m/z tolerance in ppm for matching ms1 precursor m/z to observed m/z.
+    format : str, optional
+        Format of the library to return. Options are 'flashentropy' (default) or 'metabref'.
+    normalize : bool, optional
+        Normalize each spectrum by its magnitude. By default, True.
+    fe_kwargs : dict, optional
+        Keyword arguments for instantiation of FlashEntropy search and building index for FlashEntropy search;
+        any keys not recognized will be ignored. By default, all parameters set to defaults.
+    
+    Returns
+    -------
+    :obj:`~ms_entropy.FlashEntropySearch`
+        MS2 library as FlashEntropy search instance.
+    :obj:`~dataclasses.dataclass`
+        Lipid metadata as LipidMetadata dataclass.
+    """
     # prepare the mz_list for searching against the database
     mz_list = pd.DataFrame(mz_list, columns=['mz_obs'])
     mz_list = mz_list.sort_values(by='mz_obs')

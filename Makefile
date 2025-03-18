@@ -19,18 +19,21 @@ major:
 	@bumpversion major --allow-dirty
 	@make bump_lipid_major
 	@make convert_lipid_rst_to_md
+	@make docu
 
 minor:
 	
 	@bumpversion minor --allow-dirty
 	@make bump_lipid_minor
 	@make convert_lipid_rst_to_md
+	@make docu
 
 patch:
 	
 	@bumpversion patch --allow-dirty
 	@make bump_lipid_patch
 	@make convert_lipid_rst_to_md
+	@make docu
 
 bump_lipid_major:
 	
@@ -108,3 +111,7 @@ convert_lipid_rst_to_md:
 	pandoc -f rst -t markdown -o docs/lcms_lipidomics/README_LCMS_LIPID.md docs/lcms_lipidomics/index.rst
 	# render the lipid documentation into html from the rst file
 	pandoc -f rst -t html -o docs/lcms_lipidomics/index.html docs/lcms_lipidomics/index.rst
+
+docu:
+	# Generate the documentation, ignoring the nmdc_lipidomics_metadata_generation module
+	pdoc --output-dir docs --docformat numpy metaMS !metaMS.nmdc_lipidomics_metadata_generation

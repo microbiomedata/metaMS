@@ -53,17 +53,22 @@ To bump *both* the repo and the lipid workflow, run one of the following command
     make patch
     ```
 ### Push Updated Docker Image
-You must be logged into docker hub
-1. Build the push the tagged docker image
-    ```sh
-    make docker-nmdc
-    ```
+Use the github action to push a docker image to the appropriate dockerhub repository.
 
-## Generate Documentation
-Documentation of the two workflows can be found the docs folder of this repo.
+## Generating Documentation
 
-For the lipidomics workflow, edit only the `docs/lcms_lipidomics/index.rst` file.  Once changes are made there, re-render the `docs/lcms_lipidomics/index.html` and the `docs/lcms_lipidomics/README_LCMS_LIPID.md` with the following command.  **This happens automatically with bumping versions if using the `make major` commands (or similar) above.**
+**This happens automatically with bumping versions if using the `make major` commands (or similar) above.**
+Overview documentation of the two workflows can be found the docs folder of this repo.
+
+For the lipidomics workflow, edit only the `docs/lcms_lipidomics/index.rst` file.  Once changes are made there, re-render the `docs/lcms_lipidomics/index.html` and the `docs/lcms_lipidomics/README_LCMS_LIPID.md` with the following command.  
 
     ```sh
     make convert_lipid_rst_to_md
+    ```
+
+API documentation can be found in the docs/metaMS file. We use [pdoc](https://github.com/mitmproxy/pdoc) to generate the API documentation.  To regenerate the API documentation, run the following command.  Note that **this happens automatically with bumping versions if using the `make major` commands (or similar) above.**
+
+
+    ```sh
+    make docu
     ```
