@@ -197,4 +197,41 @@ def load_msp_files_from_minio(minio_client, bucket_name, prefix):
     all_data = pd.concat(dataframes, ignore_index=True)
     return all_data
 
+def load_lookups_from_minio(minio_client, bucket_name, prefix):
+    """
+    Load lookup files from a MinIO bucket subfolder.
+
+    Args:
+        minio_client (Minio): An instance of the MinIO client.
+        bucket_name (str): Name of the MinIO bucket.
+        prefix (str): Prefix (subfolder path) in the MinIO bucket to look for lookup files.
+
+    Returns:
+        pd.DataFrame: A concatenated DataFrame containing data from all lookup files.
+    """
+    objects = minio_client.list_objects(bucket_name, prefix=prefix, recursive=True)
+
+    # Filter for lookup files
+    files = [obj.object_name for obj in objects]
+    files = [f for f in files if f.endswith('.txt')]
+
+    if not files:
+        raise FileNotFoundError(f"No lookup files found in MinIO bucket '{bucket_name}' with prefix '{prefix}'")
+
+    lookups = {}
+    for file_key in files:
+        print(file_key)
+        response = minio_client.get_object(bucket_name, file_key)
+        file_content = response.read().decode('utf-8')
+        lookup_destination = os.path.basename(file_key).replace('.txt', '').replace('inchikey_to_', '')
+        df = pd.read_table(StringIO(file_content), sep="\t",
+                           skiprows=1, header=None, names=['inchikey', lookup_destination])
+        # Check that inchikey is a column in the DataFrame
+        if 'inchikey' not in df.columns:
+            raise ValueError(f"Inchikey column not found in {file_key}")
+        # extract the filename without the extension and without the "inchikey_to_" prefix
+        lookups[lookup_destination] = df
+
+    # Return the list of lookup DataFrames
+    return lookups
     

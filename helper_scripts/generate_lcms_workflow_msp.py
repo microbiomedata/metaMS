@@ -14,7 +14,7 @@ from rdkit.Chem import rdMolDescriptors
 from corems.mass_spectra.output.export import ion_type_dict, LipidomicsExport
 from corems.molecular_formula.factory.MolecularFormulaFactory import MolecularFormula
 
-from helper_scripts.parse_msp import write_to_msp, load_msp_files_from_minio
+from helper_scripts.parse_msp import write_to_msp, load_msp_files_from_minio, load_lookups_from_minio
 
 # Set location of lookup directory (with appropriate lookup files)
 lookup_dir = "/Users/heal742/Library/CloudStorage/OneDrive-PNNL/Documents/01_NMDC/04_Metabolomics_databases/20250407/id_lookups"
@@ -61,27 +61,25 @@ assert all_data['ionmode'].isin(['positive', 'negative']).all(), "Ionmode standa
 # Remove rows with missing or empty InChIKey values
 all_data = all_data[all_data['inchikey'].notna() & (all_data['inchikey'] != '')]
 assert not all_data['inchikey'].isnull().any(), "Missing InChIKey values found"
-# Check that PNNL_MSMLSPlate2MSMS.msp is still present
-assert 'PNNL_MSMLSPlate2MSMS.msp' in all_data['file_name'].unique(), "PNNL_MSMLSPlate2MSMS.msp not found in data"
 
 # Create a DataFrame with unique InChIKeys for preparing lookups
 inchikey_df = all_data[['inchikey']].drop_duplicates(subset=['inchikey'])
-inchikey_df.to_csv(os.path.join(lookup_dir, "unique_inchikeys.csv"), index=False)
+#inchikey_df.to_csv(os.path.join(lookup_dir, "unique_inchikeys.csv"), index=False)
 print(f"Found {inchikey_df.shape[0]} unique InChIKeys")
 
 # Read in lookups and join to all_data
 ## Note that these lookups were downloaded on 2025-04-07 using the pubchem ID exchange at https://pubchem.ncbi.nlm.nih.gov/idexchange/idexchange.cgi, using the 
 ## inchikeys from the unique_inchikeys.csv file
-#TODO: Redo this to get the latest lookups (lots from the PNNL one is missing)
-pubchem_lookup = pd.read_table(os.path.join(lookup_dir, "inchikey_to_cid.txt"), skiprows=1, names=['inchikey', 'pubchem_id'], sep='\t')
-inchi_lookup = pd.read_table(os.path.join(lookup_dir, "inchikey_to_inchi.txt"), skiprows=1, names=['inchikey', 'inchi'], sep='\t')
-pubchem_title_lookup = pd.read_table(os.path.join(lookup_dir, "inchikey_to_pubchemtitle.txt"), skiprows=1, names=['inchikey', 'pubchem_name'], sep='\t')
-inchikey_df = inchikey_df.merge(pubchem_lookup, on='inchikey', how='left')
-inchikey_df = inchikey_df.merge(inchi_lookup, on='inchikey', how='left')
-inchikey_df = inchikey_df.merge(pubchem_title_lookup, on='inchikey', how='left')
+lookups = load_lookups_from_minio(
+    minio_client, 
+    bucket_name='metabolomics',
+    prefix=gnps_msp_dir+"lookups/"
+)
+for k, v in lookups.items():
+    inchikey_df = inchikey_df.merge(v, on='inchikey', how='left')
 
 # Drop rows with missing inchi values, pubchem_id values, or smiles values
-inchikey_df = inchikey_df[inchikey_df['inchi'].notna() & inchikey_df['pubchem_id'].notna()]
+inchikey_df = inchikey_df[inchikey_df['inchi'].notna() & inchikey_df['cid'].notna()]
 
 # Get smiles from inchi using rdkit
 def inchi_to_smiles(inchi: str) -> str:
