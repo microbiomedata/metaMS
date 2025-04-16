@@ -14,7 +14,7 @@ from rdkit.Chem import rdMolDescriptors
 from corems.mass_spectra.output.export import ion_type_dict, LipidomicsExport
 from corems.molecular_formula.factory.MolecularFormulaFactory import MolecularFormula
 
-from helper_scripts.parse_msp import write_to_msp, load_msp_files_from_minio, load_lookups_from_minio
+from helper_scripts.parse_msp import write_to_msp, load_msp_files_from_minio, load_lookups_from_minio, load_refmet
 
 # Set location of lookup directory (with appropriate lookup files)
 lookup_dir = "/Users/heal742/Library/CloudStorage/OneDrive-PNNL/Documents/01_NMDC/04_Metabolomics_databases/20250407/id_lookups"
@@ -25,6 +25,7 @@ gnps_msp_dir = "databases/20250407_gnps_databases/"
 # ==================================================
 # STEP 1: Read in the data from minio and add unique spectra ID column
 # ==================================================
+
 # Start up a minio client, note the access key and secret key are set in the environment variables
 minio_client = Minio("admin.nmdcdemo.emsl.pnl.gov",
                         access_key=os.environ["MINIO_ACCESS_KEY"],
@@ -106,14 +107,11 @@ inchikey_df['molecular_formula'] = inchikey_df['inchi'].apply(inchi_to_molecular
 inchikey_df = inchikey_df.groupby('inchikey').first().reset_index()
 
 # ==================================================
-# STEP 4: Standardize name of the compound using MetRef
+# STEP 4: Standardize name of the compound using RefMet
 # ==================================================
 
-# read in downloaded refmet data; downloaded on 2025-04-07
-refmet_lookup = pd.read_csv(os.path.join(lookup_dir, "refmet.csv"))
-refmet_lookup = refmet_lookup[['inchi_key', 'refmet_id', 'refmet_name', 'kegg_id']].drop_duplicates()
-refmet_lookup = refmet_lookup.rename(columns={'inchi_key': 'inchikey'})
-refmet_lookup = refmet_lookup[refmet_lookup['inchikey'].notna()]
+# read in refmet and join to inchikey_df to get refmet_name, refmet_id, kegg_id, chebi_id
+refmet_lookup = load_refmet()
 inchikey_df = inchikey_df.merge(refmet_lookup, on='inchikey', how='left')
 
 # ==================================================

@@ -2,6 +2,7 @@
 
 import pandas as pd 
 import os
+import requests
 import numpy as np
 from io import StringIO
 def read_msp(file_path=None, string_buffer=None):
@@ -234,4 +235,26 @@ def load_lookups_from_minio(minio_client, bucket_name, prefix):
 
     # Return the list of lookup DataFrames
     return lookups
+
+def load_refmet():
+    """
+    Load refmet database from https://www.metabolomicsworkbench.org/databases/refmet/refmet_download.php
+    """
+    refmet_url = "https://www.metabolomicsworkbench.org/databases/refmet/refmet_download.php"
+    response = requests.get(refmet_url)
+    if response.status_code != 200:
+        raise Exception(f"Failed to download RefMet data: {response.status_code}")
+    
+    # Convert the response content to a pandas DataFrame
+    refmet_data = pd.read_csv(StringIO(response.text))
+
+    # Rename inchi_key to inchikey, keep only inchikey, kegg_id, chebi_id, refmet_id, and refmet_name
+    refmet_data = refmet_data.rename(columns={'inchi_key': 'inchikey',
+                                              ' refmet_id': 'refmet_id'})
+    refmet_data = refmet_data[['inchikey', 'kegg_id', 'chebi_id', 'refmet_id', 'refmet_name']]
+    # Drop rows without inchikey
+    refmet_data = refmet_data.dropna(subset=['inchikey'])
+    refmet_data = refmet_data.drop_duplicates()
+    return refmet_data
+
     
