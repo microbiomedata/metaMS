@@ -2,6 +2,10 @@
 This script generates an msp database of MS2 spectra to be used with the LCMS workflow.
 
 Note that rdkit is required to run this script, but is not required to run the workflow and therefore not included in the requirements.txt file.
+
+Note that this is not intended for external use, but is included in the repository for completeness.
+Source databases were downloaded from here: https://gnps-external.ucsd.edu/gnpslibrary and were loaded into the minio prior to running.
+To reproduce this, you will need to download the databases from GNPS and load them into a new minio location.
 """
 
 import os
