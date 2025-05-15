@@ -6,7 +6,7 @@
          site the file is incorporated into. You can learn more about the `github_url` field at:
          https://sphinx-rtd-theme.readthedocs.io/en/stable/configuring.html#confval-github_url
 
-LC/MS Metabolomics Workflow (v1.0.0)
+LC/MS Metabolomics Workflow (v0.0.0)
 ============================
 
 .. figure:: lcms_metabolite_workflow.svg
@@ -22,7 +22,7 @@ metabolites. The initial signal processing includes peak picking, integration
 of mass features, deconvolution of MS1 spectra, and calculation of
 peak shape metrics. The workflow associates MS1 spectra with their
 corresponding MS2 spectra. It uses the MS2 spectra to search a subset of the GNPS's (Global Natural Products Social Molecular Networking)
-[library of tandem mass spectra](https://gnps-external.ucsd.edu/gnpslibrary) to identify metabolites. The workflow also
+`library of tandem mass spectra <https://gnps-external.ucsd.edu/gnpslibrary>`_ to identify metabolites. The workflow also
 uses the deconvoluted MS1 spectra
 to assign a molecular formula. Each candidate metabolites assignment is given
 two confidence scores: one for its match to the predicted molecular
@@ -39,8 +39,7 @@ https://github.com/microbiomedata/metaMS/blob/master/wdl/metaMS_lcmsmetabolomics
 The container is available at Docker Hub (microbiomedata/metaMS):
 https://hub.docker.com/r/microbiomedata/metams
 
-The database is available by request. Please contact NMDC
-(support@microbiomedata.org) for access.
+The database is available to download `here <https://nmdcdemo.emsl.pnnl.gov/metabolomics/databases/20250407_gnps_curated.msp>`_.
 
 Requirements for Execution
 --------------------------
@@ -56,14 +55,14 @@ Software Requirements
 -  Docker Container Runtime
 -  miniwdl (v1, https://pypi.org/project/miniwdl/)
 
-*Note that the wdl file will automatically pull the necessary docker with the required workflow dependencies.*
+*Note that the wdl file will automatically pull the necessary docker image with the required workflow dependencies.*
 
 Database
 ~~~~~~~~
 
 -  A local copy of a msp database.  The workflow uses a subset of databases available through GNPS (https://gnps-external.ucsd.edu/gnpslibrary) that 
 has been filtered to include only compounds with high quality metadata and with high resolution MS2 spectra. 
-The curated database can be downloaded from [here](https://nmdcdemo.emsl.pnnl.gov/metabolomics/databases/20250407_gnps_curated.msp)
+The curated database can be downloaded `here <https://nmdcdemo.emsl.pnnl.gov/metabolomics/databases/20250407_gnps_curated.msp>`_.
 
 Sample datasets
 ---------------
@@ -87,7 +86,7 @@ Inputs
 ~~~~~~
 
 To use the wdl, inputs should be specified in a json file. See example
-input json file in wdl/metams_input_lcms_metabolomics.wdl.
+input json file in wdl/metams_input_lcms_metabolomics.json.
 
 The following inputs are required (declared in the input json file):
 
@@ -113,7 +112,7 @@ Outputs
 Version History
 ---------------
 
-- v1.0.0: Initial release of the lipidomics workflow #TODO KRH: Add date
+- v0.0.0: Initial release of the lipidomics workflow #TODO KRH: Add date
 
 Point of contact
 ----------------
