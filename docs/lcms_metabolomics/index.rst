@@ -6,7 +6,7 @@
          site the file is incorporated into. You can learn more about the `github_url` field at:
          https://sphinx-rtd-theme.readthedocs.io/en/stable/configuring.html#confval-github_url
 
-LC/MS Metabolomics Workflow (v1.1.0)
+LC/MS Metabolomics Workflow (v1.0.0)
 ============================
 
 .. figure:: lipid_workflow_v1.svg

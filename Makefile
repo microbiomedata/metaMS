@@ -112,6 +112,12 @@ convert_lipid_rst_to_md:
 	# render the lipid documentation into html from the rst file
 	pandoc -f rst -t html -o docs/lcms_lipidomics/index.html docs/lcms_lipidomics/index.rst
 
+convert_lcmsmetab_rst_to_md:
+    # convert the lipid documentation from rst to md
+	pandoc -f rst -t markdown -o docs/lcms_metabolomics/README_LCMS_METABOLOMICS.md docs/lcms_metabolomics/index.rst
+	# render the lipid documentation into html from the rst file
+	pandoc -f rst -t html -o docs/lcms_metabolomics/index.html docs/lcms_metabolomics/index.rst
+
 docu:
 	# Generate the documentation, ignoring the nmdc_lipidomics_metadata_generation module
 	pdoc --output-dir docs --docformat numpy metaMS !metaMS.nmdc_lipidomics_metadata_generation
