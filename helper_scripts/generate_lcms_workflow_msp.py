@@ -191,7 +191,7 @@ inchi_precursor_summary = (
 print(
     f"Able to calculate {inchi_precursor[inchi_precursor['precursortype_flag']].shape[0] / inchi_precursor.shape[0]} precursors of molecular formula"
 )
-# TODO: Fix remaining precursors and deal with multiply charged species (needs to extend the ion_type_dict in corems to do this)
+# TODO KRH: Fix remaining precursors and deal with multiply charged species (needs to extend the ion_type_dict in corems to do this)
 
 # ==================================================
 # STEP 6: Calculate m/z based on molecular formula and the precursortype
