@@ -18,21 +18,27 @@ major:
 	
 	@bumpversion major --allow-dirty
 	@make bump_lipid_major
+	@make bump_lcmsmetab_major
 	@make convert_lipid_rst_to_md
+	@make convert_lcmsmetab_rst_to_md
 	@make docu
 
 minor:
 	
 	@bumpversion minor --allow-dirty
 	@make bump_lipid_minor
+	@make bump_lcmsmetab_minor
 	@make convert_lipid_rst_to_md
+	@make convert_lcmsmetab_rst_to_md
 	@make docu
 
 patch:
 	
 	@bumpversion patch --allow-dirty
 	@make bump_lipid_patch
+	@make bump_lcmsmetab_patch
 	@make convert_lipid_rst_to_md
+	@make convert_lcmsmetab_rst_to_md
 	@make docu
 
 bump_lipid_major:
@@ -46,6 +52,16 @@ bump_lipid_minor:
 bump_lipid_patch:
 	
 	@bumpversion patch --allow-dirty --config-file .bumpversion_lipid.cfg
+
+bump_lcmsmetab_major:
+	
+	@bumpversion major --allow-dirty --config-file .bumpversion_lcmsmetab.cfg
+
+bump_lcmsmetab_minor:
+	@bumpversion minor --allow-dirty --config-file .bumpversion_lcmsmetab.cfg
+
+bump_lcmsmetab_patch:
+	@bumpversion patch --allow-dirty --config-file .bumpversion_lcmsmetab.cfg
 
 install:
 	@source venv/bin/activate
