@@ -19,7 +19,7 @@ MS2 spectra to search a subset of the GNPS\'s (Global Natural Products
 Social Molecular Networking) [library of tandem mass
 spectra](https://gnps-external.ucsd.edu/gnpslibrary) to identify
 metabolites. The workflow also uses the deconvoluted MS1 spectra to
-assign a molecular formula. Each candidate metabolites assignment is
+assign a molecular formula. Each candidate metabolite assignment is
 given two confidence scores: one for its match to the predicted
 molecular formula based on the mass accuracy and fine isotopic structure
 and a second for the MS2 spectral matching for filtering and selecting
@@ -123,8 +123,8 @@ The following inputs are required (declared in the input json file):
 
 # Version History
 
--   v0.0.0: Initial release of the lipidomics workflow #TODO KRH: Add
-    date
+-   v0.0.0: Initial release of the LC/MS metabolomics workflow #TODO
+    KRH: Add date
 
 # Point of contact
 
