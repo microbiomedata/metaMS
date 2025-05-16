@@ -18,21 +18,27 @@ major:
 	
 	@bumpversion major --allow-dirty
 	@make bump_lipid_major
+	@make bump_lcmsmetab_major
 	@make convert_lipid_rst_to_md
+	@make convert_lcmsmetab_rst_to_md
 	@make docu
 
 minor:
 	
 	@bumpversion minor --allow-dirty
 	@make bump_lipid_minor
+	@make bump_lcmsmetab_minor
 	@make convert_lipid_rst_to_md
+	@make convert_lcmsmetab_rst_to_md
 	@make docu
 
 patch:
 	
 	@bumpversion patch --allow-dirty
 	@make bump_lipid_patch
+	@make bump_lcmsmetab_patch
 	@make convert_lipid_rst_to_md
+	@make convert_lcmsmetab_rst_to_md
 	@make docu
 
 bump_lipid_major:
@@ -46,6 +52,16 @@ bump_lipid_minor:
 bump_lipid_patch:
 	
 	@bumpversion patch --allow-dirty --config-file .bumpversion_lipid.cfg
+
+bump_lcmsmetab_major:
+	
+	@bumpversion major --allow-dirty --config-file .bumpversion_lcmsmetab.cfg
+
+bump_lcmsmetab_minor:
+	@bumpversion minor --allow-dirty --config-file .bumpversion_lcmsmetab.cfg
+
+bump_lcmsmetab_patch:
+	@bumpversion patch --allow-dirty --config-file .bumpversion_lcmsmetab.cfg
 
 install:
 	@source venv/bin/activate
@@ -107,11 +123,15 @@ wdl-run-lipid :
 	miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics.json --verbose --no-cache --copy-input-files
 
 convert_lipid_rst_to_md:
-    # convert the lipid documentation from rst to md
+    # convert the lipid documentation from rst to md and render it into html
 	pandoc -f rst -t markdown -o docs/lcms_lipidomics/README_LCMS_LIPID.md docs/lcms_lipidomics/index.rst
-	# render the lipid documentation into html from the rst file
 	pandoc -f rst -t html -o docs/lcms_lipidomics/index.html docs/lcms_lipidomics/index.rst
 
+convert_lcmsmetab_rst_to_md:
+    # convert the lcms metabolomics documentation from rst to md and render it into html
+	pandoc -f rst -t markdown -o docs/lcms_metabolomics/README_LCMS_METABOLOMICS.md docs/lcms_metabolomics/index.rst
+	pandoc -f rst -t html -o docs/lcms_metabolomics/index.html docs/lcms_metabolomics/index.rst
+
 docu:
-	# Generate the documentation, ignoring the nmdc_lipidomics_metadata_generation module
-	pdoc --output-dir docs --docformat numpy metaMS !metaMS.nmdc_lipidomics_metadata_generation
+	# Generate the documentation
+	pdoc --output-dir docs --docformat numpy metaMS
