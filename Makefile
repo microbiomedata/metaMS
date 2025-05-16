@@ -119,8 +119,20 @@ wdl-run-gcms-local:
 	@make docker-build-local
 	@miniwdl run wdl/metaMS_gcms.wdl -i wdl/metams_input_gcms_local_docker.json --verbose --no-cache --copy-input-files
 
+get-lipid-test-data:
+	@echo "Downloading test data for lipidomics"
+	@mkdir -p test_data
+	@curl -L -o test_data/test_lipid_data.zip https://nmdcdemo.emsl.pnnl.gov/lipidomics/test_data/metams_lipid_test_data/test_lipid_data.zip
+	@unzip test_data/test_lipid_data.zip -d test_data/
+	@rm test_data/test_lipid_data.zip
+	@echo "Test data downloaded and unzipped"
+
 wdl-run-lipid :
 	miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics.json --verbose --no-cache --copy-input-files
+
+wdl-run-lipid-local:
+	@make docker-build-local
+	miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics_local_docker.json --verbose --no-cache --copy-input-files
 
 convert_lipid_rst_to_md:
     # convert the lipid documentation from rst to md and render it into html

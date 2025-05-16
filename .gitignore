@@ -45,3 +45,6 @@ share/python-wheels/
 
 # msp databases
 *.msp
+
+# test_data
+test_data/

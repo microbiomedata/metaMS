@@ -39,3 +39,19 @@ jobs:
     - name: Run GCMS WDL with local Docker Image based on Dockerfile
       run: |
         miniwdl run wdl/metaMS_gcms.wdl -i wdl/metams_input_gcms_local_docker.json --verbose --no-cache --copy-input-files
+
+    - name: Download test data for lipidomics
+      run: |
+        make get-lipid-test-data
+    
+    - name: Run Lipidomics WDL with lipidomics test data
+      run: |
+        miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics.json --verbose --no-cache --copy-input-files
+    
+    - name: Run Lipidomics WDL with local Docker Image based on Dockerfile
+      run: |
+        miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics_local_docker.json --verbose --no-cache --copy-input-files
+    
+    - name: Remove lipidomics test data
+      run: |
+        rm -rf test_data

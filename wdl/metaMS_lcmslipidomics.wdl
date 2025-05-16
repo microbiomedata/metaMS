@@ -1,7 +1,14 @@
 version 1.0
 
 workflow lcmsLipidomics {
-    call runMetaMSLCMSLipidomics
+    input {
+        String? docker_image  # Optional input for Docker image
+    }
+
+    call runMetaMSLCMSLipidomics {
+        input:
+            docker_image = docker_image
+    }
 
     output {
         String out = runMetaMSLCMSLipidomics.out
@@ -17,6 +24,7 @@ task runMetaMSLCMSLipidomics {
         File db_location
         File scan_translator_path
         Int cores
+        String? docker_image
     }
 
     command {
@@ -35,6 +43,6 @@ task runMetaMSLCMSLipidomics {
     }
 
     runtime {
-        docker: "microbiomedata/metams:3.1.0"
+        docker: "~{if defined(docker_image) then docker_image else 'microbiomedata/metams:3.1.0'}"
     }
 }
