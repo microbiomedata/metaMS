@@ -1,4 +1,4 @@
-name: Test GC/MS workflow
+name: Test workflows
 
 on:
   push:
