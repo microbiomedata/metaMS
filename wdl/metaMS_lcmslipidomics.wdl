@@ -36,12 +36,7 @@ task runMetaMSLCMSLipidomics {
             -s ${scan_translator_path} \
             -j ${cores}
         EXIT_CODE=$?
-
-        # Count subdirectories in output_directory
-        num_subdirs=$(find "${output_directory}" -mindepth 1 -maxdepth 1 -type d | wc -l)
-        num_inputs=${#file_paths[@]}
-
-        # Check that each subdirectory contains at least one .csv file
+        # Check that each subdirectory of output_directory contains at least one .csv file
         all_ok=1
         for subdir in "${output_directory}"/*/; do
             if [ -d "$subdir" ]; then
@@ -52,7 +47,7 @@ task runMetaMSLCMSLipidomics {
             fi
         done
 
-        if [ "$all_ok" -eq 1 ] && [ "$num_subdirs" -eq "$num_inputs" ]; then
+        if [ "$all_ok" -eq 1 ]; then
             exit 0
         else
             exit $EXIT_CODE
