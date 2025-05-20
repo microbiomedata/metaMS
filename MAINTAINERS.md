@@ -3,10 +3,11 @@
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [Setting Up the Development Environment](#setting-up-the-development-environment)
-3. [Releasing a new version](#releasing-a-new-version)
+3. [Testing a new or modified workflow](#testing-a-new-or-modified-workflow)
+4. [Releasing a new version](#releasing-a-new-version)
     1. [Bump Version Numbers](#bump-version-numbers)
     2. [Push Updated Docker Image](#push-updated-docker-image)
-4. [Generate Documentation](#generate-documentation)
+5. [Generate Documentation](#generate-documentation)
 
 ## Introduction
 This guide provides instructions for developers working on the project. It covers setting up the development environment, pushing Docker images, generating documentation, and bumping version numbers.
@@ -29,6 +30,14 @@ This guide provides instructions for developers working on the project. It cover
 4. Install developer-specific dependencies:
     ```sh
     pip install -r requirements-dev.txt
+    ```
+
+## Testing a new or modified workflow
+
+To test a workflow before an associated docker image is pushed, you can run the workflow locally using the docker image that is built locally according to the dockerfile in the workflow directory.  To do this, your wdl must have the option to change the docker image in which the workflow is run, and this image must be specified in the input json file.  For example, the following command will run the lipidomcis workflow using the docker image that is built locally.  See the input file [here](wdl/metams_input_lipidomics_local_docker.json) for an example of how to specify the docker image in the input file.
+
+    ```sh
+    miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics_local_docker.json --verbose --no-cache --copy-input-files
     ```
 
 ## Releasing a new version
@@ -54,7 +63,7 @@ To bump the repo *and all workflows*, run one of the following commands.  This w
     make patch
     ```
 ### Push Updated Docker Image
-Use the github action to push a docker image to the appropriate dockerhub repository.
+Use the github action to push a docker image to the appropriate dockerhub repository. This will use the version number that was set in the previous step and will build and push a docker image according to the dockerfile in the root of the repo.  The docker image will be tagged with the version number and the latest tag.
 
 ## Generating Documentation
 
