@@ -291,10 +291,6 @@ def export_results(myLCMSobj, out_path, molecular_metadata=None, final=False):
     exporter.to_hdf(overwrite=True)
     if final:
         exporter.report_to_csv(molecular_metadata=molecular_metadata)
-    else:
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            exporter.report_to_csv()
 
 def run_lipid_sp_ms1(file_in, out_path, params_toml, scan_translator):
     """Run signal processing and associated mass feature generation for a lipidomics LCMS file
@@ -336,7 +332,11 @@ def run_lipid_sp_ms1(file_in, out_path, params_toml, scan_translator):
             ]
         )
     )
-    mz_dict = {myLCMSobj.polarity: precursor_mz_list}
+    mz_dict = {myLCMSobj.polarity: precursor_mz_list.copy()}
+    myLCMSobj.spectra_parser = None 
+    del myLCMSobj
+    gc.collect()
+
     return mz_dict
 
 def prep_metadata(mz_dicts, out_dir, db_location):
@@ -599,8 +599,6 @@ def run_lcms_lipidomics_workflow(
     scan_translator = lipid_workflow_params.scan_translator_path
 
     click.echo("Starting lipidomics workflow for " + str(len(files_list)) + " file(s), using " +  str(cores) + " core(s)")
-    gc.collect()
-
     # Run signal processing, get associated ms1, add associated ms2, do ms1 molecular search, and export intermediate results
     if cores == 1 or len(files_list) == 1:
         mz_dicts = []
@@ -624,13 +622,11 @@ def run_lcms_lipidomics_workflow(
                 for file_in, file_out in zip(files_list, out_paths_list)
             ]
             mz_dicts = pool.starmap(run_lipid_sp_ms1, args)
-    gc.collect() 
-        
+
     # Prepare metadata for searching
     click.echo("Preparing metadata for ms2 spectral search")
     metadata = prep_metadata(mz_dicts, out_dir, lipid_workflow_params.db_location)
     del mz_dicts
-    gc.collect()
     
     # Run ms2 spectral search and export final results
     click.echo("Starting ms2 spectral search and exporting final results")
@@ -644,4 +640,4 @@ def run_lcms_lipidomics_workflow(
             args = [(file_out, metadata, scan_translator) for file_out in out_paths_list]
             pool.starmap(run_lipid_ms2, args)
 
-    gc.collect()
+    click.echo("Lipidomics workflow complete")
