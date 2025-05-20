@@ -22,6 +22,11 @@ jobs:
         curl -fsSL https://get.docker.com -o get-docker.sh
         sh get-docker.sh
         sudo usermod -aG docker $USER
+
+    - name: Install MiniWDL
+      run: |
+        python -m pip install --upgrade pip
+        pip install miniwdl
     
     - name: Download test data for lipidomics
       run: |
@@ -30,19 +35,14 @@ jobs:
     - name: Run Lipidomics WDL with lipidomics test data
       run: |
         miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics.json --verbose --no-cache --copy-input-files
+    
+    - name: Run GCMS WDL with pushed Docker Image
+      run: |
+        miniwdl run wdl/metaMS_gcms.wdl -i wdl/metams_input_gcms.json --verbose --no-cache --copy-input-files
   
     - name: Build Docker Image
       run: |
         docker build -t local-metams:latest .
-
-    - name: Install MiniWDL
-      run: |
-        python -m pip install --upgrade pip
-        pip install miniwdl
-
-    - name: Run GCMS WDL with pushed Docker Image
-      run: |
-        miniwdl run wdl/metaMS_gcms.wdl -i wdl/metams_input_gcms.json --verbose --no-cache --copy-input-files
     
     - name: Run GCMS WDL with local Docker Image based on Dockerfile
       run: |
