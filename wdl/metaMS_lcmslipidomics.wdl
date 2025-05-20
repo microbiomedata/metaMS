@@ -1,7 +1,14 @@
 version 1.0
 
 workflow lcmsLipidomics {
-    call runMetaMSLCMSLipidomics
+    input {
+        String? docker_image  # Optional input for Docker image
+    }
+
+    call runMetaMSLCMSLipidomics {
+        input:
+            docker_image = docker_image
+    }
 
     output {
         String out = runMetaMSLCMSLipidomics.out
@@ -17,6 +24,7 @@ task runMetaMSLCMSLipidomics {
         File db_location
         File scan_translator_path
         Int cores
+        String? docker_image
     }
 
     command {
@@ -27,6 +35,24 @@ task runMetaMSLCMSLipidomics {
             -d ${db_location} \
             -s ${scan_translator_path} \
             -j ${cores}
+        EXIT_CODE=$?
+        num_inputs=$(echo ${sep=' ' file_paths} | wc -w)
+        num_subdirs=$(find "${output_directory}" -mindepth 1 -maxdepth 1 -type d | wc -l)
+        all_ok=1
+        for subdir in "${output_directory}"/*/; do
+            if [ -d "$subdir" ]; then
+                if ! ls "$subdir"/*.csv 1> /dev/null 2>&1; then
+                    all_ok=0
+                    break
+                fi
+            fi
+        done
+
+        if [ "$all_ok" -eq 1 ] && [ "$num_subdirs" -eq "$num_inputs" ]; then
+            exit 0
+        else
+            exit $EXIT_CODE
+        fi
     }
 
     output {
@@ -35,6 +61,6 @@ task runMetaMSLCMSLipidomics {
     }
 
     runtime {
-        docker: "microbiomedata/metams:3.1.0"
+        docker: "~{if defined(docker_image) then docker_image else 'microbiomedata/metams:3.1.0'}"
     }
 }
