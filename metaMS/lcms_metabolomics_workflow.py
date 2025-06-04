@@ -235,6 +235,8 @@ def add_mass_features(myLCMSobj, scan_translator):
     """
     # Process ms1 spectra
     myLCMSobj.find_mass_features()
+
+    ms1_scan_df = myLCMSobj.scan_df[myLCMSobj.scan_df.ms_level == 1]
     
     if all(x == "profile" for x in ms1_scan_df.ms_format.to_list()):
         myLCMSobj.add_associated_ms1(
@@ -307,7 +309,7 @@ def export_results(myLCMSobj, out_path, molecular_metadata=None, final=False):
             warnings.simplefilter("ignore")
             exporter.report_to_csv()
 
-def run_lcmetab_ms1(file_in, out_path, params_toml, scan_translator):
+def run_lcmetab_ms1(file_in, params_toml, scan_translator):
     """Run signal processing and associated mass feature generation for a metabolomics LCMS file
     
     Run signal processing, get associated ms1, do ms1 molecular search, 
@@ -317,8 +319,6 @@ def run_lcmetab_ms1(file_in, out_path, params_toml, scan_translator):
     ----------
     file_in : str or Path
         Path to input file (raw or mzML)
-    out_path : str or Path
-        Path to output file
     params_toml : str or Path
         Path to toml file with parameters
     scan_translator : str or Path
@@ -331,7 +331,7 @@ def run_lcmetab_ms1(file_in, out_path, params_toml, scan_translator):
     """  
 
     myLCMSobj = instantiate_lcms_obj(file_in)
-    set_params_on_lcms_obj(myLCMSobj, params_toml, verbose)
+    set_params_on_lcms_obj(myLCMSobj, params_toml)
     
     # If the ms1 data are centroided, switch the peak picking method to centroided persistent homology
     # and set the noise threshold method to relative abundance
@@ -354,15 +354,11 @@ def run_lcmetab_ms1(file_in, out_path, params_toml, scan_translator):
 
     return myLCMSobj
 
-def prepare_metadata(out_dir, msp_file_path):
+def prepare_metadata(msp_file_path):
     """Prepare metadata for ms2 spectral search
 
     Parameters
     ----------
-    mz_dicts : list of dicts
-        List of dicts with keys "positive" and "negative" and values of lists of precursor mzs
-    out_dir : Path
-        Path to output directory
     msp_file_path : str
         Path to sqlite database
 
@@ -536,6 +532,7 @@ def run_lcms_metabolomics_workflow(
         with open(lcmsmetab_workflow_parameters_file, "r") as infile:
             lcmetab_workflow_params = LCMetabolomicsWorkflowParameters(**toml.load(infile))
     else:
+        click.echo("Setting workflow params")
         lcmetab_workflow_params = LCMetabolomicsWorkflowParameters(
             file_paths= file_paths.split(","),
             output_directory=output_directory,
@@ -544,6 +541,7 @@ def run_lcms_metabolomics_workflow(
             corems_toml_path=corems_toml_path,
             cores=cores,
         )
+        click.echo("file paths are" + file_paths)
     
     # Make output dir
     out_dir = Path(lcmetab_workflow_params.output_directory)
@@ -569,7 +567,6 @@ def run_lcms_metabolomics_workflow(
         for file_in in files_list:
             lcms_obj = run_lcmetab_ms1(
                 file_in=str(file_in),
-                out_path=str(file_out),
                 params_toml=params_toml,
                 scan_translator=scan_translator,
             )
@@ -589,7 +586,7 @@ def run_lcms_metabolomics_workflow(
 
     # Prepare metadata for searching
     click.echo("Preparing metadata for ms2 spectral search")
-    metadata = prep_metadata(lcmetab_workflow_params.msp_file_path)
+    metadata = prepare_metadata(lcmetab_workflow_params.msp_file_path)
     
     # Run ms2 spectral search and export final results
     click.echo("Starting ms2 spectral search and exporting final results")
@@ -601,7 +598,7 @@ def run_lcms_metabolomics_workflow(
                 scan_translator=scan_translator)
             export_results(
                 lcms_obj, 
-                str(out_path), 
+                str(out_dir), 
                 metadata["molecular_metadata"], 
                 final=True)
     elif cores > 1:
@@ -609,7 +606,7 @@ def run_lcms_metabolomics_workflow(
             args = [(lcms_obj, metadata, scan_translator) for lcms_obj in lcms_obj_list]
             pool.starmap(process_ms2, args)
 
-            args = [(lcms_obj, str(out_path), metadata["molecular_metadata"], True) for lcms_obj in lcms_obj_list]
+            args = [(lcms_obj, str(out_dir), metadata["molecular_metadata"], True) for lcms_obj in lcms_obj_list]
             pool.starmap(export_results, args)
 
     click.echo("LC metabolomics workflow complete")

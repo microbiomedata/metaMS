@@ -5,8 +5,8 @@
         "./test_data/test_lcms_metab_data/Blanch_Nat_Lip_C_4_AB_M_08_POS_23Jan18_Brandi-WCSH5801.raw"
     ],
     "lcmsMetabolomics.runMetaMSLCMSMetabolomics.output_directory": "output",
-    "lcmsMetabolomics.runMetaMSLCMSMetabolomics.corems_toml_path": "./test_data/test_lcms_metab_data/emsl_lipidomics_corems_params_test.toml",
-    "lcmsMetabolomics.runMetaMSLCMSMetabolomics.msp_file_path": "./test_data/test_lcms_metab_data/lipid_ref.sqlite",
-    "lcmsMetabolomics.runMetaMSLCMSMetabolomics.scan_translator_path": "./test_data/test_lcms_metab_data/emsl_lipidomics_scan_translator.toml",
+    "lcmsMetabolomics.runMetaMSLCMSMetabolomics.corems_toml_path": "./test_data/test_lcms_metab_data/emsl_lcmetab_corems_params_test.toml",
+    "lcmsMetabolomics.runMetaMSLCMSMetabolomics.msp_file_path": "./test_data/test_lcms_metab_data/20250407_gnps_curated.msp",
+    "lcmsMetabolomics.runMetaMSLCMSMetabolomics.scan_translator_path": "./test_data/test_lcms_metab_data/emsl_lcmetab_scan_translator.toml",
     "lcmsMetabolomics.runMetaMSLCMSMetabolomics.cores": 1
 }

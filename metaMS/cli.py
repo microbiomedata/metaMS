@@ -280,7 +280,7 @@ def dump_lipidomics_toml_template(toml_file_name):
 @click.option(
     "-j", "--cores", required=False, type=int, help="'cpu's to use for processing"
 )
-def run_lcms_metabolomics_workflow(
+def run_lcmsmetab_workflow(
     paramaters_file, 
     file_paths, 
     output_directory, 
@@ -308,30 +308,41 @@ def run_lcms_metabolomics_workflow(
     cores : int
         The number of cores to use for processing
     """
+    click.echo("beep boop")
     if paramaters_file is not None:
+        click.echo("boop beep")
         if cores is not None or file_paths is not None:
             click.echo("Using parameters file, ignoring other parameters")
+        click.echo("about to run the workflow with parameters file")
         run_lcms_metabolomics_workflow(
             lcmsmetab_workflow_parameters_file=paramaters_file
         )
     else:
+        click.echo("parameters file is none")
         if cores is None:
+            click.echo("cores is None")
             cores = 1
+        click.echo(cores)
         if file_paths is None:
             click.echo("No file paths provided, no data to process")
             return
+        click.echo(file_paths)
         if corems_params is None:
             click.echo("No corems parameters provided")
+        click.echo(corems_params)
         if scan_translator_path is None:
             click.echo("No scan translator provided")
+        click.echo(scan_translator_path)
         if output_directory is None:
             click.echo(
                 "Must provide an output directory if not using a parameters file"
             )
             return
+        click.echo(output_directory)
         if msp_file_path is None:
             click.echo("No database path provided")
             return
+        click.echo(msp_file_path)
         run_lcms_metabolomics_workflow(
             file_paths=file_paths,
             output_directory=output_directory,
@@ -340,3 +351,4 @@ def run_lcms_metabolomics_workflow(
             scan_translator_path=scan_translator_path,
             cores=cores,
         )
+        click.echo("i got to the end")
