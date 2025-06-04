@@ -122,8 +122,9 @@ wdl-run-gcms-local:
 get-lipid-test-data:
 	@echo "Downloading test data for lipidomics"
 	@mkdir -p test_data
+	@mkdir -p test_data/test_lipid_data
 	@curl -L -o test_data/test_lipid_data.zip https://nmdcdemo.emsl.pnnl.gov/lipidomics/test_data/metams_lipid_test_data/test_lipid_data.zip
-	@unzip test_data/test_lipid_data.zip -d test_data/
+	@unzip test_data/test_lipid_data.zip -d test_data/test_lipid_data/
 	@rm test_data/test_lipid_data.zip
 	@echo "Test data downloaded and unzipped"
 
