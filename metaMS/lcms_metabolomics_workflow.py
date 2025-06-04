@@ -9,7 +9,6 @@ import pandas as pd
 from corems.mass_spectra.output.export import LCMSMetabolomicsExport
 
 from corems.molecular_id.search.database_interfaces import MSPInterface
-from metaMS.lipid_metadata_prepper import _to_flashentropy
 from metaMS.lcms_functions import (
     instantiate_lcms_obj,
     set_params_on_lcms_obj,
