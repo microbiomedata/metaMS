@@ -188,7 +188,11 @@ def prepare_metadata(msp_file_path):
     metadata = {
         "fe": {"positive": None, "negative": None},
         "molecular_metadata": {},
+        "fe_lr": {"positive": None, "negative": None},
+        "molecular_metadata_lr": {},
     }
+
+    # High resolution
     msp_positive, metabolite_metadata_positive = (
         my_msp.get_metabolomics_spectra_library(
             polarity="positive",
@@ -224,6 +228,43 @@ def prepare_metadata(msp_file_path):
     )
     metadata["fe"]["negative"] = msp_negative
     metadata["molecular_metadata"].update(metabolite_metadata_negative)
+
+    # Low resolution
+    msp_positive, metabolite_metadata_positive = (
+        my_msp.get_metabolomics_spectra_library(
+            polarity="positive",
+            format="flashentropy",
+            normalize=True,
+            fe_kwargs={
+                "normalize_intensity": True,
+                "min_ms2_difference_in_da": 0.4,  # for cleaning spectra
+                "max_ms2_tolerance_in_da": 0.2,  # for setting search space
+                "max_indexed_mz": 3000,
+                "precursor_ions_removal_da": None,
+                "noise_threshold": 0,
+            },
+        )
+    )
+    metadata["fe_lr"]["positive"] = msp_positive
+    metadata["molecular_metadata_lr"] = metabolite_metadata_positive
+
+    msp_negative, metabolite_metadata_negative = (
+        my_msp.get_metabolomics_spectra_library(
+            polarity="negative",
+            format="flashentropy",
+            normalize=True,
+            fe_kwargs={
+                "normalize_intensity": True,
+                "min_ms2_difference_in_da": 0.4,  # for cleaning spectra
+                "max_ms2_tolerance_in_da": 0.2,  # for setting search space
+                "max_indexed_mz": 3000,
+                "precursor_ions_removal_da": None,
+                "noise_threshold": 0,
+            },
+        )
+    )
+    metadata["fe_lr"]["negative"] = msp_negative
+    metadata["molecular_metadata_lr"].update(metabolite_metadata_negative)
 
     return metadata
 
@@ -289,18 +330,20 @@ def process_ms2(myLCMSobj, metadata, scan_translator):
     # Perform search on low res scans
     if len(ms2_scans_oi_lr) > 0:
         # Recast the flashentropy search database to low resolution
-        fe_search_lr = _to_flashentropy(
-            metabref_lib=fe_search,
-            normalize=True,
-            fe_kwargs={
-                "normalize_intensity": True,
-                "min_ms2_difference_in_da": 0.4,
-                "max_ms2_tolerance_in_da": 0.2,
-                "max_indexed_mz": 3000,
-                "precursor_ions_removal_da": None,
-                "noise_threshold": 0,
-            },
-        )
+        # fe_search_lr = _to_flashentropy(
+        #     metabref_lib=fe_search,
+        #     normalize=True,
+        #     fe_kwargs={
+        #         "normalize_intensity": True,
+        #         "min_ms2_difference_in_da": 0.4,
+        #         "max_ms2_tolerance_in_da": 0.2,
+        #         "max_indexed_mz": 3000,
+        #         "precursor_ions_removal_da": None,
+        #         "noise_threshold": 0,
+        #     },
+        # )
+
+        fe_search_lr = metadata["fe_lr"][myLCMSobj.polarity]
         myLCMSobj.fe_search(
             scan_list=ms2_scans_oi_lr, fe_lib=fe_search_lr, peak_sep_da=0.3
         )
