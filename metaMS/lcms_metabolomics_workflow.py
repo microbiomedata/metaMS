@@ -408,6 +408,7 @@ def run_lcms_metabolomics_workflow(
     file_paths = [Path(file_path) for file_path in lcmetab_workflow_params.file_paths]
     files_list = list(file_paths)
     out_paths_list = [out_dir / f.stem for f in files_list]
+    print(out_paths_list)
     
     # Set the workflow parameters
     cores = lcmetab_workflow_params.cores
@@ -415,16 +416,32 @@ def run_lcms_metabolomics_workflow(
     scan_translator = lcmetab_workflow_params.scan_translator_path
 
     click.echo("Starting LC metabolomics workflow for " + str(len(files_list)) + " file(s), using " +  str(cores) + " core(s)")
+
+    # Prepare metadata for searching
+    click.echo("Preparing metadata for ms2 spectral search")
+    metadata = prepare_metadata(lcmetab_workflow_params.msp_file_path)
+
     # Run signal processing, get associated ms1, add associated ms2, do ms1 molecular search, and export intermediate results
     if cores == 1 or len(files_list) == 1:
         lcms_obj_list = []
-        for file_in in files_list:
+        for file_in, output_path in zip(files_list, out_paths_list):
+            click.echo("Starting ms1 processing")
             lcms_obj = run_lcmetab_ms1(
                 file_in=str(file_in),
                 params_toml=params_toml,
                 scan_translator=scan_translator,
             )
-            lcms_obj_list.append(lcms_obj)
+            click.echo("Starting ms2 spectral search and exporting final results")
+            process_ms2(
+                lcms_obj, 
+                metadata, 
+                scan_translator=scan_translator)
+            export_results(
+                lcms_obj, 
+                str(output_path), 
+                metadata["molecular_metadata"], 
+                final=True)
+
     elif cores > 1:
         with Pool(cores) as pool:
             args = [
@@ -438,25 +455,6 @@ def run_lcms_metabolomics_workflow(
             ]
             lcms_obj_list = pool.starmap(run_lcmetab_ms1, args)
 
-    # Prepare metadata for searching
-    click.echo("Preparing metadata for ms2 spectral search")
-    metadata = prepare_metadata(lcmetab_workflow_params.msp_file_path)
-    
-    # Run ms2 spectral search and export final results
-    click.echo("Starting ms2 spectral search and exporting final results")
-    if cores == 1 or len(files_list) == 1:
-        for lcms_obj in lcms_obj_list:
-            process_ms2(
-                lcms_obj, 
-                metadata, 
-                scan_translator=scan_translator)
-            export_results(
-                lcms_obj, 
-                str(out_dir), 
-                metadata["molecular_metadata"], 
-                final=True)
-    elif cores > 1:
-        with Pool(cores) as pool:
             args = [(lcms_obj, metadata, scan_translator) for lcms_obj in lcms_obj_list]
             pool.starmap(process_ms2, args)
 

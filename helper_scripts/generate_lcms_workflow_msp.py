@@ -17,7 +17,7 @@ from minio import Minio
 from rdkit import Chem
 from rdkit.Chem import rdMolDescriptors
 
-from parse_msp import (
+from helper_scripts.parse_msp import (
     load_lookups_from_minio,
     load_msp_files_from_minio,
     load_refmet,

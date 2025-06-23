@@ -4,7 +4,6 @@ import sqlite3
 import re
 from ms_entropy import FlashEntropySearch
 from corems.molecular_id.factory.lipid_molecular_metadata import LipidMetadata
-import click
 
 def find_closest(A, target):
     """Find the index of closest value in A to each value in target.
@@ -113,7 +112,7 @@ def _to_flashentropy(metabref_lib, normalize=True, fe_kwargs={}):
             spectrum = source["spectrum_data"]
         else:
             spectrum = source
-        click.echo(spectrum.keys())
+
         # Rename precursor_mz key for FlashEntropy
         if "precursor_mz" not in spectrum.keys():
             spectrum["precursor_mz"] = spectrum.pop("precursor_ion")

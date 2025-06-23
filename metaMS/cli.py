@@ -308,19 +308,14 @@ def run_lcmsmetab_workflow(
     cores : int
         The number of cores to use for processing
     """
-    click.echo("beep boop")
     if paramaters_file is not None:
-        click.echo("boop beep")
         if cores is not None or file_paths is not None:
             click.echo("Using parameters file, ignoring other parameters")
-        click.echo("about to run the workflow with parameters file")
         run_lcms_metabolomics_workflow(
             lcmsmetab_workflow_parameters_file=paramaters_file
         )
     else:
-        click.echo("parameters file is none")
         if cores is None:
-            click.echo("cores is None")
             cores = 1
         click.echo(cores)
         if file_paths is None:
@@ -351,4 +346,3 @@ def run_lcmsmetab_workflow(
             scan_translator_path=scan_translator_path,
             cores=cores,
         )
-        click.echo("i got to the end")
