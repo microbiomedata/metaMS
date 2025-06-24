@@ -348,6 +348,28 @@ def process_ms2(myLCMSobj, metadata, scan_translator):
             scan_list=ms2_scans_oi_lr, fe_lib=fe_search_lr, peak_sep_da=0.3
         )
 
+def process_complete_workflow(args):
+    """Process a single file through the complete workflow"""
+    try:
+        file_in, output_path, params_toml, scan_translator, metadata = args
+        
+        # MS1 processing
+        click.echo(f"Starting complete processing for {file_in}")
+        lcms_obj = run_lcmetab_ms1(
+            file_in=file_in,
+            params_toml=params_toml,
+            scan_translator=scan_translator,
+        )
+        
+        # MS2 processing and export
+        process_ms2(lcms_obj, metadata, scan_translator)
+        export_results(lcms_obj, output_path, metadata["molecular_metadata"], final=True)
+        
+        return f"Completed: {output_path}"
+    except Exception as e:
+        click.echo(f"Error processing {file_in}: {str(e)}")
+        raise
+
 def run_lcms_metabolomics_workflow(
     lcmsmetab_workflow_parameters_file=None,
     file_paths=None,
@@ -408,7 +430,6 @@ def run_lcms_metabolomics_workflow(
     file_paths = [Path(file_path) for file_path in lcmetab_workflow_params.file_paths]
     files_list = list(file_paths)
     out_paths_list = [out_dir / f.stem for f in files_list]
-    print(out_paths_list)
     
     # Set the workflow parameters
     cores = lcmetab_workflow_params.cores
@@ -423,42 +444,15 @@ def run_lcms_metabolomics_workflow(
 
     # Run signal processing, get associated ms1, add associated ms2, do ms1 molecular search, and export intermediate results
     if cores == 1 or len(files_list) == 1:
-        lcms_obj_list = []
         for file_in, output_path in zip(files_list, out_paths_list):
-            click.echo("Starting ms1 processing")
-            lcms_obj = run_lcmetab_ms1(
-                file_in=str(file_in),
-                params_toml=params_toml,
-                scan_translator=scan_translator,
-            )
-            click.echo("Starting ms2 spectral search and exporting final results")
-            process_ms2(
-                lcms_obj, 
-                metadata, 
-                scan_translator=scan_translator)
-            export_results(
-                lcms_obj, 
-                str(output_path), 
-                metadata["molecular_metadata"], 
-                final=True)
+            args = (file_in, output_path, params_toml, scan_translator, metadata)
 
     elif cores > 1:
         with Pool(cores) as pool:
             args = [
-                (
-                    str(file_in),
-                    str(file_out),
-                    params_toml,
-                    scan_translator,
-                )
-                for file_in in files_list
+                (str(file_in), str(file_out), params_toml, scan_translator, metadata)
+                for file_in, file_out in zip(files_list, out_paths_list)
             ]
-            lcms_obj_list = pool.starmap(run_lcmetab_ms1, args)
-
-            args = [(lcms_obj, metadata, scan_translator) for lcms_obj in lcms_obj_list]
-            pool.starmap(process_ms2, args)
-
-            args = [(lcms_obj, str(out_dir), metadata["molecular_metadata"], True) for lcms_obj in lcms_obj_list]
-            pool.starmap(export_results, args)
+            pool.map(process_complete_workflow, args)
 
     click.echo("LC metabolomics workflow complete")
