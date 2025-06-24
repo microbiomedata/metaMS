@@ -123,7 +123,7 @@ get-lipid-test-data:
 	@echo "Downloading test data for lipidomics"
 	@mkdir -p test_data
 	@mkdir -p test_data/test_lipid_data
-    @curl --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 300 -L -o test_data/test_lipid_data.zip https://nmdcdemo.emsl.pnnl.gov/lipidomics/test_data/metams_lipid_test_data/test_lipid_data.zip
+	@curl --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 300 -L -o test_data/test_lipid_data.zip https://nmdcdemo.emsl.pnnl.gov/lipidomics/test_data/metams_lipid_test_data/test_lipid_data.zip
 	@unzip test_data/test_lipid_data.zip -d test_data/test_lipid_data/
 	@rm test_data/test_lipid_data.zip
 	@echo "Test data downloaded and unzipped"
@@ -138,7 +138,7 @@ wdl-run-lipid-local:
 get-lcms-metab-test-data:
 	@echo "Downloading test data for LC-MS metabolomics workflow"
 	@mkdir -p test_data
-    @curl --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 300 -L -o test_data/test_lcms_metab_data.zip https://nmdcdemo.emsl.pnl.gov/metabolomics/test_data/metams_lcms_metab_test_data/test_lcms_metab_data.zip
+	@curl --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 300 -L -o test_data/test_lcms_metab_data.zip https://nmdcdemo.emsl.pnl.gov/metabolomics/test_data/metams_lcms_metab_test_data/test_lcms_metab_data.zip
 	@unzip test_data/test_lcms_metab_data.zip -d test_data/
 	@rm test_data/test_lcms_metab_data.zip
 	@echo "Test data downloaded and unzipped"
@@ -146,9 +146,9 @@ get-lcms-metab-test-data:
 get-test-data: get-lipid-test-data wait-and-get-lcms-metab-test-data
 
 wait-and-get-lcms-metab-test-data:
-    @echo "Waiting 10 seconds before downloading LC-MS metabolomics data..."
-    @sleep 10
-    @$(MAKE) get-lcms-metab-test-data
+	@echo "Waiting 10 seconds before downloading LC-MS metabolomics data..."
+	@sleep 10
+	@$(MAKE) get-lcms-metab-test-data
 
 wdl-run-lcms-metab :
 	miniwdl run wdl/metaMS_lcms_metabolomics.wdl -i wdl/metams_input_lcms_metabolomics.json --verbose --no-cache --copy-input-files
