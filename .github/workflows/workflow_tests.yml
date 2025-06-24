@@ -28,9 +28,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install miniwdl
     
-    - name: Download LCMS metabolomics test data
+    - name: Download LCMS metabolomics database
       run: |
-        make get-lcms-metab-test-data
+        make get-lcms-database
+    
+    - name: Download lipidomics test data
+      run: |
+        make get-lipid-test-data
     
     - name: Run Lipidomics WDL with lipidomics test data
       run: |

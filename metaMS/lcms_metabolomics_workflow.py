@@ -363,7 +363,7 @@ def process_complete_workflow(args):
         
         # MS2 processing and export
         process_ms2(lcms_obj, metadata, scan_translator)
-        export_results(lcms_obj, output_path, metadata["molecular_metadata"], final=True)
+        export_results(lcms_obj, str(output_path), metadata["molecular_metadata"], final=True)
         
         return f"Completed: {output_path}"
     except Exception as e:
@@ -446,6 +446,7 @@ def run_lcms_metabolomics_workflow(
     if cores == 1 or len(files_list) == 1:
         for file_in, output_path in zip(files_list, out_paths_list):
             args = (file_in, output_path, params_toml, scan_translator, metadata)
+            process_complete_workflow(args)
 
     elif cores > 1:
         with Pool(cores) as pool:

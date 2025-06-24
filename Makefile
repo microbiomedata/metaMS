@@ -119,6 +119,12 @@ wdl-run-gcms-local:
 	@make docker-build-local
 	@miniwdl run wdl/metaMS_gcms.wdl -i wdl/metams_input_gcms_local_docker.json --verbose --no-cache --copy-input-files
 
+get-lcms-database:
+	@echo "Downloading LC-MS database"
+	@mkdir -p test_data/test_lcms_metab_data
+	@curl --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 300 -L -o test_data/test_lcms_metab_data/database.msp https://nmdcdemo.emsl.pnnl.gov/metabolomics/databases/20250407_gnps_curated.msp
+	@echo "LC-MS database downloaded"
+
 get-lipid-test-data:
 	@echo "Downloading test data for lipidomics"
 	@mkdir -p test_data
