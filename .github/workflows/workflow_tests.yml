@@ -31,14 +31,14 @@ jobs:
     - name: Download test data for lipidomics
       run: |
         make get-lipid-test-data
-    
-    - name: Run Lipidomics WDL with lipidomics test data
-      run: |
-        miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics.json --verbose --no-cache --copy-input-files
 
     - name: Download test data for LCMS metabolomics
       run: |
         make get-lcms-metab-test-data
+    
+    - name: Run Lipidomics WDL with lipidomics test data
+      run: |
+        miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics.json --verbose --no-cache --copy-input-files
 
     # This will fail until the new Docker image is pushed to Docker Hub
     #- name: Run LCMS metabolomics WDL with LCMS metabolomics test data
