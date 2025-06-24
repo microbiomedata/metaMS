@@ -141,20 +141,9 @@ wdl-run-lipid-local:
 	@make docker-build-local
 	miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics_local_docker.json --verbose --no-cache --copy-input-files
 
-get-lcms-metab-test-data:
-	@echo "Downloading test data for LC-MS metabolomics workflow"
-	@mkdir -p test_data
-	@curl --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 300 -L -o test_data/test_lcms_metab_data.zip https://nmdcdemo.emsl.pnl.gov/metabolomics/test_data/metams_lcms_metab_test_data/test_lcms_metab_data.zip
-	@unzip test_data/test_lcms_metab_data.zip -d test_data/
-	@rm test_data/test_lcms_metab_data.zip
-	@echo "Test data downloaded and unzipped"
-
-get-test-data: get-lipid-test-data wait-and-get-lcms-metab-test-data
-
-wait-and-get-lcms-metab-test-data:
-	@echo "Waiting 30 seconds before downloading LC-MS metabolomics data..."
-	@sleep 30
-	@$(MAKE) get-lcms-metab-test-data
+get-test-data:
+	@make get-lipid-test-data
+	@make get-lcms-database
 
 wdl-run-lcms-metab :
 	miniwdl run wdl/metaMS_lcms_metabolomics.wdl -i wdl/metams_input_lcms_metabolomics.json --verbose --no-cache --copy-input-files

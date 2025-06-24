@@ -28,20 +28,16 @@ jobs:
         python -m pip install --upgrade pip
         pip install miniwdl
     
-    - name: Download LCMS metabolomics database
+    - name: Download LCMS metabolomics database and test data
       run: |
-        make get-lcms-database
-    
-    - name: Download lipidomics test data
-      run: |
-        make get-lipid-test-data
-    
-    - name: Run Lipidomics WDL with lipidomics test data
+        make get-test-data
+
+    - name: Run Lipidomics WDL with lipidomics test data and pushed Docker Image
       run: |
         miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics.json --verbose --no-cache --copy-input-files
 
     # This will fail until the new Docker image is pushed to Docker Hub
-    #- name: Run LCMS metabolomics WDL with LCMS metabolomics test data
+    #- name: Run LCMS metabolomics WDL with test data and pushed Docker Image
     #  run: |
     #    make wdl-run-lcms-metab
 
