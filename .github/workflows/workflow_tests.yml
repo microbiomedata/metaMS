@@ -62,7 +62,8 @@ jobs:
         miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics_local_docker.json --verbose --no-cache --copy-input-files
     
     - name: Run LCMS metabolomics WDL with local Docker Image based on Dockerfile
-      run: make wdl-run-lcms-metab-local
+      run: |
+        miniwdl run wdl/metaMS_lcms_metabolomics.wdl -i wdl/metams_input_lcms_metabolomics_local_docker.json --verbose --no-cache --copy-input-files
     
     - name: Remove test data
       run: |
