@@ -138,19 +138,7 @@ wdl-run-lipid-local:
 get-lcms-metab-test-data:
 	@echo "Downloading test data for LC-MS metabolomics workflow"
 	@mkdir -p test_data
-	@for i in 1 2 3 4 5; do \
-		echo "Download attempt $$i of 5..."; \
-		if curl --retry 5 --retry-delay 10 --retry-max-time 600 --connect-timeout 60 --max-time 900 -L -o test_data/test_lcms_metab_data.zip https://nmdcdemo.emsl.pnl.gov/metabolomics/test_data/metams_lcms_metab_test_data/test_lcms_metab_data.zip; then \
-        	break; \
-		else \
-			echo "Download attempt $$i failed, waiting 30 seconds before retry..."; \
-			sleep 30; \
-			fi; \
-	done
-	@if [ ! -f test_data/test_lcms_metab_data.zip ]; then \
-    	echo "All download attempts failed"; \
-    	exit 1; \
-	fi
+	@curl --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 300 -L -o test_data/test_lcms_metab_data.zip https://nmdcdemo.emsl.pnl.gov/metabolomics/test_data/metams_lcms_metab_test_data/test_lcms_metab_data.zip
 	@unzip test_data/test_lcms_metab_data.zip -d test_data/
 	@rm test_data/test_lcms_metab_data.zip
 	@echo "Test data downloaded and unzipped"
