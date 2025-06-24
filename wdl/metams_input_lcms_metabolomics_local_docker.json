@@ -1,0 +1,12 @@
+{
+    "lcmsMetabolomics.docker_image": "local-metams:latest",
+    "lcmsMetabolomics.runMetaMSLCMSMetabolomics.file_paths": [
+        "./test_data/test_lipid_data/Blanch_Nat_Lip_C_4_AB_M_08_NEG_25Jan18_Brandi-WCSH5801.raw",
+        "./test_data/test_lipid_data/Blanch_Nat_Lip_C_4_AB_M_08_POS_23Jan18_Brandi-WCSH5801.raw"
+    ],
+    "lcmsMetabolomics.runMetaMSLCMSMetabolomics.output_directory": "output",
+    "lcmsMetabolomics.runMetaMSLCMSMetabolomics.corems_toml_path": "./configuration/lcms_metab_configs/emsl_lcms_metab_corems_params.toml",
+    "lcmsMetabolomics.runMetaMSLCMSMetabolomics.msp_file_path": "./test_data/test_lcms_metab_data/database.msp",
+    "lcmsMetabolomics.runMetaMSLCMSMetabolomics.scan_translator_path": "./configuration/lcms_metab_configs/emsl_lcms_metab_scan_translator.toml",
+    "lcmsMetabolomics.runMetaMSLCMSMetabolomics.cores": 1
+}

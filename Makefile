@@ -119,11 +119,18 @@ wdl-run-gcms-local:
 	@make docker-build-local
 	@miniwdl run wdl/metaMS_gcms.wdl -i wdl/metams_input_gcms_local_docker.json --verbose --no-cache --copy-input-files
 
+get-lcms-database:
+	@echo "Downloading LC-MS database"
+	@mkdir -p test_data/test_lcms_metab_data
+	@curl --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 300 -L -o test_data/test_lcms_metab_data/database.msp https://nmdcdemo.emsl.pnnl.gov/metabolomics/databases/20250407_gnps_curated.msp
+	@echo "LC-MS database downloaded"
+
 get-lipid-test-data:
 	@echo "Downloading test data for lipidomics"
 	@mkdir -p test_data
-	@curl -L -o test_data/test_lipid_data.zip https://nmdcdemo.emsl.pnnl.gov/lipidomics/test_data/metams_lipid_test_data/test_lipid_data.zip
-	@unzip test_data/test_lipid_data.zip -d test_data/
+	@mkdir -p test_data/test_lipid_data
+	@curl --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 300 -L -o test_data/test_lipid_data.zip https://nmdcdemo.emsl.pnnl.gov/lipidomics/test_data/metams_lipid_test_data/test_lipid_data.zip
+	@unzip test_data/test_lipid_data.zip -d test_data/test_lipid_data/
 	@rm test_data/test_lipid_data.zip
 	@echo "Test data downloaded and unzipped"
 
@@ -133,6 +140,17 @@ wdl-run-lipid :
 wdl-run-lipid-local:
 	@make docker-build-local
 	miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics_local_docker.json --verbose --no-cache --copy-input-files
+
+get-test-data:
+	@make get-lipid-test-data
+	@make get-lcms-database
+
+wdl-run-lcms-metab :
+	miniwdl run wdl/metaMS_lcms_metabolomics.wdl -i wdl/metams_input_lcms_metabolomics.json --verbose --no-cache --copy-input-files
+
+wdl-run-lcms-metab-local:
+	@make docker-build-local
+	miniwdl run wdl/metaMS_lcms_metabolomics.wdl -i wdl/metams_input_lcms_metabolomics_local_docker.json --verbose --no-cache --copy-input-files
 
 convert_lipid_rst_to_md:
     # convert the lipid documentation from rst to md and render it into html
