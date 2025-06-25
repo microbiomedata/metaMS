@@ -1,12 +1,14 @@
-github_url
+github\_url
 
 :   <https://github.com/microbiomedata/metaMS/blob/master/docs/index_lipid.rst>
 
-# Lipidomics Workflow (v1.1.0)
+Lipidomics Workflow (v1.2.0)
+============================
 
 ![](lipid_workflow_v1.svg)
 
-## Workflow Overview
+Workflow Overview
+-----------------
 
 The liquid chromatography-mass spectrometry (LC-MS)-based lipidomics
 workflow (part of MetaMS) is built using PNNL's CoreMS software
@@ -26,7 +28,8 @@ the best match.
 Note that only data collected in profile mode for MS1 and data-dependent
 acquisition for MS2 is supported at this time.
 
-## Workflow Availability
+Workflow Availability
+---------------------
 
 The workflow is available in GitHub:
 <https://github.com/microbiomedata/metaMS/blob/master/wdl/metaMS_lcmslipidomics.wdl>
@@ -37,7 +40,8 @@ The container is available at Docker Hub (microbiomedata/metaMS):
 The database is available by request. Please contact NMDC
 (<support@microbiomedata.org>) for access.
 
-## Requirements for Execution
+Requirements for Execution
+--------------------------
 
 The recommended way to run the workflow is via the provided wdl file and
 the miniwdl package. Using the wdl file requires the following:
@@ -68,7 +72,8 @@ workflow does not use retention time scoring. Currently the workflow
 uses a local copy of the database, and the database is available by
 request.
 
-## Sample datasets
+Sample datasets
+---------------
 
 -   An example dataset can be downloaded from here:
     <https://nmdcdemo.emsl.pnnl.gov/lipidomics/blanchard_11_8ws97026/Blanch_Nat_Lip_H_32_AB_O_19_NEG_25Jan18_Brandi-WCSH5801.raw>
@@ -77,21 +82,22 @@ request.
 -   Example Scan Translator file (applicable to the example dataset):
     <https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/emsl_lipidomics_scan_translator.toml>
 
-## Execution Details
+Execution Details
+-----------------
 
 This workflow should be executed using the wdl file provided in the
-MetaMS package (wdl/metaMS_lipidomics.wdl).
+MetaMS package (wdl/metaMS\_lipidomics.wdl).
 
 Example command to run the workflow:
 
-``` 
+``` {.}
 miniwdl run wdl/metaMS_lipidomics.wdl -i metams_input_lipidomics.json --verbose --no-cache --copy-input-files
 ```
 
 ### Inputs
 
 To use the wdl, inputs should be specified in a json file. See example
-input json file in wdl/metaMS_lipidomics.wdl.
+input json file in wdl/metaMS\_lipidomics.wdl.
 
 The following inputs are required (declared in the input json file):
 
@@ -126,10 +132,12 @@ The following inputs are required (declared in the input json file):
     -   The full set of CoreMS parameters used in the workflow, some of
         which are set dynamically within the workflow (.toml)
 
-## Version History
+Version History
+---------------
 
--   v1.1.0: Initial release of the lipidomics workflow Jan 9, 2025
+-   v1.2.0: Initial release of the lipidomics workflow Jan 9, 2025
 
-## Point of contact
+Point of contact
+----------------
 
 Workflow maintainer: Katherine R. Heal \<<katherine.heal@pnnl.gov>\>
