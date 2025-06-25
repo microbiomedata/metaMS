@@ -5,12 +5,10 @@ from multiprocessing import Pool
 import click
 import warnings
 import pandas as pd
-import gc
 
-from corems.mass_spectra.input.corems_hdf5 import ReadCoreMSHDFMassSpectra
-from corems.mass_spectra.output.export import LipidomicsExport
+from corems.mass_spectra.output.export import LCMSMetabolomicsExport
 
-from metaMS.lipid_metadata_prepper import get_lipid_library, _to_flashentropy
+from corems.molecular_id.search.database_interfaces import MSPInterface
 from metaMS.lcms_functions import (
     instantiate_lcms_obj,
     set_params_on_lcms_obj,
@@ -28,9 +26,9 @@ warnings.filterwarnings(
 )
 
 @dataclass
-class LipidomicsWorkflowParameters:
+class LCMetabolomicsWorkflowParameters:
     """
-    Parameters for the lipidomics workflow
+    Parameters for the LC metabolomics workflow
 
     Parameters
     ----------
@@ -40,8 +38,8 @@ class LipidomicsWorkflowParameters:
         The directory where the output files will be stored
     corems_toml_path : str
         The path to the corems configuration file
-    db_location : str
-        The path to the local sqlite database used for searching lipid ms2 spectra
+    msp_file_path : str
+        The path to the local sqlite database used for searching ms2 spectra
     scan_translator_path : str
         The path to the scan translator file, optional
     cores : int
@@ -51,51 +49,51 @@ class LipidomicsWorkflowParameters:
     file_paths: tuple = ('data/...', 'data/...')
     output_directory: str = "output"
     corems_toml_path: str = None
-    db_location: str = None
+    msp_file_path: str = None
     scan_translator_path: str = None
     cores: int = 1
 
-def check_lipidomics_workflow_params(lipid_workflow_params):
+def check_lcmetab_workflow_params(lcmetab_workflow_params):
     """Check that all parameters are valid and exist
 
     Parameters
     ----------
-    lipid_workflow_params : LipidomicsWorkflowParameters
-        Parameters for the lipidomics workflow
+    lcmetab_workflow_params : LCMetabolomicsWorkflowParameters
+        Parameters for the LC metabolomics workflow
 
     Returns
     -------
     None, raises errors if parameters are not valid or do not exist
     """
     # Check that corems_toml_path exists
-    if not Path(lipid_workflow_params.corems_toml_path).exists():
+    if not Path(lcmetab_workflow_params.corems_toml_path).exists():
         raise FileNotFoundError("Corems toml file not found, exiting workflow")
     
     # Check that scan_translator_path exists
-    if not Path(lipid_workflow_params.scan_translator_path).exists():
+    if not Path(lcmetab_workflow_params.scan_translator_path).exists():
         raise FileNotFoundError("Scan translator file not found, exiting workflow")
     
     # Check that output_directory exists
-    if not Path(lipid_workflow_params.output_directory).exists():
+    if not Path(lcmetab_workflow_params.output_directory).exists():
         raise FileNotFoundError("Output directory not found, exiting workflow")
     
     # Check that file_paths exist
-    for file_path in lipid_workflow_params.file_paths:
+    for file_path in lcmetab_workflow_params.file_paths:
         if not Path(file_path).exists():
             raise FileNotFoundError(f"File path {file_path} not found, exiting workflow")
     
     # Check that all file_paths end in .raw or .mzML
-    for file_path in lipid_workflow_params.file_paths:
+    for file_path in lcmetab_workflow_params.file_paths:
         if ".raw" not in file_path and ".mzML" not in file_path:
             raise ValueError(f"File path {file_path} is not a .raw or .mzML file, exiting workflow")
     
-    # Check that db_location exists
-    if lipid_workflow_params.db_location is not None:
-        if not Path(lipid_workflow_params.db_location).exists():
+    # Check that msp_file_path exists
+    if lcmetab_workflow_params.msp_file_path is not None:
+        if not Path(lcmetab_workflow_params.msp_file_path).exists():
             raise FileNotFoundError("Database location not found, exiting workflow")
 
 def export_results(myLCMSobj, out_path, molecular_metadata=None, final=False):
-    """Export results to hdf5 and csv as a lipid report
+    """Export results to hdf5 and csv
 
     Parameters
     ----------
@@ -110,25 +108,28 @@ def export_results(myLCMSobj, out_path, molecular_metadata=None, final=False):
 
     Returns
     -------
-    None, exports results to hdf5 and csv as a lipid report
+    None, exports results to hdf5 and csv
     """
-    exporter = LipidomicsExport(out_path, myLCMSobj)
+    exporter = LCMSMetabolomicsExport(out_path, myLCMSobj)
     exporter.to_hdf(overwrite=True)
     if final:
+        # Do not show warnings, these are expected
         exporter.report_to_csv(molecular_metadata=molecular_metadata)
+    else:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            exporter.report_to_csv()
 
-def run_lipid_sp_ms1(file_in, out_path, params_toml, scan_translator):
-    """Run signal processing and associated mass feature generation for a lipidomics LCMS file
+def run_lcmetab_ms1(file_in, params_toml, scan_translator):
+    """Run signal processing and associated mass feature generation for a metabolomics LCMS file
     
-    Run signal processing, get associated ms1, add associated ms2, do ms1 molecular search, 
+    Run signal processing, get associated ms1, do ms1 molecular search, 
     and export intermediate results from an input LCMS file
 
     Parameters
     ----------
     file_in : str or Path
         Path to input file (raw or mzML)
-    out_path : str or Path
-        Path to output file
     params_toml : str or Path
         Path to toml file with parameters
     scan_translator : str or Path
@@ -140,41 +141,37 @@ def run_lipid_sp_ms1(file_in, out_path, params_toml, scan_translator):
         Dict with keys "positive" and "negative" and values of lists of precursor mzs
     """  
 
-    myLCMSobj = instantiate_lcms_obj(file_in)           
+    myLCMSobj = instantiate_lcms_obj(file_in)
     set_params_on_lcms_obj(myLCMSobj, params_toml)
+    
+    # If the ms1 data are centroided, switch the peak picking method to centroided persistent homology
+    # and set the noise threshold method to relative abundance
+    ms1_scan_df = myLCMSobj.scan_df[myLCMSobj.scan_df.ms_level == 1]
+    if all(x == "centroid" for x in ms1_scan_df.ms_format.to_list()):
+        # Switch peak picking method to centroided persistent homology
+        myLCMSobj.parameters.lc_ms.peak_picking_method = "centroided_persistent_homology"
+        myLCMSobj.parameters.mass_spectrum[
+            "ms1"
+        ].mass_spectrum.noise_threshold_method = "relative_abundance"
+
+    myLCMSobj.parameters.mass_spectrum[
+        "ms1"
+    ].mass_spectrum.noise_threshold_min_relative_abundance = 0.1
+
     check_scan_translator(myLCMSobj, scan_translator)
     add_mass_features(myLCMSobj, scan_translator)
     myLCMSobj.remove_unprocessed_data()
-    #Finally, perform molecular formula search on all ms1 spectra associated with mass features
     molecular_formula_search(myLCMSobj)
-    export_results(myLCMSobj, out_path=out_path, final=False)
-    precursor_mz_list = list(
-        set(
-            [
-                v.mz
-                for k, v in myLCMSobj.mass_features.items()
-                if len(v.ms2_scan_numbers) > 0 and v.isotopologue_type is None
-            ]
-        )
-    )
-    mz_dict = {myLCMSobj.polarity: precursor_mz_list.copy()}
-    myLCMSobj.spectra_parser = None 
-    del myLCMSobj
-    gc.collect()
 
-    return mz_dict
+    return myLCMSobj
 
-def prep_metadata(mz_dicts, out_dir, db_location):
+def prepare_metadata(msp_file_path):
     """Prepare metadata for ms2 spectral search
 
     Parameters
     ----------
-    mz_dicts : list of dicts
-        List of dicts with keys "positive" and "negative" and values of lists of precursor mzs
-    out_dir : Path
-        Path to output directory
-    db_location : str
-        Path to lipid database
+    msp_file_path : str
+        Path to sqlite database
 
     Returns
     -------
@@ -185,47 +182,20 @@ def prep_metadata(mz_dicts, out_dir, db_location):
     -------
     Also writes out files for the flash entropy search databases and molecular metadata
     """
+    print("Parsing MSP file...")
+    my_msp = MSPInterface(file_path=msp_file_path)
+    print("Parsing MSP file complete.")
     metadata = {
-        "mzs": {"positive": None, "negative": None},
         "fe": {"positive": None, "negative": None},
         "molecular_metadata": {},
+        "fe_lr": {"positive": None, "negative": None},
+        "molecular_metadata_lr": {},
     }
-    for d in mz_dicts:
-        metadata["mzs"].update(d)
 
-    print("Preparing negative lipid library")
-
-    if metadata["mzs"]["negative"] is not None:
-        metabref_negative, lipidmetadata_negative = get_lipid_library(
-            db_location=db_location,
-            mz_list=metadata["mzs"]["negative"],
-            polarity="negative",
-            mz_tol_ppm=5,
-            format="flashentropy",
-            normalize=True,
-            fe_kwargs={
-                "normalize_intensity": True,
-                "min_ms2_difference_in_da": 0.02,  # for cleaning spectra
-                "max_ms2_tolerance_in_da": 0.01,  # for setting search space
-                "max_indexed_mz": 3000,
-                "precursor_ions_removal_da": None,
-                "noise_threshold": 0,
-            },
-        )
-        metadata["fe"]["negative"] = metabref_negative
-        metadata["molecular_metadata"].update(lipidmetadata_negative)
-        fe_negative_df = pd.DataFrame.from_dict(
-            {k: v for k, v in enumerate(metadata["fe"]["negative"])}, orient="index"
-        )
-        fe_negative_df.to_csv(out_dir / "ms2_db_negative.csv")
-    
-    print("Preparing positive lipid library")
-    if metadata["mzs"]["positive"] is not None:
-        metabref_positive, lipidmetadata_positive = get_lipid_library(
-            db_location=db_location,
-            mz_list=metadata["mzs"]["positive"],
+    # High resolution
+    msp_positive, metabolite_metadata_positive = (
+        my_msp.get_metabolomics_spectra_library(
             polarity="positive",
-            mz_tol_ppm=5,
             format="flashentropy",
             normalize=True,
             fe_kwargs={
@@ -237,21 +207,64 @@ def prep_metadata(mz_dicts, out_dir, db_location):
                 "noise_threshold": 0,
             },
         )
-        metadata["fe"]["positive"] = metabref_positive
-        metadata["molecular_metadata"].update(lipidmetadata_positive)
-        fe_positive_df = pd.DataFrame.from_dict(
-            {k: v for k, v in enumerate(metadata["fe"]["positive"])}, orient="index"
-        )
-        fe_positive_df.to_csv(out_dir / "ms2_db_positive.csv")
-
-    mol_metadata_df = pd.concat(
-        [
-            pd.DataFrame.from_dict(v.__dict__, orient="index").transpose()
-            for k, v in metadata["molecular_metadata"].items()
-        ],
-        ignore_index=True,
     )
-    mol_metadata_df.to_csv(out_dir / "molecular_metadata.csv")
+    metadata["fe"]["positive"] = msp_positive
+    metadata["molecular_metadata"] = metabolite_metadata_positive
+
+    msp_negative, metabolite_metadata_negative = (
+        my_msp.get_metabolomics_spectra_library(
+            polarity="negative",
+            format="flashentropy",
+            normalize=True,
+            fe_kwargs={
+                "normalize_intensity": True,
+                "min_ms2_difference_in_da": 0.02,  # for cleaning spectra
+                "max_ms2_tolerance_in_da": 0.01,  # for setting search space
+                "max_indexed_mz": 3000,
+                "precursor_ions_removal_da": None,
+                "noise_threshold": 0,
+            },
+        )
+    )
+    metadata["fe"]["negative"] = msp_negative
+    metadata["molecular_metadata"].update(metabolite_metadata_negative)
+
+    # Low resolution
+    msp_positive, metabolite_metadata_positive = (
+        my_msp.get_metabolomics_spectra_library(
+            polarity="positive",
+            format="flashentropy",
+            normalize=True,
+            fe_kwargs={
+                "normalize_intensity": True,
+                "min_ms2_difference_in_da": 0.4,  # for cleaning spectra
+                "max_ms2_tolerance_in_da": 0.2,  # for setting search space
+                "max_indexed_mz": 3000,
+                "precursor_ions_removal_da": None,
+                "noise_threshold": 0,
+            },
+        )
+    )
+    metadata["fe_lr"]["positive"] = msp_positive
+    metadata["molecular_metadata_lr"] = metabolite_metadata_positive
+
+    msp_negative, metabolite_metadata_negative = (
+        my_msp.get_metabolomics_spectra_library(
+            polarity="negative",
+            format="flashentropy",
+            normalize=True,
+            fe_kwargs={
+                "normalize_intensity": True,
+                "min_ms2_difference_in_da": 0.4,  # for cleaning spectra
+                "max_ms2_tolerance_in_da": 0.2,  # for setting search space
+                "max_indexed_mz": 3000,
+                "precursor_ions_removal_da": None,
+                "noise_threshold": 0,
+            },
+        )
+    )
+    metadata["fe_lr"]["negative"] = msp_negative
+    metadata["molecular_metadata_lr"].update(metabolite_metadata_negative)
 
     return metadata
 
@@ -317,62 +330,60 @@ def process_ms2(myLCMSobj, metadata, scan_translator):
     # Perform search on low res scans
     if len(ms2_scans_oi_lr) > 0:
         # Recast the flashentropy search database to low resolution
-        fe_search_lr = _to_flashentropy(
-            metabref_lib=fe_search,
-            normalize=True,
-            fe_kwargs={
-                "normalize_intensity": True,
-                "min_ms2_difference_in_da": 0.4,
-                "max_ms2_tolerance_in_da": 0.2,
-                "max_indexed_mz": 3000,
-                "precursor_ions_removal_da": None,
-                "noise_threshold": 0,
-            },
-        )
+        # fe_search_lr = _to_flashentropy(
+        #     metabref_lib=fe_search,
+        #     normalize=True,
+        #     fe_kwargs={
+        #         "normalize_intensity": True,
+        #         "min_ms2_difference_in_da": 0.4,
+        #         "max_ms2_tolerance_in_da": 0.2,
+        #         "max_indexed_mz": 3000,
+        #         "precursor_ions_removal_da": None,
+        #         "noise_threshold": 0,
+        #     },
+        # )
+
+        fe_search_lr = metadata["fe_lr"][myLCMSobj.polarity]
         myLCMSobj.fe_search(
             scan_list=ms2_scans_oi_lr, fe_lib=fe_search_lr, peak_sep_da=0.3
         )
 
-def run_lipid_ms2(out_path, metadata, scan_translator=None):
-    """Run ms2 spectral search and export final results
+def process_complete_workflow(args):
+    """Process a single file through the complete workflow"""
+    try:
+        file_in, output_path, params_toml, scan_translator, metadata = args
+        
+        # MS1 processing
+        click.echo(f"Starting complete processing for {file_in}")
+        lcms_obj = run_lcmetab_ms1(
+            file_in=file_in,
+            params_toml=params_toml,
+            scan_translator=scan_translator,
+        )
+        
+        # MS2 processing and export
+        process_ms2(lcms_obj, metadata, scan_translator)
+        export_results(lcms_obj, str(output_path), metadata["molecular_metadata"], final=True)
+        
+        return f"Completed: {output_path}"
+    except Exception as e:
+        click.echo(f"Error processing {file_in}: {str(e)}")
+        raise
 
-    Parameters
-    ----------
-    out_path : str or Path
-        Path to output file
-    metadata : dict
-        Dict with keys "mzs", "fe", and "molecular_metadata" with values of dicts of precursor mzs (negative and positive), flash entropy search databases (negative and positive), and molecular metadata, respectively
-
-    Returns
-    -------
-    None, runs ms2 spectral search and exports final results
-    """
-    # Read in the intermediate results
-    out_path_hdf5 = str(out_path) + ".corems/" + out_path.stem + ".hdf5"
-    # Catch known UserWarning from corems and ignore it
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        parser = ReadCoreMSHDFMassSpectra(out_path_hdf5)
-        myLCMSobj = parser.get_lcms_obj(load_raw=False)
-
-    # Process ms2 spectra, perform spectral search, and export final results
-    process_ms2(myLCMSobj, metadata, scan_translator=scan_translator)
-    export_results(myLCMSobj, str(out_path), metadata["molecular_metadata"], final=True)
-
-def run_lcms_lipidomics_workflow(
-    lipidomics_workflow_paramaters_file=None,
+def run_lcms_metabolomics_workflow(
+    lcmsmetab_workflow_parameters_file=None,
     file_paths=None,
     output_directory=None,
     corems_toml_path=None,
-    db_location=None,
+    msp_file_path=None,
     scan_translator_path=None,
     cores=None,
 ):
-    """Run the lipidomics workflow
+    """Run the LC metabolomics workflow
     
     Parameters
     ----------
-    lipidomics_workflow_paramaters_file : str or Path
+    lcmsmetab_workflow_parameters_file : str or Path
         Path to toml file with parameters
     file_paths : str
         Comma-separated string of file paths
@@ -380,8 +391,8 @@ def run_lcms_lipidomics_workflow(
         Path to output directory
     corems_toml_path : str
         Path to corems toml file
-    db_location : str
-        Path to lipid database
+    msp_file_path : str
+        The path to the local sqlite database used for searching ms2 spectra
     scan_translator_path : str
         Path to scan translator file
     cores : int
@@ -389,80 +400,60 @@ def run_lcms_lipidomics_workflow(
 
     Returns
     -------
-    None, runs the lipidomics workflow        
+    None, runs the LC metabolomics workflow        
     """
 
-    if lipidomics_workflow_paramaters_file is not None:
+    if lcmsmetab_workflow_parameters_file is not None:
         # Set the parameters from the toml file
-        with open(lipidomics_workflow_paramaters_file, "r") as infile:
-            lipid_workflow_params = LipidomicsWorkflowParameters(**toml.load(infile))
+        with open(lcmsmetab_workflow_parameters_file, "r") as infile:
+            lcmetab_workflow_params = LCMetabolomicsWorkflowParameters(**toml.load(infile))
     else:
-        lipid_workflow_params = LipidomicsWorkflowParameters(
+        click.echo("Setting workflow params")
+        lcmetab_workflow_params = LCMetabolomicsWorkflowParameters(
             file_paths= file_paths.split(","),
             output_directory=output_directory,
-            db_location=db_location,
+            msp_file_path=msp_file_path,
             scan_translator_path=scan_translator_path,
             corems_toml_path=corems_toml_path,
             cores=cores,
         )
+        click.echo("file paths are" + file_paths)
     
     # Make output dir
-    out_dir = Path(lipid_workflow_params.output_directory)
+    out_dir = Path(lcmetab_workflow_params.output_directory)
     out_dir.mkdir(parents=True, exist_ok=True)
 
     # Check that all parameters are valid and exist
-    check_lipidomics_workflow_params(lipid_workflow_params)
+    check_lcmetab_workflow_params(lcmetab_workflow_params)
 
     # Organize input and output paths
-    file_paths = [Path(file_path) for file_path in lipid_workflow_params.file_paths]
+    file_paths = [Path(file_path) for file_path in lcmetab_workflow_params.file_paths]
     files_list = list(file_paths)
     out_paths_list = [out_dir / f.stem for f in files_list]
     
     # Set the workflow parameters
-    cores = lipid_workflow_params.cores
-    params_toml = lipid_workflow_params.corems_toml_path
-    scan_translator = lipid_workflow_params.scan_translator_path
+    cores = lcmetab_workflow_params.cores
+    params_toml = lcmetab_workflow_params.corems_toml_path
+    scan_translator = lcmetab_workflow_params.scan_translator_path
 
-    click.echo("Starting lipidomics workflow for " + str(len(files_list)) + " file(s), using " +  str(cores) + " core(s)")
-    # Run signal processing, get associated ms1, add associated ms2, do ms1 molecular search, and export intermediate results
-    if cores == 1 or len(files_list) == 1:
-        mz_dicts = []
-        for file_in, file_out in list(zip(files_list, out_paths_list)):
-            mz_dict = run_lipid_sp_ms1(
-                file_in=str(file_in),
-                out_path=str(file_out),
-                params_toml=params_toml,
-                scan_translator=scan_translator,
-            )
-            mz_dicts.append(mz_dict)
-    elif cores > 1:
-        with Pool(cores) as pool:
-            args = [
-                (
-                    str(file_in),
-                    str(file_out),
-                    params_toml,
-                    scan_translator,
-                )
-                for file_in, file_out in zip(files_list, out_paths_list)
-            ]
-            mz_dicts = pool.starmap(run_lipid_sp_ms1, args)
+    click.echo("Starting LC metabolomics workflow for " + str(len(files_list)) + " file(s), using " +  str(cores) + " core(s)")
 
     # Prepare metadata for searching
     click.echo("Preparing metadata for ms2 spectral search")
-    metadata = prep_metadata(mz_dicts, out_dir, lipid_workflow_params.db_location)
-    del mz_dicts
-    
-    # Run ms2 spectral search and export final results
-    click.echo("Starting ms2 spectral search and exporting final results")
+    metadata = prepare_metadata(lcmetab_workflow_params.msp_file_path)
+
+    # Run signal processing, get associated ms1, add associated ms2, do ms1 molecular search, and export intermediate results
     if cores == 1 or len(files_list) == 1:
-        for file_out in out_paths_list:
-            run_lipid_ms2(
-                file_out, metadata, scan_translator=scan_translator
-            )
+        for file_in, output_path in zip(files_list, out_paths_list):
+            args = (file_in, output_path, params_toml, scan_translator, metadata)
+            process_complete_workflow(args)
+
     elif cores > 1:
         with Pool(cores) as pool:
-            args = [(file_out, metadata, scan_translator) for file_out in out_paths_list]
-            pool.starmap(run_lipid_ms2, args)
+            args = [
+                (str(file_in), str(file_out), params_toml, scan_translator, metadata)
+                for file_in, file_out in zip(files_list, out_paths_list)
+            ]
+            pool.map(process_complete_workflow, args)
 
-    click.echo("Lipidomics workflow complete")
+    click.echo("LC metabolomics workflow complete")

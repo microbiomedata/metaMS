@@ -15,6 +15,11 @@ from metaMS.lcms_lipidomics_workflow import (
     run_lcms_lipidomics_workflow,
 )
 
+from metaMS.lcms_metabolomics_workflow import (
+    LCMetabolomicsWorkflowParameters,
+    run_lcms_metabolomics_workflow,
+)
+
 
 @click.group()
 def cli():
@@ -216,6 +221,128 @@ def run_lipidomics_workflow(
             output_directory=output_directory,
             corems_toml_path=corems_params,
             db_location=db_location,
+            scan_translator_path=scan_translator_path,
+            cores=cores,
+        )
+
+
+@cli.command(name="dump-lcms-metabolomics-toml-template")
+@click.argument("toml_file_name", required=True, type=str)
+def dump_lipidomics_toml_template(toml_file_name):
+    """
+    Writes a toml file template to run the lipidomics workflow, starting with the input file
+
+    Parameters
+    ----------
+    toml_file_name : str
+        The name of the toml file to write the parameters to
+    """
+    ref_lib_path = Path(toml_file_name).with_suffix(".toml")
+    with open(ref_lib_path, "w") as workflow_param:
+        toml.dump(LipidomicsWorkflowParameters().__dict__, workflow_param)
+
+
+@cli.command(name="run-lcms-metabolomics-workflow")
+@click.option(
+    "-p",
+    "--paramaters_file",
+    required=False,
+    type=str,
+    help="The path to the toml file with the lipidomics workflow parameters",
+)
+@click.option(
+    "-i",
+    "--file_paths",
+    required=False,
+    type=str,
+    help="The path to the directory with the input files",
+)
+@click.option(
+    "-o",
+    "--output_directory",
+    required=False,
+    type=str,
+    help="The directory where the output files will be stored",
+)
+@click.option(
+    "-c",
+    "--corems_params",
+    required=False,
+    type=str,
+    help="The path corems parameters toml file",
+)
+@click.option(
+    "-m", "--msp_file_path", required=False, type=str, help="The path to the local database"
+)
+@click.option(
+    "-s", "--scan_translator_path", required=False, type=str, help="The path to the scan translator file"
+)
+@click.option(
+    "-j", "--cores", required=False, type=int, help="'cpu's to use for processing"
+)
+def run_lcmsmetab_workflow(
+    paramaters_file, 
+    file_paths, 
+    output_directory, 
+    corems_params, 
+    msp_file_path, 
+    scan_translator_path, 
+    cores
+    ):
+    """Run the LC metabolomics workflow
+
+    Parameters
+    ----------
+    paramaters_file : str
+        The path to the toml file with the workflow parameters
+    file_paths : str
+        The paths to the input files, separated by commas as one string
+    output_directory : str
+        The directory where the output files will be stored
+    corems_params : str
+        The path corems parameters toml file
+    msp_file_path : str
+        The path to the sqlite database for spectra searching
+    scan_translator_path : str
+        The path to the scan translator file
+    cores : int
+        The number of cores to use for processing
+    """
+    if paramaters_file is not None:
+        if cores is not None or file_paths is not None:
+            click.echo("Using parameters file, ignoring other parameters")
+        run_lcms_metabolomics_workflow(
+            lcmsmetab_workflow_parameters_file=paramaters_file
+        )
+    else:
+        if cores is None:
+            cores = 1
+        click.echo(cores)
+        if file_paths is None:
+            click.echo("No file paths provided, no data to process")
+            return
+        click.echo(file_paths)
+        if corems_params is None:
+            click.echo("No corems parameters provided")
+        click.echo(corems_params)
+        if scan_translator_path is None:
+            click.echo("No scan translator provided")
+        click.echo(scan_translator_path)
+        if output_directory is None:
+            click.echo(
+                "Must provide an output directory if not using a parameters file"
+            )
+            return
+        click.echo(output_directory)
+        if msp_file_path is None:
+            click.echo("No database path provided")
+            return
+        click.echo(msp_file_path)
+        run_lcms_metabolomics_workflow(
+            file_paths=file_paths,
+            output_directory=output_directory,
+            corems_toml_path=corems_params,
+            msp_file_path=msp_file_path,
             scan_translator_path=scan_translator_path,
             cores=cores,
         )

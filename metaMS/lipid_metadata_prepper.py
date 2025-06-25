@@ -5,7 +5,6 @@ import re
 from ms_entropy import FlashEntropySearch
 from corems.molecular_id.factory.lipid_molecular_metadata import LipidMetadata
 
-
 def find_closest(A, target):
     """Find the index of closest value in A to each value in target.
 

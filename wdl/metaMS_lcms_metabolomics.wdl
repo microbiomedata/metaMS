@@ -1,38 +1,38 @@
 version 1.0
 
-workflow lcmsLipidomics {
+workflow lcmsMetabolomics {
     input {
         String? docker_image  # Optional input for Docker image
     }
 
-    call runMetaMSLCMSLipidomics {
+    call runMetaMSLCMSMetabolomics {
         input:
             docker_image = docker_image
     }
 
     output {
-        String out = runMetaMSLCMSLipidomics.out
-        Array[File] output_files = runMetaMSLCMSLipidomics.output_files
+        String out = runMetaMSLCMSMetabolomics.out
+        Array[File] output_files = runMetaMSLCMSMetabolomics.output_files
     }
 }
 
-task runMetaMSLCMSLipidomics {
+task runMetaMSLCMSMetabolomics {
     input {
         Array[File] file_paths
         String output_directory
         File corems_toml_path
-        File db_location
+        File msp_file_path
         File scan_translator_path
         Int cores
         String? docker_image
     }
 
     command {
-        metaMS run-lipidomics-workflow \
+        metaMS run-lcms-metabolomics-workflow \
             -i ${sep=',' file_paths} \
             -o ${output_directory} \
             -c ${corems_toml_path} \
-            -d ${db_location} \
+            -m ${msp_file_path} \
             -s ${scan_translator_path} \
             -j ${cores}
         EXIT_CODE=$?

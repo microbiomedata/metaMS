@@ -18,21 +18,27 @@ major:
 	
 	@bumpversion major --allow-dirty
 	@make bump_lipid_major
+	@make bump_lcmsmetab_major
 	@make convert_lipid_rst_to_md
+	@make convert_lcmsmetab_rst_to_md
 	@make docu
 
 minor:
 	
 	@bumpversion minor --allow-dirty
 	@make bump_lipid_minor
+	@make bump_lcmsmetab_minor
 	@make convert_lipid_rst_to_md
+	@make convert_lcmsmetab_rst_to_md
 	@make docu
 
 patch:
 	
 	@bumpversion patch --allow-dirty
 	@make bump_lipid_patch
+	@make bump_lcmsmetab_patch
 	@make convert_lipid_rst_to_md
+	@make convert_lcmsmetab_rst_to_md
 	@make docu
 
 bump_lipid_major:
@@ -46,6 +52,16 @@ bump_lipid_minor:
 bump_lipid_patch:
 	
 	@bumpversion patch --allow-dirty --config-file .bumpversion_lipid.cfg
+
+bump_lcmsmetab_major:
+	
+	@bumpversion major --allow-dirty --config-file .bumpversion_lcmsmetab.cfg
+
+bump_lcmsmetab_minor:
+	@bumpversion minor --allow-dirty --config-file .bumpversion_lcmsmetab.cfg
+
+bump_lcmsmetab_patch:
+	@bumpversion patch --allow-dirty --config-file .bumpversion_lcmsmetab.cfg
 
 install:
 	@source venv/bin/activate
@@ -103,15 +119,49 @@ wdl-run-gcms-local:
 	@make docker-build-local
 	@miniwdl run wdl/metaMS_gcms.wdl -i wdl/metams_input_gcms_local_docker.json --verbose --no-cache --copy-input-files
 
+get-lcms-database:
+	@echo "Downloading LC-MS database"
+	@mkdir -p test_data/test_lcms_metab_data
+	@curl --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 300 -L -o test_data/test_lcms_metab_data/database.msp https://nmdcdemo.emsl.pnnl.gov/metabolomics/databases/20250407_gnps_curated.msp
+	@echo "LC-MS database downloaded"
+
+get-lipid-test-data:
+	@echo "Downloading test data for lipidomics"
+	@mkdir -p test_data
+	@mkdir -p test_data/test_lipid_data
+	@curl --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 300 -L -o test_data/test_lipid_data.zip https://nmdcdemo.emsl.pnnl.gov/lipidomics/test_data/metams_lipid_test_data/test_lipid_data.zip
+	@unzip test_data/test_lipid_data.zip -d test_data/test_lipid_data/
+	@rm test_data/test_lipid_data.zip
+	@echo "Test data downloaded and unzipped"
+
 wdl-run-lipid :
 	miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics.json --verbose --no-cache --copy-input-files
 
+wdl-run-lipid-local:
+	@make docker-build-local
+	miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics_local_docker.json --verbose --no-cache --copy-input-files
+
+get-test-data:
+	@make get-lipid-test-data
+	@make get-lcms-database
+
+wdl-run-lcms-metab :
+	miniwdl run wdl/metaMS_lcms_metabolomics.wdl -i wdl/metams_input_lcms_metabolomics.json --verbose --no-cache --copy-input-files
+
+wdl-run-lcms-metab-local:
+	@make docker-build-local
+	miniwdl run wdl/metaMS_lcms_metabolomics.wdl -i wdl/metams_input_lcms_metabolomics_local_docker.json --verbose --no-cache --copy-input-files
+
 convert_lipid_rst_to_md:
-    # convert the lipid documentation from rst to md
+    # convert the lipid documentation from rst to md and render it into html
 	pandoc -f rst -t markdown -o docs/lcms_lipidomics/README_LCMS_LIPID.md docs/lcms_lipidomics/index.rst
-	# render the lipid documentation into html from the rst file
 	pandoc -f rst -t html -o docs/lcms_lipidomics/index.html docs/lcms_lipidomics/index.rst
 
+convert_lcmsmetab_rst_to_md:
+    # convert the lcms metabolomics documentation from rst to md and render it into html
+	pandoc -f rst -t markdown -o docs/lcms_metabolomics/README_LCMS_METABOLOMICS.md docs/lcms_metabolomics/index.rst
+	pandoc -f rst -t html -o docs/lcms_metabolomics/index.html docs/lcms_metabolomics/index.rst
+
 docu:
-	# Generate the documentation, ignoring the nmdc_lipidomics_metadata_generation module
-	pdoc --output-dir docs --docformat numpy metaMS !metaMS.nmdc_lipidomics_metadata_generation
+	# Generate the documentation
+	pdoc --output-dir docs --docformat numpy metaMS
