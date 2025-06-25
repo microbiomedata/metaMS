@@ -36,10 +36,9 @@ jobs:
       run: |
         miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics.json --verbose --no-cache --copy-input-files
 
-    # This will fail until the new Docker image is pushed to Docker Hub
-    #- name: Run LCMS metabolomics WDL with test data and pushed Docker Image
-    #  run: |
-    #    make wdl-run-lcms-metab
+    - name: Run LCMS metabolomics WDL with test data and pushed Docker Image
+      run: |
+        make wdl-run-lcms-metab
 
     - name: Run GCMS WDL with pushed Docker Image
       run: |
