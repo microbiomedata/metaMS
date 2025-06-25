@@ -112,7 +112,7 @@ Outputs
 Version History
 ---------------
 
-- v0.0.0: Initial release of the LC/MS metabolomics workflow #TODO KRH: Add date
+- v0.0.0: Initial release of the LC/MS metabolomics workflow June 24, 2025
 
 Point of contact
 ----------------
