@@ -114,21 +114,21 @@
 
                         <label class="view-source-button" for="mod-gcmsWorkflow-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">cProfile</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pool</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="kn">import</span> <span class="nn">cProfile</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">toml</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">corems.encapsulation.input</span><span class="w"> </span><span class="kn">import</span> <span class="n">parameter_from_json</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">corems.mass_spectra.calc.GC_RI_Calibration</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_rt_ri_pairs</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">corems.mass_spectra.input.andiNetCDF</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReadAndiNetCDF</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">corems.molecular_id.search.compoundSearch</span><span class="w"> </span><span class="kn">import</span> <span class="n">LowResMassSpectralMatch</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">corems.molecular_id.search.database_interfaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetabRefGCInterface</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">import</span> <span class="nn">toml</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">from</span> <span class="nn">corems.encapsulation.input</span> <span class="kn">import</span> <span class="n">parameter_from_json</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span> <span class="nn">corems.mass_spectra.calc.GC_RI_Calibration</span> <span class="kn">import</span> <span class="n">get_rt_ri_pairs</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">from</span> <span class="nn">corems.mass_spectra.input.andiNetCDF</span> <span class="kn">import</span> <span class="n">ReadAndiNetCDF</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="kn">from</span> <span class="nn">corems.molecular_id.search.compoundSearch</span> <span class="kn">import</span> <span class="n">LowResMassSpectralMatch</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="kn">from</span> <span class="nn">corems.molecular_id.search.database_interfaces</span> <span class="kn">import</span> <span class="n">MetabRefGCInterface</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>
 </span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>
 </span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="nd">@dataclass</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="k">class</span><span class="w"> </span><span class="nc">WorkflowParameters</span><span class="p">:</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="k">class</span> <span class="nc">WorkflowParameters</span><span class="p">:</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="sd">    Data class to establish workflow parameters.</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>
@@ -173,7 +173,7 @@
 </span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>    <span class="n">metabref_token_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;configuration/...&quot;</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="k">def</span><span class="w"> </span><span class="nf">worker</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="k">def</span> <span class="nf">worker</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
 </span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="sd">    Wraps `workflow_worker` using cProfile.</span>
 </span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>
@@ -182,7 +182,7 @@
 </span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>    <span class="n">cProfile</span><span class="o">.</span><span class="n">runctx</span><span class="p">(</span><span class="s2">&quot;workflow_worker(args)&quot;</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span> <span class="nb">locals</span><span class="p">(),</span> <span class="s2">&quot;gc-ms.prof&quot;</span><span class="p">)</span>
 </span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>
 </span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="k">def</span><span class="w"> </span><span class="nf">run_gcms_metabolomics_workflow_wdl</span><span class="p">(</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="k">def</span> <span class="nf">run_gcms_metabolomics_workflow_wdl</span><span class="p">(</span>
 </span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>    <span class="n">file_paths</span><span class="p">,</span>
 </span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>    <span class="n">calibration_file_path</span><span class="p">,</span>
 </span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>    <span class="n">output_directory</span><span class="p">,</span>
@@ -219,7 +219,7 @@
 </span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>
 </span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>    <span class="kn">import</span><span class="w"> </span><span class="nn">click</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>    <span class="kn">import</span> <span class="nn">click</span>
 </span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>
 </span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>    <span class="c1"># Store workflow parameters</span>
 </span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>    <span class="n">workflow_params</span> <span class="o">=</span> <span class="n">WorkflowParameters</span><span class="p">()</span>
@@ -279,7 +279,7 @@
 </span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>        <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">jobs</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
 </span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>            <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">run_workflow_worker_and_write</span><span class="p">,</span> <span class="n">worker_args</span><span class="p">)</span>
 </span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>
-</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a><span class="k">def</span><span class="w"> </span><span class="nf">run_gcms_metabolomics_workflow</span><span class="p">(</span><span class="n">workflow_params_file</span><span class="p">,</span> <span class="n">jobs</span><span class="p">):</span>
+</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a><span class="k">def</span> <span class="nf">run_gcms_metabolomics_workflow</span><span class="p">(</span><span class="n">workflow_params_file</span><span class="p">,</span> <span class="n">jobs</span><span class="p">):</span>
 </span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a><span class="sd">    GC/MS metabolomics workflow.</span>
 </span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>
@@ -292,7 +292,7 @@
 </span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>
 </span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>
-</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>    <span class="kn">import</span><span class="w"> </span><span class="nn">click</span>
+</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>    <span class="kn">import</span> <span class="nn">click</span>
 </span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>
 </span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>    <span class="c1"># Load workflow settings</span>
 </span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Loading search settings from </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">workflow_params_file</span><span class="p">)</span>
@@ -345,7 +345,7 @@
 </span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a>            <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">run_workflow_worker_and_write</span><span class="p">,</span> <span class="n">worker_args</span><span class="p">)</span>
 </span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a>
 </span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a>
-</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a><span class="k">def</span><span class="w"> </span><span class="nf">read_toml</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a><span class="k">def</span> <span class="nf">read_toml</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
 </span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a><span class="sd">    Read TOML file.</span>
 </span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a>
@@ -365,7 +365,7 @@
 </span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a>        <span class="k">return</span> <span class="n">toml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
 </span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a>
 </span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a>
-</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a><span class="k">def</span><span class="w"> </span><span class="nf">load_workflow_parameters</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a><span class="k">def</span> <span class="nf">load_workflow_parameters</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
 </span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a><span class="sd">    Load workflow configuration parameters from file.</span>
 </span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a>
@@ -384,7 +384,7 @@
 </span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a>    <span class="k">return</span> <span class="n">WorkflowParameters</span><span class="p">(</span><span class="o">**</span><span class="n">read_toml</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
 </span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a>
 </span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a>
-</span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a><span class="k">def</span><span class="w"> </span><span class="nf">load_corems_parameters</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+</span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a><span class="k">def</span> <span class="nf">load_corems_parameters</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
 </span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a><span class="sd">    Load workflow configuration parameters from file.</span>
 </span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a>
@@ -404,7 +404,7 @@
 </span><span id="L-288"><a href="#L-288"><span class="linenos">288</span></a>
 </span><span id="L-289"><a href="#L-289"><span class="linenos">289</span></a>
 </span><span id="L-290"><a href="#L-290"><span class="linenos">290</span></a><span class="c1"># Function for running the workflow_worker and writing out the output</span>
-</span><span id="L-291"><a href="#L-291"><span class="linenos">291</span></a><span class="k">def</span><span class="w"> </span><span class="nf">run_workflow_worker_and_write</span><span class="p">(</span>
+</span><span id="L-291"><a href="#L-291"><span class="linenos">291</span></a><span class="k">def</span> <span class="nf">run_workflow_worker_and_write</span><span class="p">(</span>
 </span><span id="L-292"><a href="#L-292"><span class="linenos">292</span></a>        <span class="n">args</span>
 </span><span id="L-293"><a href="#L-293"><span class="linenos">293</span></a><span class="p">):</span>
 </span><span id="L-294"><a href="#L-294"><span class="linenos">294</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -437,7 +437,7 @@
 </span><span id="L-321"><a href="#L-321"><span class="linenos">321</span></a>    <span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;gcms.to_&quot;</span> <span class="o">+</span> <span class="n">output_type</span> <span class="o">+</span> <span class="s2">&quot;(output_path)&quot;</span><span class="p">)</span>
 </span><span id="L-322"><a href="#L-322"><span class="linenos">322</span></a>
 </span><span id="L-323"><a href="#L-323"><span class="linenos">323</span></a>
-</span><span id="L-324"><a href="#L-324"><span class="linenos">324</span></a><span class="k">def</span><span class="w"> </span><span class="nf">workflow_worker</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+</span><span id="L-324"><a href="#L-324"><span class="linenos">324</span></a><span class="k">def</span> <span class="nf">workflow_worker</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
 </span><span id="L-325"><a href="#L-325"><span class="linenos">325</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-326"><a href="#L-326"><span class="linenos">326</span></a><span class="sd">    Wrap data processing functionality for parallel execution. Loads GC data,</span>
 </span><span id="L-327"><a href="#L-327"><span class="linenos">327</span></a><span class="sd">    applies calibration, performs spectral search.</span>
@@ -473,7 +473,7 @@
 </span><span id="L-357"><a href="#L-357"><span class="linenos">357</span></a>    <span class="k">return</span> <span class="n">gcms</span>
 </span><span id="L-358"><a href="#L-358"><span class="linenos">358</span></a>
 </span><span id="L-359"><a href="#L-359"><span class="linenos">359</span></a>
-</span><span id="L-360"><a href="#L-360"><span class="linenos">360</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_gcms</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">corems_params</span><span class="p">):</span>
+</span><span id="L-360"><a href="#L-360"><span class="linenos">360</span></a><span class="k">def</span> <span class="nf">get_gcms</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">corems_params</span><span class="p">):</span>
 </span><span id="L-361"><a href="#L-361"><span class="linenos">361</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-362"><a href="#L-362"><span class="linenos">362</span></a><span class="sd">    Convenience function to load and process file according to CoreMS configuration</span>
 </span><span id="L-363"><a href="#L-363"><span class="linenos">363</span></a><span class="sd">    parameters.</span>
@@ -518,7 +518,7 @@
     </div>
     <a class="headerlink" href="#WorkflowParameters"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="WorkflowParameters-15"><a href="#WorkflowParameters-15"><span class="linenos">15</span></a><span class="nd">@dataclass</span>
-</span><span id="WorkflowParameters-16"><a href="#WorkflowParameters-16"><span class="linenos">16</span></a><span class="k">class</span><span class="w"> </span><span class="nc">WorkflowParameters</span><span class="p">:</span>
+</span><span id="WorkflowParameters-16"><a href="#WorkflowParameters-16"><span class="linenos">16</span></a><span class="k">class</span> <span class="nc">WorkflowParameters</span><span class="p">:</span>
 </span><span id="WorkflowParameters-17"><a href="#WorkflowParameters-17"><span class="linenos">17</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="WorkflowParameters-18"><a href="#WorkflowParameters-18"><span class="linenos">18</span></a><span class="sd">    Data class to establish workflow parameters.</span>
 </span><span id="WorkflowParameters-19"><a href="#WorkflowParameters-19"><span class="linenos">19</span></a>
@@ -720,7 +720,7 @@ Output filename.</li>
 
     </div>
     <a class="headerlink" href="#worker"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="worker-61"><a href="#worker-61"><span class="linenos">61</span></a><span class="k">def</span><span class="w"> </span><span class="nf">worker</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="worker-61"><a href="#worker-61"><span class="linenos">61</span></a><span class="k">def</span> <span class="nf">worker</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
 </span><span id="worker-62"><a href="#worker-62"><span class="linenos">62</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="worker-63"><a href="#worker-63"><span class="linenos">63</span></a><span class="sd">    Wraps `workflow_worker` using cProfile.</span>
 </span><span id="worker-64"><a href="#worker-64"><span class="linenos">64</span></a>
@@ -746,7 +746,7 @@ Output filename.</li>
 
     </div>
     <a class="headerlink" href="#run_gcms_metabolomics_workflow_wdl"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="run_gcms_metabolomics_workflow_wdl-70"><a href="#run_gcms_metabolomics_workflow_wdl-70"><span class="linenos"> 70</span></a><span class="k">def</span><span class="w"> </span><span class="nf">run_gcms_metabolomics_workflow_wdl</span><span class="p">(</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="run_gcms_metabolomics_workflow_wdl-70"><a href="#run_gcms_metabolomics_workflow_wdl-70"><span class="linenos"> 70</span></a><span class="k">def</span> <span class="nf">run_gcms_metabolomics_workflow_wdl</span><span class="p">(</span>
 </span><span id="run_gcms_metabolomics_workflow_wdl-71"><a href="#run_gcms_metabolomics_workflow_wdl-71"><span class="linenos"> 71</span></a>    <span class="n">file_paths</span><span class="p">,</span>
 </span><span id="run_gcms_metabolomics_workflow_wdl-72"><a href="#run_gcms_metabolomics_workflow_wdl-72"><span class="linenos"> 72</span></a>    <span class="n">calibration_file_path</span><span class="p">,</span>
 </span><span id="run_gcms_metabolomics_workflow_wdl-73"><a href="#run_gcms_metabolomics_workflow_wdl-73"><span class="linenos"> 73</span></a>    <span class="n">output_directory</span><span class="p">,</span>
@@ -783,7 +783,7 @@ Output filename.</li>
 </span><span id="run_gcms_metabolomics_workflow_wdl-104"><a href="#run_gcms_metabolomics_workflow_wdl-104"><span class="linenos">104</span></a>
 </span><span id="run_gcms_metabolomics_workflow_wdl-105"><a href="#run_gcms_metabolomics_workflow_wdl-105"><span class="linenos">105</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="run_gcms_metabolomics_workflow_wdl-106"><a href="#run_gcms_metabolomics_workflow_wdl-106"><span class="linenos">106</span></a>
-</span><span id="run_gcms_metabolomics_workflow_wdl-107"><a href="#run_gcms_metabolomics_workflow_wdl-107"><span class="linenos">107</span></a>    <span class="kn">import</span><span class="w"> </span><span class="nn">click</span>
+</span><span id="run_gcms_metabolomics_workflow_wdl-107"><a href="#run_gcms_metabolomics_workflow_wdl-107"><span class="linenos">107</span></a>    <span class="kn">import</span> <span class="nn">click</span>
 </span><span id="run_gcms_metabolomics_workflow_wdl-108"><a href="#run_gcms_metabolomics_workflow_wdl-108"><span class="linenos">108</span></a>
 </span><span id="run_gcms_metabolomics_workflow_wdl-109"><a href="#run_gcms_metabolomics_workflow_wdl-109"><span class="linenos">109</span></a>    <span class="c1"># Store workflow parameters</span>
 </span><span id="run_gcms_metabolomics_workflow_wdl-110"><a href="#run_gcms_metabolomics_workflow_wdl-110"><span class="linenos">110</span></a>    <span class="n">workflow_params</span> <span class="o">=</span> <span class="n">WorkflowParameters</span><span class="p">()</span>
@@ -883,7 +883,7 @@ Path to database.</li>
 
     </div>
     <a class="headerlink" href="#run_gcms_metabolomics_workflow"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="run_gcms_metabolomics_workflow-167"><a href="#run_gcms_metabolomics_workflow-167"><span class="linenos">167</span></a><span class="k">def</span><span class="w"> </span><span class="nf">run_gcms_metabolomics_workflow</span><span class="p">(</span><span class="n">workflow_params_file</span><span class="p">,</span> <span class="n">jobs</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="run_gcms_metabolomics_workflow-167"><a href="#run_gcms_metabolomics_workflow-167"><span class="linenos">167</span></a><span class="k">def</span> <span class="nf">run_gcms_metabolomics_workflow</span><span class="p">(</span><span class="n">workflow_params_file</span><span class="p">,</span> <span class="n">jobs</span><span class="p">):</span>
 </span><span id="run_gcms_metabolomics_workflow-168"><a href="#run_gcms_metabolomics_workflow-168"><span class="linenos">168</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="run_gcms_metabolomics_workflow-169"><a href="#run_gcms_metabolomics_workflow-169"><span class="linenos">169</span></a><span class="sd">    GC/MS metabolomics workflow.</span>
 </span><span id="run_gcms_metabolomics_workflow-170"><a href="#run_gcms_metabolomics_workflow-170"><span class="linenos">170</span></a>
@@ -896,7 +896,7 @@ Path to database.</li>
 </span><span id="run_gcms_metabolomics_workflow-177"><a href="#run_gcms_metabolomics_workflow-177"><span class="linenos">177</span></a>
 </span><span id="run_gcms_metabolomics_workflow-178"><a href="#run_gcms_metabolomics_workflow-178"><span class="linenos">178</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="run_gcms_metabolomics_workflow-179"><a href="#run_gcms_metabolomics_workflow-179"><span class="linenos">179</span></a>
-</span><span id="run_gcms_metabolomics_workflow-180"><a href="#run_gcms_metabolomics_workflow-180"><span class="linenos">180</span></a>    <span class="kn">import</span><span class="w"> </span><span class="nn">click</span>
+</span><span id="run_gcms_metabolomics_workflow-180"><a href="#run_gcms_metabolomics_workflow-180"><span class="linenos">180</span></a>    <span class="kn">import</span> <span class="nn">click</span>
 </span><span id="run_gcms_metabolomics_workflow-181"><a href="#run_gcms_metabolomics_workflow-181"><span class="linenos">181</span></a>
 </span><span id="run_gcms_metabolomics_workflow-182"><a href="#run_gcms_metabolomics_workflow-182"><span class="linenos">182</span></a>    <span class="c1"># Load workflow settings</span>
 </span><span id="run_gcms_metabolomics_workflow-183"><a href="#run_gcms_metabolomics_workflow-183"><span class="linenos">183</span></a>    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Loading search settings from </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">workflow_params_file</span><span class="p">)</span>
@@ -975,7 +975,7 @@ Number of concurrent jobs.</li>
 
     </div>
     <a class="headerlink" href="#read_toml"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="read_toml-233"><a href="#read_toml-233"><span class="linenos">233</span></a><span class="k">def</span><span class="w"> </span><span class="nf">read_toml</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="read_toml-233"><a href="#read_toml-233"><span class="linenos">233</span></a><span class="k">def</span> <span class="nf">read_toml</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
 </span><span id="read_toml-234"><a href="#read_toml-234"><span class="linenos">234</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="read_toml-235"><a href="#read_toml-235"><span class="linenos">235</span></a><span class="sd">    Read TOML file.</span>
 </span><span id="read_toml-236"><a href="#read_toml-236"><span class="linenos">236</span></a>
@@ -1025,7 +1025,7 @@ Path to TOML file.</li>
 
     </div>
     <a class="headerlink" href="#load_workflow_parameters"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="load_workflow_parameters-253"><a href="#load_workflow_parameters-253"><span class="linenos">253</span></a><span class="k">def</span><span class="w"> </span><span class="nf">load_workflow_parameters</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="load_workflow_parameters-253"><a href="#load_workflow_parameters-253"><span class="linenos">253</span></a><span class="k">def</span> <span class="nf">load_workflow_parameters</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
 </span><span id="load_workflow_parameters-254"><a href="#load_workflow_parameters-254"><span class="linenos">254</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="load_workflow_parameters-255"><a href="#load_workflow_parameters-255"><span class="linenos">255</span></a><span class="sd">    Load workflow configuration parameters from file.</span>
 </span><span id="load_workflow_parameters-256"><a href="#load_workflow_parameters-256"><span class="linenos">256</span></a>
@@ -1074,7 +1074,7 @@ Path to parameters file.</li>
 
     </div>
     <a class="headerlink" href="#load_corems_parameters"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="load_corems_parameters-272"><a href="#load_corems_parameters-272"><span class="linenos">272</span></a><span class="k">def</span><span class="w"> </span><span class="nf">load_corems_parameters</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="load_corems_parameters-272"><a href="#load_corems_parameters-272"><span class="linenos">272</span></a><span class="k">def</span> <span class="nf">load_corems_parameters</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
 </span><span id="load_corems_parameters-273"><a href="#load_corems_parameters-273"><span class="linenos">273</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="load_corems_parameters-274"><a href="#load_corems_parameters-274"><span class="linenos">274</span></a><span class="sd">    Load workflow configuration parameters from file.</span>
 </span><span id="load_corems_parameters-275"><a href="#load_corems_parameters-275"><span class="linenos">275</span></a>
@@ -1123,7 +1123,7 @@ Path to parameters file.</li>
 
     </div>
     <a class="headerlink" href="#run_workflow_worker_and_write"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="run_workflow_worker_and_write-292"><a href="#run_workflow_worker_and_write-292"><span class="linenos">292</span></a><span class="k">def</span><span class="w"> </span><span class="nf">run_workflow_worker_and_write</span><span class="p">(</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="run_workflow_worker_and_write-292"><a href="#run_workflow_worker_and_write-292"><span class="linenos">292</span></a><span class="k">def</span> <span class="nf">run_workflow_worker_and_write</span><span class="p">(</span>
 </span><span id="run_workflow_worker_and_write-293"><a href="#run_workflow_worker_and_write-293"><span class="linenos">293</span></a>        <span class="n">args</span>
 </span><span id="run_workflow_worker_and_write-294"><a href="#run_workflow_worker_and_write-294"><span class="linenos">294</span></a><span class="p">):</span>
 </span><span id="run_workflow_worker_and_write-295"><a href="#run_workflow_worker_and_write-295"><span class="linenos">295</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1187,7 +1187,7 @@ args = (file_path, rt_ri_pairs, corems_params_file, cal_file_path, output_type, 
 
     </div>
     <a class="headerlink" href="#workflow_worker"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="workflow_worker-325"><a href="#workflow_worker-325"><span class="linenos">325</span></a><span class="k">def</span><span class="w"> </span><span class="nf">workflow_worker</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="workflow_worker-325"><a href="#workflow_worker-325"><span class="linenos">325</span></a><span class="k">def</span> <span class="nf">workflow_worker</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
 </span><span id="workflow_worker-326"><a href="#workflow_worker-326"><span class="linenos">326</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="workflow_worker-327"><a href="#workflow_worker-327"><span class="linenos">327</span></a><span class="sd">    Wrap data processing functionality for parallel execution. Loads GC data,</span>
 </span><span id="workflow_worker-328"><a href="#workflow_worker-328"><span class="linenos">328</span></a><span class="sd">    applies calibration, performs spectral search.</span>
@@ -1254,7 +1254,7 @@ Arguments fed to worker.</li>
 
     </div>
     <a class="headerlink" href="#get_gcms"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="get_gcms-361"><a href="#get_gcms-361"><span class="linenos">361</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_gcms</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">corems_params</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get_gcms-361"><a href="#get_gcms-361"><span class="linenos">361</span></a><span class="k">def</span> <span class="nf">get_gcms</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">corems_params</span><span class="p">):</span>
 </span><span id="get_gcms-362"><a href="#get_gcms-362"><span class="linenos">362</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="get_gcms-363"><a href="#get_gcms-363"><span class="linenos">363</span></a><span class="sd">    Convenience function to load and process file according to CoreMS configuration</span>
 </span><span id="get_gcms-364"><a href="#get_gcms-364"><span class="linenos">364</span></a><span class="sd">    parameters.</span>

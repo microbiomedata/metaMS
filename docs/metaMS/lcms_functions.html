@@ -69,19 +69,19 @@
 
                         <label class="view-source-button" for="mod-lcms_functions-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">toml</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="kn">import</span> <span class="nn">toml</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">import</span> <span class="nn">warnings</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">corems.mass_spectra.input.mzml</span><span class="w"> </span><span class="kn">import</span> <span class="n">MZMLSpectraParser</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">corems.molecular_id.search.molecularFormulaSearch</span><span class="w"> </span><span class="kn">import</span> <span class="n">SearchMolecularFormulasLC</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">corems.encapsulation.input.parameter_from_json</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">from</span> <span class="nn">corems.mass_spectra.input.mzml</span> <span class="kn">import</span> <span class="n">MZMLSpectraParser</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span> <span class="nn">corems.molecular_id.search.molecularFormulaSearch</span> <span class="kn">import</span> <span class="n">SearchMolecularFormulasLC</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">from</span> <span class="nn">corems.encapsulation.input.parameter_from_json</span> <span class="kn">import</span> <span class="p">(</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a>    <span class="n">load_and_set_toml_parameters_lcms</span><span class="p">,</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="p">)</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="k">def</span><span class="w"> </span><span class="nf">instantiate_lcms_obj</span><span class="p">(</span><span class="n">file_in</span><span class="p">):</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="k">def</span> <span class="nf">instantiate_lcms_obj</span><span class="p">(</span><span class="n">file_in</span><span class="p">):</span>
 </span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Instantiate a corems LCMS object from a binary file.  Pull in ms1 spectra into dataframe (without storing as MassSpectrum objects to save memory)</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>
 </span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="sd">    Parameters</span>
@@ -98,7 +98,7 @@
 </span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>    <span class="c1"># Instantiate parser based on binary file type</span>
 </span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>    <span class="k">if</span> <span class="s2">&quot;.raw&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_in</span><span class="p">):</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">corems.mass_spectra.input.rawFileReader</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportMassSpectraThermoMSFileReader</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>        <span class="kn">from</span> <span class="nn">corems.mass_spectra.input.rawFileReader</span> <span class="kn">import</span> <span class="n">ImportMassSpectraThermoMSFileReader</span>
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>        <span class="n">parser</span> <span class="o">=</span> <span class="n">ImportMassSpectraThermoMSFileReader</span><span class="p">(</span><span class="n">file_in</span><span class="p">)</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>    <span class="k">if</span> <span class="s2">&quot;.mzML&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_in</span><span class="p">):</span>
@@ -109,7 +109,7 @@
 </span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>    <span class="k">return</span> <span class="n">myLCMSobj</span>
 </span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="k">def</span><span class="w"> </span><span class="nf">set_params_on_lcms_obj</span><span class="p">(</span><span class="n">myLCMSobj</span><span class="p">,</span> <span class="n">params_toml</span><span class="p">):</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="k">def</span> <span class="nf">set_params_on_lcms_obj</span><span class="p">(</span><span class="n">myLCMSobj</span><span class="p">,</span> <span class="n">params_toml</span><span class="p">):</span>
 </span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Set parameters on the LCMS object</span>
 </span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">    Parameters</span>
@@ -133,7 +133,7 @@
 </span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>    <span class="k">elif</span> <span class="n">myLCMSobj</span><span class="o">.</span><span class="n">polarity</span> <span class="o">==</span> <span class="s2">&quot;negative&quot;</span><span class="p">:</span>
 </span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>        <span class="n">myLCMSobj</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mass_spectrum</span><span class="p">[</span><span class="s2">&quot;ms1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">molecular_search</span><span class="o">.</span><span class="n">usedAtoms</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Na&quot;</span><span class="p">)</span>
 </span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="k">def</span><span class="w"> </span><span class="nf">load_scan_translator</span><span class="p">(</span><span class="n">scan_translator</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="k">def</span> <span class="nf">load_scan_translator</span><span class="p">(</span><span class="n">scan_translator</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Translate scans using a scan translator</span>
 </span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>
 </span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">    Parameters</span>
@@ -163,7 +163,7 @@
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>            <span class="n">scan_translator_dict</span><span class="p">[</span><span class="n">param_key</span><span class="p">][</span><span class="s2">&quot;scan_filter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="k">return</span> <span class="n">scan_translator_dict</span>
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="k">def</span><span class="w"> </span><span class="nf">check_scan_translator</span><span class="p">(</span><span class="n">myLCMSobj</span><span class="p">,</span> <span class="n">scan_translator</span><span class="p">):</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="k">def</span> <span class="nf">check_scan_translator</span><span class="p">(</span><span class="n">myLCMSobj</span><span class="p">,</span> <span class="n">scan_translator</span><span class="p">):</span>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if scan translator is provided and that it maps correctly to scans and parameters</span>
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">    </span>
 </span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">    Parameters</span>
@@ -204,7 +204,7 @@
 </span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">scans_pulled_out</span><span class="p">))</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">scans_pulled_out</span><span class="p">):</span>
 </span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Overlapping scans pulled out by scan translator&quot;</span><span class="p">)</span>
 </span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>
-</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a><span class="k">def</span><span class="w"> </span><span class="nf">add_mass_features</span><span class="p">(</span><span class="n">myLCMSobj</span><span class="p">,</span> <span class="n">scan_translator</span><span class="p">):</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a><span class="k">def</span> <span class="nf">add_mass_features</span><span class="p">(</span><span class="n">myLCMSobj</span><span class="p">,</span> <span class="n">scan_translator</span><span class="p">):</span>
 </span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Process ms1 spectra and perform molecular search</span>
 </span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>
 </span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a><span class="sd">    This includes peak picking, adding and processing associated ms1 spectra,</span>
@@ -254,7 +254,7 @@
 </span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a>            <span class="n">spectrum_mode</span><span class="o">=</span><span class="s2">&quot;centroid&quot;</span><span class="p">,</span> <span class="n">ms_params_key</span><span class="o">=</span><span class="n">param_key</span><span class="p">,</span> <span class="n">scan_filter</span><span class="o">=</span><span class="n">scan_filter</span>
 </span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a>        <span class="p">)</span>
 </span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a>
-</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a><span class="k">def</span><span class="w"> </span><span class="nf">molecular_formula_search</span><span class="p">(</span><span class="n">myLCMSobj</span><span class="p">):</span>
+</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a><span class="k">def</span> <span class="nf">molecular_formula_search</span><span class="p">(</span><span class="n">myLCMSobj</span><span class="p">):</span>
 </span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform molecular search on mass features within the LCMS object</span>
 </span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>
 </span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a><span class="sd">    Parameters</span>
@@ -285,7 +285,7 @@
 
     </div>
     <a class="headerlink" href="#instantiate_lcms_obj"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="instantiate_lcms_obj-14"><a href="#instantiate_lcms_obj-14"><span class="linenos">14</span></a><span class="k">def</span><span class="w"> </span><span class="nf">instantiate_lcms_obj</span><span class="p">(</span><span class="n">file_in</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="instantiate_lcms_obj-14"><a href="#instantiate_lcms_obj-14"><span class="linenos">14</span></a><span class="k">def</span> <span class="nf">instantiate_lcms_obj</span><span class="p">(</span><span class="n">file_in</span><span class="p">):</span>
 </span><span id="instantiate_lcms_obj-15"><a href="#instantiate_lcms_obj-15"><span class="linenos">15</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Instantiate a corems LCMS object from a binary file.  Pull in ms1 spectra into dataframe (without storing as MassSpectrum objects to save memory)</span>
 </span><span id="instantiate_lcms_obj-16"><a href="#instantiate_lcms_obj-16"><span class="linenos">16</span></a>
 </span><span id="instantiate_lcms_obj-17"><a href="#instantiate_lcms_obj-17"><span class="linenos">17</span></a><span class="sd">    Parameters</span>
@@ -302,7 +302,7 @@
 </span><span id="instantiate_lcms_obj-28"><a href="#instantiate_lcms_obj-28"><span class="linenos">28</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="instantiate_lcms_obj-29"><a href="#instantiate_lcms_obj-29"><span class="linenos">29</span></a>    <span class="c1"># Instantiate parser based on binary file type</span>
 </span><span id="instantiate_lcms_obj-30"><a href="#instantiate_lcms_obj-30"><span class="linenos">30</span></a>    <span class="k">if</span> <span class="s2">&quot;.raw&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_in</span><span class="p">):</span>
-</span><span id="instantiate_lcms_obj-31"><a href="#instantiate_lcms_obj-31"><span class="linenos">31</span></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">corems.mass_spectra.input.rawFileReader</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportMassSpectraThermoMSFileReader</span>
+</span><span id="instantiate_lcms_obj-31"><a href="#instantiate_lcms_obj-31"><span class="linenos">31</span></a>        <span class="kn">from</span> <span class="nn">corems.mass_spectra.input.rawFileReader</span> <span class="kn">import</span> <span class="n">ImportMassSpectraThermoMSFileReader</span>
 </span><span id="instantiate_lcms_obj-32"><a href="#instantiate_lcms_obj-32"><span class="linenos">32</span></a>        <span class="n">parser</span> <span class="o">=</span> <span class="n">ImportMassSpectraThermoMSFileReader</span><span class="p">(</span><span class="n">file_in</span><span class="p">)</span>
 </span><span id="instantiate_lcms_obj-33"><a href="#instantiate_lcms_obj-33"><span class="linenos">33</span></a>
 </span><span id="instantiate_lcms_obj-34"><a href="#instantiate_lcms_obj-34"><span class="linenos">34</span></a>    <span class="k">if</span> <span class="s2">&quot;.mzML&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_in</span><span class="p">):</span>
@@ -347,7 +347,7 @@ LCMS object with unprocessed ms1 spectra included as an attribute</li>
 
     </div>
     <a class="headerlink" href="#set_params_on_lcms_obj"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="set_params_on_lcms_obj-42"><a href="#set_params_on_lcms_obj-42"><span class="linenos">42</span></a><span class="k">def</span><span class="w"> </span><span class="nf">set_params_on_lcms_obj</span><span class="p">(</span><span class="n">myLCMSobj</span><span class="p">,</span> <span class="n">params_toml</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="set_params_on_lcms_obj-42"><a href="#set_params_on_lcms_obj-42"><span class="linenos">42</span></a><span class="k">def</span> <span class="nf">set_params_on_lcms_obj</span><span class="p">(</span><span class="n">myLCMSobj</span><span class="p">,</span> <span class="n">params_toml</span><span class="p">):</span>
 </span><span id="set_params_on_lcms_obj-43"><a href="#set_params_on_lcms_obj-43"><span class="linenos">43</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Set parameters on the LCMS object</span>
 </span><span id="set_params_on_lcms_obj-44"><a href="#set_params_on_lcms_obj-44"><span class="linenos">44</span></a>
 </span><span id="set_params_on_lcms_obj-45"><a href="#set_params_on_lcms_obj-45"><span class="linenos">45</span></a><span class="sd">    Parameters</span>
@@ -404,7 +404,7 @@ Path to toml file with parameters</li>
 
     </div>
     <a class="headerlink" href="#load_scan_translator"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="load_scan_translator-66"><a href="#load_scan_translator-66"><span class="linenos">66</span></a><span class="k">def</span><span class="w"> </span><span class="nf">load_scan_translator</span><span class="p">(</span><span class="n">scan_translator</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="load_scan_translator-66"><a href="#load_scan_translator-66"><span class="linenos">66</span></a><span class="k">def</span> <span class="nf">load_scan_translator</span><span class="p">(</span><span class="n">scan_translator</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span id="load_scan_translator-67"><a href="#load_scan_translator-67"><span class="linenos">67</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Translate scans using a scan translator</span>
 </span><span id="load_scan_translator-68"><a href="#load_scan_translator-68"><span class="linenos">68</span></a>
 </span><span id="load_scan_translator-69"><a href="#load_scan_translator-69"><span class="linenos">69</span></a><span class="sd">    Parameters</span>
@@ -468,7 +468,7 @@ of "{"ms2": {"scan_filter": "", "resolution": "high"}}"</li>
 
     </div>
     <a class="headerlink" href="#check_scan_translator"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="check_scan_translator-96"><a href="#check_scan_translator-96"><span class="linenos"> 96</span></a><span class="k">def</span><span class="w"> </span><span class="nf">check_scan_translator</span><span class="p">(</span><span class="n">myLCMSobj</span><span class="p">,</span> <span class="n">scan_translator</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="check_scan_translator-96"><a href="#check_scan_translator-96"><span class="linenos"> 96</span></a><span class="k">def</span> <span class="nf">check_scan_translator</span><span class="p">(</span><span class="n">myLCMSobj</span><span class="p">,</span> <span class="n">scan_translator</span><span class="p">):</span>
 </span><span id="check_scan_translator-97"><a href="#check_scan_translator-97"><span class="linenos"> 97</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if scan translator is provided and that it maps correctly to scans and parameters</span>
 </span><span id="check_scan_translator-98"><a href="#check_scan_translator-98"><span class="linenos"> 98</span></a><span class="sd">    </span>
 </span><span id="check_scan_translator-99"><a href="#check_scan_translator-99"><span class="linenos"> 99</span></a><span class="sd">    Parameters</span>
@@ -542,7 +542,7 @@ Path to scan translator yaml file</li>
 
     </div>
     <a class="headerlink" href="#add_mass_features"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="add_mass_features-137"><a href="#add_mass_features-137"><span class="linenos">137</span></a><span class="k">def</span><span class="w"> </span><span class="nf">add_mass_features</span><span class="p">(</span><span class="n">myLCMSobj</span><span class="p">,</span> <span class="n">scan_translator</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="add_mass_features-137"><a href="#add_mass_features-137"><span class="linenos">137</span></a><span class="k">def</span> <span class="nf">add_mass_features</span><span class="p">(</span><span class="n">myLCMSobj</span><span class="p">,</span> <span class="n">scan_translator</span><span class="p">):</span>
 </span><span id="add_mass_features-138"><a href="#add_mass_features-138"><span class="linenos">138</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Process ms1 spectra and perform molecular search</span>
 </span><span id="add_mass_features-139"><a href="#add_mass_features-139"><span class="linenos">139</span></a>
 </span><span id="add_mass_features-140"><a href="#add_mass_features-140"><span class="linenos">140</span></a><span class="sd">    This includes peak picking, adding and processing associated ms1 spectra,</span>
@@ -630,7 +630,7 @@ Path to scan translator yaml file</li>
 
     </div>
     <a class="headerlink" href="#molecular_formula_search"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="molecular_formula_search-187"><a href="#molecular_formula_search-187"><span class="linenos">187</span></a><span class="k">def</span><span class="w"> </span><span class="nf">molecular_formula_search</span><span class="p">(</span><span class="n">myLCMSobj</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="molecular_formula_search-187"><a href="#molecular_formula_search-187"><span class="linenos">187</span></a><span class="k">def</span> <span class="nf">molecular_formula_search</span><span class="p">(</span><span class="n">myLCMSobj</span><span class="p">):</span>
 </span><span id="molecular_formula_search-188"><a href="#molecular_formula_search-188"><span class="linenos">188</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform molecular search on mass features within the LCMS object</span>
 </span><span id="molecular_formula_search-189"><a href="#molecular_formula_search-189"><span class="linenos">189</span></a>
 </span><span id="molecular_formula_search-190"><a href="#molecular_formula_search-190"><span class="linenos">190</span></a><span class="sd">    Parameters</span>
