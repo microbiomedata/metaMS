@@ -10,15 +10,15 @@ from corems.encapsulation.input.parameter_from_json import (
     load_and_set_toml_parameters_lcms,
 )
 
-def instantiate_lcms_obj(file_in):
+def instantiate_lcms_obj(file_in, spectra="ms1"):
     """Instantiate a corems LCMS object from a binary file.  Pull in ms1 spectra into dataframe (without storing as MassSpectrum objects to save memory)
 
     Parameters
     ----------
     file_in : str or Path
         Path to binary file
-    verbose : bool
-        Whether to print verbose output
+    spectra : str, optional
+        Type of spectra to pull in, default is "ms1". Other options are "ms2" or "none".
 
     Returns
     -------
@@ -34,7 +34,7 @@ def instantiate_lcms_obj(file_in):
         parser = MZMLSpectraParser(file_in)
 
     # Instantiate lc-ms data object using parser and pull in ms1 spectra into dataframe (without storing as MassSpectrum objects to save memory)
-    myLCMSobj = parser.get_lcms_obj(spectra="ms1")
+    myLCMSobj = parser.get_lcms_obj(spectra=spectra)
 
     return myLCMSobj
 
