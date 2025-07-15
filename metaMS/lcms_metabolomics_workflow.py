@@ -5,6 +5,7 @@ from multiprocessing import Pool
 import click
 import warnings
 import pandas as pd
+import gc
 
 from corems.mass_spectra.output.export import LCMSMetabolomicsExport
 
@@ -148,7 +149,7 @@ def run_lcmetab_ms1(file_in, params_toml, scan_translator):
     # and set the noise threshold method to relative abundance
     ms1_scan_df = myLCMSobj.scan_df[myLCMSobj.scan_df.ms_level == 1]
     if all(x == "centroid" for x in ms1_scan_df.ms_format.to_list()):
-        # Switch peak picking method to centroided persistent homology
+        click.echo("Centroided MS1 data detected, switching peak picking method to centroided persistent homology")
         myLCMSobj.parameters.lc_ms.peak_picking_method = "centroided_persistent_homology"
         myLCMSobj.parameters.mass_spectrum[
             "ms1"
@@ -160,12 +161,16 @@ def run_lcmetab_ms1(file_in, params_toml, scan_translator):
 
     check_scan_translator(myLCMSobj, scan_translator)
     add_mass_features(myLCMSobj, scan_translator)
+
+    del ms1_scan_df
+    gc.collect()
+    
     myLCMSobj.remove_unprocessed_data()
     molecular_formula_search(myLCMSobj)
 
     return myLCMSobj
 
-def prepare_metadata(msp_file_path):
+def prepare_metadata(msp_file_path, generate_lr_metadata=False):
     """Prepare metadata for ms2 spectral search
 
     Parameters
@@ -188,8 +193,7 @@ def prepare_metadata(msp_file_path):
     metadata = {
         "fe": {"positive": None, "negative": None},
         "molecular_metadata": {},
-        "fe_lr": {"positive": None, "negative": None},
-        "molecular_metadata_lr": {},
+        "fe_lr": {"positive": None, "negative": None}
     }
 
     # High resolution
@@ -229,42 +233,41 @@ def prepare_metadata(msp_file_path):
     metadata["fe"]["negative"] = msp_negative
     metadata["molecular_metadata"].update(metabolite_metadata_negative)
 
-    # Low resolution
-    msp_positive, metabolite_metadata_positive = (
-        my_msp.get_metabolomics_spectra_library(
-            polarity="positive",
-            format="flashentropy",
-            normalize=True,
-            fe_kwargs={
-                "normalize_intensity": True,
-                "min_ms2_difference_in_da": 0.4,  # for cleaning spectra
-                "max_ms2_tolerance_in_da": 0.2,  # for setting search space
-                "max_indexed_mz": 3000,
-                "precursor_ions_removal_da": None,
-                "noise_threshold": 0,
-            },
+    if generate_lr_metadata:
+        # Low resolution
+        msp_positive, metabolite_metadata_positive = (
+            my_msp.get_metabolomics_spectra_library(
+                polarity="positive",
+                format="flashentropy",
+                normalize=True,
+                fe_kwargs={
+                    "normalize_intensity": True,
+                    "min_ms2_difference_in_da": 0.4,  # for cleaning spectra
+                    "max_ms2_tolerance_in_da": 0.2,  # for setting search space
+                    "max_indexed_mz": 3000,
+                    "precursor_ions_removal_da": None,
+                    "noise_threshold": 0,
+                },
+            )
         )
-    )
-    metadata["fe_lr"]["positive"] = msp_positive
-    metadata["molecular_metadata_lr"] = metabolite_metadata_positive
+        metadata["fe_lr"]["positive"] = msp_positive
 
-    msp_negative, metabolite_metadata_negative = (
-        my_msp.get_metabolomics_spectra_library(
-            polarity="negative",
-            format="flashentropy",
-            normalize=True,
-            fe_kwargs={
-                "normalize_intensity": True,
-                "min_ms2_difference_in_da": 0.4,  # for cleaning spectra
-                "max_ms2_tolerance_in_da": 0.2,  # for setting search space
-                "max_indexed_mz": 3000,
-                "precursor_ions_removal_da": None,
-                "noise_threshold": 0,
-            },
+        msp_negative, metabolite_metadata_negative = (
+            my_msp.get_metabolomics_spectra_library(
+                polarity="negative",
+                format="flashentropy",
+                normalize=True,
+                fe_kwargs={
+                    "normalize_intensity": True,
+                    "min_ms2_difference_in_da": 0.4,  # for cleaning spectra
+                    "max_ms2_tolerance_in_da": 0.2,  # for setting search space
+                    "max_indexed_mz": 3000,
+                    "precursor_ions_removal_da": None,
+                    "noise_threshold": 0,
+                },
+            )
         )
-    )
-    metadata["fe_lr"]["negative"] = msp_negative
-    metadata["molecular_metadata_lr"].update(metabolite_metadata_negative)
+        metadata["fe_lr"]["negative"] = msp_negative
 
     return metadata
 
@@ -439,8 +442,15 @@ def run_lcms_metabolomics_workflow(
     click.echo("Starting LC metabolomics workflow for " + str(len(files_list)) + " file(s), using " +  str(cores) + " core(s)")
 
     # Prepare metadata for searching
+    # Check the scan translator, if there are only high resolution scans, then do not make low resolution metadata
     click.echo("Preparing metadata for ms2 spectral search")
-    metadata = prepare_metadata(lcmetab_workflow_params.msp_file_path)
+    scan_trans_dict = load_scan_translator(scan_translator)
+    if all(x["resolution"] == "high" for x in scan_trans_dict.values()):
+        click.echo("Only high resolution scans found, not generating low resolution metadata")
+        metadata = prepare_metadata(lcmetab_workflow_params.msp_file_path, generate_lr_metadata=False)
+    else:
+        click.echo("Low resolution scans found, generating low resolution metadata")
+        metadata = prepare_metadata(lcmetab_workflow_params.msp_file_path, generate_lr_metadata=True)
 
     # Run signal processing, get associated ms1, add associated ms2, do ms1 molecular search, and export intermediate results
     if cores == 1 or len(files_list) == 1:
