@@ -41,8 +41,9 @@ class LipidomicsWorkflowParameters:
         The directory where the output files will be stored
     corems_toml_path : str
         The path to the corems configuration file
-    db_location : str
+    db_location : str | None
         The path to the local sqlite database used for searching lipid ms2 spectra
+        No longer used, only present for compatibility
     scan_translator_path : str
         The path to the scan translator file, optional
     cores : int
@@ -165,7 +166,7 @@ def run_lipid_sp_ms1(file_in, out_path, params_toml, scan_translator):
 
     return mz_dict
 
-def prep_metadata(mz_dicts, out_dir, db_location):
+def prep_metadata(mz_dicts, out_dir):
     """Prepare metadata for ms2 spectral search
 
     Parameters
@@ -174,8 +175,6 @@ def prep_metadata(mz_dicts, out_dir, db_location):
         List of dicts with keys "positive" and "negative" and values of lists of precursor mzs
     out_dir : Path
         Path to output directory
-    db_location : str
-        Path to lipid database
 
     Returns
     -------
@@ -320,7 +319,7 @@ def process_ms2(myLCMSobj, metadata, scan_translator):
             ms2_scans_oi_lr.extend(ms2_scans_oi_lri)
     # Perform search on low res scans
     metabref = MetabRefLCInterface()
-    
+
     if len(ms2_scans_oi_lr) > 0:
         # Recast the flashentropy search database to low resolution
         fe_search_lr = metabref._to_flashentropy(
@@ -386,8 +385,9 @@ def run_lcms_lipidomics_workflow(
         Path to output directory
     corems_toml_path : str
         Path to corems toml file
-    db_location : str
+    db_location : str or None
         Path to lipid database
+        No longer used, only present for compatibility
     scan_translator_path : str
         Path to scan translator file
     cores : int
@@ -406,7 +406,6 @@ def run_lcms_lipidomics_workflow(
         lipid_workflow_params = LipidomicsWorkflowParameters(
             file_paths= file_paths.split(","),
             output_directory=output_directory,
-            db_location=db_location,
             scan_translator_path=scan_translator_path,
             corems_toml_path=corems_toml_path,
             cores=cores,
@@ -456,7 +455,7 @@ def run_lcms_lipidomics_workflow(
 
     # Prepare metadata for searching
     click.echo("Preparing metadata for ms2 spectral search")
-    metadata = prep_metadata(mz_dicts, out_dir, lipid_workflow_params.db_location)
+    metadata = prep_metadata(mz_dicts, out_dir)
     del mz_dicts
     
     # Run ms2 spectral search and export final results

@@ -169,9 +169,9 @@ def run_lipidomics_workflow(
     file_paths, 
     output_directory, 
     corems_params, 
-    db_location, 
     scan_translator_path, 
-    cores
+    cores,
+    db_location=None
     ):
     """Run the lipidomics workflow
 
@@ -185,12 +185,13 @@ def run_lipidomics_workflow(
         The directory where the output files will be stored
     corems_params : str
         The path corems parameters toml file
-    db_location : str
-        The path to the sqlite database for lipid spectra searching
     scan_translator_path : str
         The path to the scan translator file
     cores : int
         The number of cores to use for processing
+    db_location : str | None
+        The path to the sqlite database for lipid spectra searching
+        No longer used, only present for compatibility
     """
     if paramaters_file is not None:
         if cores is not None or file_paths is not None:
@@ -213,14 +214,10 @@ def run_lipidomics_workflow(
                 "Must provide an output directory if not using a parameters file"
             )
             return
-        if db_location is None:
-            click.echo("No database path provided")
-            return
         run_lcms_lipidomics_workflow(
             file_paths=file_paths,
             output_directory=output_directory,
             corems_toml_path=corems_params,
-            db_location=db_location,
             scan_translator_path=scan_translator_path,
             cores=cores,
         )
