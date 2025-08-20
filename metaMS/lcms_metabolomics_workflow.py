@@ -6,6 +6,7 @@ import click
 import warnings
 import pandas as pd
 import gc
+import pickle
 
 from corems.mass_spectra.output.export import LCMSMetabolomicsExport
 
@@ -109,7 +110,7 @@ def determine_polarity(file_path):
     lcms_obj = instantiate_lcms_obj(file_path, spectra="none")
     return lcms_obj.polarity if lcms_obj.polarity else "unknown"
 
-def export_results(myLCMSobj, out_path, molecular_metadata=None, final=False):
+def export_results(myLCMSobj, out_path, molecular_metadata, final=False):
     """Export results to hdf5 and csv
 
     Parameters
@@ -158,6 +159,7 @@ def run_lcmetab_ms1(file_in, params_toml, scan_translator):
         Dict with keys "positive" and "negative" and values of lists of precursor mzs
     """  
 
+    click.echo(f"...instantiating LCMS object for {file_in}")
     myLCMSobj = instantiate_lcms_obj(file_in)
     set_params_on_lcms_obj(myLCMSobj, params_toml)
     
@@ -193,15 +195,14 @@ def prepare_metadata(msp_file_path, generate_lr_metadata=True, polarity=None):
     ----------
     msp_file_path : str
         Path to sqlite database
-
-    Returns
-    -------
-    metadata : dict
-        Dict with keys "mzs", "fe", and "molecular_metadata" with values of dicts of precursor mzs (negative and positive), flash entropy search databases (negative and positive), and molecular metadata, respectively
     generate_lr_metadata : bool, optional
         Whether to generate low resolution metadata, default is True
     polarity : str, optional
         Polarity to prepare metadata for, can be "positive", "negative", or None (which will prepare for both polarities)
+
+    Returns
+    -------
+    None, but saves the metadata to a file named "metadata.pkl" in the current directory
         
     Notes
     -------
@@ -301,7 +302,11 @@ def prepare_metadata(msp_file_path, generate_lr_metadata=True, polarity=None):
             )
             metadata["fe_lr"]["negative"] = msp_negative
 
-    return metadata
+    # Save this as a pkl in the output directory
+    output_path = Path("metadata.pkl")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(output_path, "wb") as f:
+        pickle.dump(metadata, f) 
 
 def process_ms2(myLCMSobj, metadata, scan_translator):
     """Process ms2 spectra and perform molecular search
@@ -315,8 +320,19 @@ def process_ms2(myLCMSobj, metadata, scan_translator):
 
     Returns
     -------
-    None, processes the LCMS object
+    molecular_metadata : dict
+        Dict with keys "positive" and "negative" containing the molecular metadata for each polarity
     """
+    click.echo("...processing ms2 spectra")
+
+    if metadata is None:
+        # import pickled version (me)
+        metadata_path = Path("metadata.pkl")
+        if not metadata_path.exists():
+            raise FileNotFoundError("Metadata file not found, please prepare metadata first")
+        with open(metadata_path, "rb") as f:
+            metadata = pickle.load(f)
+
     # Perform molecular search on ms2 spectra
     # Grab fe from metatdata associated with polarity (this is inherently high resolution as its from a in-silico high res library)
     fe_search = metadata["fe"][myLCMSobj.polarity]
@@ -364,24 +380,12 @@ def process_ms2(myLCMSobj, metadata, scan_translator):
             ms2_scans_oi_lr.extend(ms2_scans_oi_lri)
     # Perform search on low res scans
     if len(ms2_scans_oi_lr) > 0:
-        # Recast the flashentropy search database to low resolution
-        # fe_search_lr = _to_flashentropy(
-        #     metabref_lib=fe_search,
-        #     normalize=True,
-        #     fe_kwargs={
-        #         "normalize_intensity": True,
-        #         "min_ms2_difference_in_da": 0.4,
-        #         "max_ms2_tolerance_in_da": 0.2,
-        #         "max_indexed_mz": 3000,
-        #         "precursor_ions_removal_da": None,
-        #         "noise_threshold": 0,
-        #     },
-        # )
-
         fe_search_lr = metadata["fe_lr"][myLCMSobj.polarity]
         myLCMSobj.fe_search(
             scan_list=ms2_scans_oi_lr, fe_lib=fe_search_lr, peak_sep_da=0.3
         )
+    
+    return metadata["molecular_metadata"]
 
 def process_complete_workflow(args):
     """Process a single file through the complete workflow"""
@@ -397,9 +401,9 @@ def process_complete_workflow(args):
         )
         
         # MS2 processing and export
-        process_ms2(lcms_obj, metadata, scan_translator)
-        export_results(lcms_obj, str(output_path), metadata["molecular_metadata"], final=True)
-        
+        mol_metadata = process_ms2(lcms_obj, metadata, scan_translator)
+        export_results(lcms_obj, str(output_path), mol_metadata, final=True)
+
         return f"Completed: {output_path}"
     except Exception as e:
         click.echo(f"Error processing {file_in}: {str(e)}")
@@ -497,24 +501,23 @@ def run_lcms_metabolomics_workflow(
         # Prepare metadata for searching
         # Check the scan translator, if there are only high resolution scans, then do not make low resolution metadata
         click.echo("Preparing metadata for ms2 spectral search for positive samples")
-        metadata = prepare_metadata(lcmetab_workflow_params.msp_file_path, generate_lr_metadata=generate_lr_metadata, polarity="positive")
+        prepare_metadata(lcmetab_workflow_params.msp_file_path, generate_lr_metadata=generate_lr_metadata, polarity="positive")
         click.echo("Metadata preparation complete for positive samples")
         
         # Run signal processing, get associated ms1, add associated ms2, do ms1 molecular search, and export intermediate results
         # for positive polarity samples
         if cores == 1 or len(files_list_positive) == 1:
             for file_in, output_path in zip(files_list_positive, out_paths_list_positive):
-                args = (file_in, output_path, params_toml, scan_translator, metadata)
+                args = (file_in, output_path, params_toml, scan_translator, None)
                 process_complete_workflow(args)
 
         elif cores > 1:
             with Pool(cores) as pool:
                 args = [
-                    (str(file_in), str(file_out), params_toml, scan_translator, metadata)
+                    (str(file_in), str(file_out), params_toml, scan_translator, None)
                     for file_in, file_out in zip(files_list_positive, out_paths_list_positive)
                 ]
                 pool.map(process_complete_workflow, args)
-        del metadata
         gc.collect()
     
     # RUN THE NEGATIVE SAMPLES ================

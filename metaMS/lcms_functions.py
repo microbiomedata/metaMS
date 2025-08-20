@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import click
 import toml
 from pathlib import Path
 import warnings
@@ -153,10 +154,12 @@ def add_mass_features(myLCMSobj, scan_translator):
     None, but populates the mass_features attribute of myLCMSobj
     """
     # Process ms1 spectra
+    click.echo("...finding mass features")
     myLCMSobj.find_mass_features()
 
     ms1_scan_df = myLCMSobj.scan_df[myLCMSobj.scan_df.ms_level == 1]
     
+    click.echo("...adding ms1 spectra")
     if all(x == "profile" for x in ms1_scan_df.ms_format.to_list()):
         myLCMSobj.add_associated_ms1(
             auto_process=True, use_parser=False, spectrum_mode="profile"
@@ -166,6 +169,7 @@ def add_mass_features(myLCMSobj, scan_translator):
             auto_process=True, use_parser=True, spectrum_mode="centroid"
         )
 
+    click.echo("...integrating mass features")
     myLCMSobj.integrate_mass_features(drop_if_fail=True)
     # Count and report how many mass features are left after integration
     print("Number of mass features after integration: ", len(myLCMSobj.mass_features))
@@ -195,6 +199,7 @@ def molecular_formula_search(myLCMSobj):
     -------
     None, processes the LCMS object
     """
+    click.echo("...performing molecular search")
     # Perform a molecular search on all of the mass features
     mol_form_search = SearchMolecularFormulasLC(myLCMSobj)
     mol_form_search.run_mass_feature_search()

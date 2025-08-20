@@ -62,8 +62,5 @@ task runMetaMSLCMSMetabolomics {
 
     runtime {
         docker: "~{if defined(docker_image) then docker_image else 'microbiomedata/metams:3.2.1'}"
-        docker_args: "--memory=16g"
-        memory: "16 GB"
-        cpu: cores
     }
 }
