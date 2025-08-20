@@ -9,8 +9,9 @@ import gc
 
 from corems.mass_spectra.input.corems_hdf5 import ReadCoreMSHDFMassSpectra
 from corems.mass_spectra.output.export import LipidomicsExport
+from corems.molecular_id.search.database_interfaces import MetabRefLCInterface
 
-from metaMS.lipid_metadata_prepper import get_lipid_library, _to_flashentropy
+#from metaMS.lipid_metadata_prepper import get_lipid_library, _to_flashentropy
 from metaMS.lcms_functions import (
     instantiate_lcms_obj,
     set_params_on_lcms_obj,
@@ -194,10 +195,10 @@ def prep_metadata(mz_dicts, out_dir, db_location):
         metadata["mzs"].update(d)
 
     print("Preparing negative lipid library")
+    metabref = MetabRefLCInterface()
 
     if metadata["mzs"]["negative"] is not None:
-        metabref_negative, lipidmetadata_negative = get_lipid_library(
-            db_location=db_location,
+        metabref_negative, lipidmetadata_negative = metabref.get_lipid_library(
             mz_list=metadata["mzs"]["negative"],
             polarity="negative",
             mz_tol_ppm=5,
@@ -211,6 +212,8 @@ def prep_metadata(mz_dicts, out_dir, db_location):
                 "precursor_ions_removal_da": None,
                 "noise_threshold": 0,
             },
+            api_attempts=50,
+            api_delay=10
         )
         metadata["fe"]["negative"] = metabref_negative
         metadata["molecular_metadata"].update(lipidmetadata_negative)
@@ -221,8 +224,7 @@ def prep_metadata(mz_dicts, out_dir, db_location):
     
     print("Preparing positive lipid library")
     if metadata["mzs"]["positive"] is not None:
-        metabref_positive, lipidmetadata_positive = get_lipid_library(
-            db_location=db_location,
+        metabref_positive, lipidmetadata_positive = metabref.get_lipid_library(
             mz_list=metadata["mzs"]["positive"],
             polarity="positive",
             mz_tol_ppm=5,
@@ -236,6 +238,8 @@ def prep_metadata(mz_dicts, out_dir, db_location):
                 "precursor_ions_removal_da": None,
                 "noise_threshold": 0,
             },
+            api_attempts=50,
+            api_delay=10
         )
         metadata["fe"]["positive"] = metabref_positive
         metadata["molecular_metadata"].update(lipidmetadata_positive)
@@ -315,9 +319,11 @@ def process_ms2(myLCMSobj, metadata, scan_translator):
             ]
             ms2_scans_oi_lr.extend(ms2_scans_oi_lri)
     # Perform search on low res scans
+    metabref = MetabRefLCInterface()
+    
     if len(ms2_scans_oi_lr) > 0:
         # Recast the flashentropy search database to low resolution
-        fe_search_lr = _to_flashentropy(
+        fe_search_lr = metabref._to_flashentropy(
             metabref_lib=fe_search,
             normalize=True,
             fe_kwargs={
