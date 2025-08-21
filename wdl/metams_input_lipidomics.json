@@ -5,6 +5,7 @@
     ],
     "lcmsLipidomics.runMetaMSLCMSLipidomics.output_directory": "output",
     "lcmsLipidomics.runMetaMSLCMSLipidomics.corems_toml_path": "./test_data/test_lipid_data/emsl_lipidomics_corems_params_test.toml",
+    "lcmsLipidomics.runMetaMSLCMSLipidomics.db_location": "./test_data/test_lipid_data/lipid_ref.sqlite",
     "lcmsLipidomics.runMetaMSLCMSLipidomics.scan_translator_path": "./test_data/test_lipid_data/emsl_lipidomics_scan_translator.toml",
     "lcmsLipidomics.runMetaMSLCMSLipidomics.cores": 1
 }

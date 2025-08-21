@@ -21,6 +21,7 @@ task runMetaMSLCMSLipidomics {
         Array[File] file_paths
         String output_directory
         File corems_toml_path
+        File db_location
         File scan_translator_path
         Int cores
         String? docker_image
@@ -31,6 +32,7 @@ task runMetaMSLCMSLipidomics {
             -i ${sep=',' file_paths} \
             -o ${output_directory} \
             -c ${corems_toml_path} \
+            -d ${db_location} \
             -s ${scan_translator_path} \
             -j ${cores}
         EXIT_CODE=$?
