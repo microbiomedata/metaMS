@@ -1,47 +1,86 @@
 <dl>
 <dt>github_url</dt>
-<dd><p><a href="https://github.com/microbiomedata/metaMS/blob/master/docs/index_lipid.rst">https://github.com/microbiomedata/metaMS/blob/master/docs/index_lipid.rst</a></p>
+<dd>
+<p><a
+href="https://github.com/microbiomedata/metaMS/blob/master/docs/index_lipid.rst">https://github.com/microbiomedata/metaMS/blob/master/docs/index_lipid.rst</a></p>
 </dd>
 </dl>
-<p>LC/MS Metabolomics Workflow (v1.0.0) ============================</p>
+<p>LC/MS Metabolomics Workflow (v1.0.1) ============================</p>
 <figure>
-<img src="lcms_metabolite_workflow.svg" alt="" />
+<img src="lcms_metabolite_workflow.svg"
+alt="lcms_metabolite_workflow.svg" />
 </figure>
 <h1 id="workflow-overview">Workflow Overview</h1>
-<p>The liquid chromatography-mass spectrometry (LC-MS)-based metabolomics workflow (part of MetaMS) is built using PNNL’s CoreMS software framework. The workflow leverages many features of CoreMS to process LC-MS/MS data and identify metabolites. The initial signal processing includes peak picking, integration of mass features, deconvolution of MS1 spectra, and calculation of peak shape metrics. The workflow associates MS1 spectra with their corresponding MS2 spectra. It uses the MS2 spectra to search a subset of the GNPS's (Global Natural Products Social Molecular Networking) <a href="https://gnps-external.ucsd.edu/gnpslibrary">library of tandem mass spectra</a> to identify metabolites. The workflow also uses the deconvoluted MS1 spectra to assign a molecular formula. Each candidate metabolite assignment is given two confidence scores: one for its match to the predicted molecular formula based on the mass accuracy and fine isotopic structure and a second for the MS2 spectral matching for filtering and selecting the best match to the MS2 library.</p>
+<p>The liquid chromatography-mass spectrometry (LC-MS)-based
+metabolomics workflow (part of MetaMS) is built using PNNL’s CoreMS
+software framework. The workflow leverages many features of CoreMS to
+process LC-MS/MS data and identify metabolites. The initial signal
+processing includes peak picking, integration of mass features,
+deconvolution of MS1 spectra, and calculation of peak shape metrics. The
+workflow associates MS1 spectra with their corresponding MS2 spectra. It
+uses the MS2 spectra to search a subset of the GNPS's (Global Natural
+Products Social Molecular Networking) <a
+href="https://gnps-external.ucsd.edu/gnpslibrary">library of tandem mass
+spectra</a> to identify metabolites. The workflow also uses the
+deconvoluted MS1 spectra to assign a molecular formula. Each candidate
+metabolite assignment is given two confidence scores: one for its match
+to the predicted molecular formula based on the mass accuracy and fine
+isotopic structure and a second for the MS2 spectral matching for
+filtering and selecting the best match to the MS2 library.</p>
 <h1 id="workflow-availability">Workflow Availability</h1>
-<p>The workflow is available in GitHub: <a href="https://github.com/microbiomedata/metaMS/blob/master/wdl/metaMS_lcmsmetabolomics.wdl">https://github.com/microbiomedata/metaMS/blob/master/wdl/metaMS_lcmsmetabolomics.wdl</a></p>
-<p>The container is available at Docker Hub (microbiomedata/metaMS): <a href="https://hub.docker.com/r/microbiomedata/metams">https://hub.docker.com/r/microbiomedata/metams</a></p>
-<p>The database is available to download <a href="https://nmdcdemo.emsl.pnnl.gov/metabolomics/databases/20250407_gnps_curated.msp">here</a>.</p>
+<p>The workflow is available in GitHub: <a
+href="https://github.com/microbiomedata/metaMS/blob/master/wdl/metaMS_lcmsmetabolomics.wdl">https://github.com/microbiomedata/metaMS/blob/master/wdl/metaMS_lcmsmetabolomics.wdl</a></p>
+<p>The container is available at Docker Hub (microbiomedata/metaMS): <a
+href="https://hub.docker.com/r/microbiomedata/metams">https://hub.docker.com/r/microbiomedata/metams</a></p>
+<p>The database is available to download <a
+href="https://nmdcdemo.emsl.pnnl.gov/metabolomics/databases/20250407_gnps_curated.msp">here</a>.</p>
 <h1 id="requirements-for-execution">Requirements for Execution</h1>
-<p>The recommended way to run the workflow is via the provided wdl file and the miniwdl package. Using the wdl file requires the following:</p>
+<p>The recommended way to run the workflow is via the provided wdl file
+and the miniwdl package. Using the wdl file requires the following:</p>
 <h2 id="hardware-requirements">Hardware Requirements</h2>
-<p>To run this application, we recommend a processor with at least 2.0 GHz speed, 8GB of RAM, 10GB of free hard disk space.</p>
+<p>To run this application, we recommend a processor with at least 2.0
+GHz speed, 8GB of RAM, 10GB of free hard disk space.</p>
 <h2 id="software-requirements">Software Requirements</h2>
 <ul>
 <li>Docker Container Runtime</li>
-<li>miniwdl (v1, <a href="https://pypi.org/project/miniwdl/">https://pypi.org/project/miniwdl/</a>)</li>
+<li>miniwdl (v1, <a
+href="https://pypi.org/project/miniwdl/">https://pypi.org/project/miniwdl/</a>)</li>
 </ul>
-<p><em>Note that the wdl file will automatically pull the necessary docker image with the required workflow dependencies.</em></p>
+<p><em>Note that the wdl file will automatically pull the necessary
+docker image with the required workflow dependencies.</em></p>
 <h2 id="database">Database</h2>
-<p>- A local copy of a msp database. The workflow uses a subset of databases available through GNPS (<a href="https://gnps-external.ucsd.edu/gnpslibrary">https://gnps-external.ucsd.edu/gnpslibrary</a>) that has been filtered to include only compounds with high quality metadata and with high resolution MS2 spectra. The curated database can be downloaded <a href="https://nmdcdemo.emsl.pnnl.gov/metabolomics/databases/20250407_gnps_curated.msp">here</a>.</p>
+<p>- A local copy of a msp database. The workflow uses a subset of
+databases available through GNPS (<a
+href="https://gnps-external.ucsd.edu/gnpslibrary">https://gnps-external.ucsd.edu/gnpslibrary</a>)
+that has been filtered to include only compounds with high quality
+metadata and with high resolution MS2 spectra. The curated database can
+be downloaded <a
+href="https://nmdcdemo.emsl.pnnl.gov/metabolomics/databases/20250407_gnps_curated.msp">here</a>.</p>
 <h1 id="sample-datasets">Sample datasets</h1>
 <ul>
-<li>An example dataset can be downloaded from here: <a href="https://nmdcdemo.emsl.pnnl.gov/lipidomics/blanchard_11_8ws97026/Blanch_Nat_Lip_H_32_AB_O_19_NEG_25Jan18_Brandi-WCSH5801.raw">https://nmdcdemo.emsl.pnnl.gov/lipidomics/blanchard_11_8ws97026/Blanch_Nat_Lip_H_32_AB_O_19_NEG_25Jan18_Brandi-WCSH5801.raw</a></li>
-<li>Example CoreMS Parameter file (applicable to the example dataset): <a href="https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/emsl_lipidomics_corems_params.toml">https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/emsl_lipidomics_corems_params.toml</a></li>
-<li>Example Scan Translator file (applicable to the example dataset): <a href="https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/emsl_lipidomics_scan_translator.toml">https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/emsl_lipidomics_scan_translator.toml</a></li>
+<li>An example dataset can be downloaded from here: <a
+href="https://nmdcdemo.emsl.pnnl.gov/lipidomics/blanchard_11_8ws97026/Blanch_Nat_Lip_H_32_AB_O_19_NEG_25Jan18_Brandi-WCSH5801.raw">https://nmdcdemo.emsl.pnnl.gov/lipidomics/blanchard_11_8ws97026/Blanch_Nat_Lip_H_32_AB_O_19_NEG_25Jan18_Brandi-WCSH5801.raw</a></li>
+<li>Example CoreMS Parameter file (applicable to the example dataset):
+<a
+href="https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/emsl_lipidomics_corems_params.toml">https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/emsl_lipidomics_corems_params.toml</a></li>
+<li>Example Scan Translator file (applicable to the example dataset): <a
+href="https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/emsl_lipidomics_scan_translator.toml">https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/emsl_lipidomics_scan_translator.toml</a></li>
 </ul>
 <h1 id="execution-details">Execution Details</h1>
-<p>This workflow should be executed using the wdl file provided in the MetaMS package (wdl/metaMS_lcmsmetabolomics.wdl).</p>
+<p>This workflow should be executed using the wdl file provided in the
+MetaMS package (wdl/metaMS_lcmsmetabolomics.wdl).</p>
 <p>Example command to run the workflow:</p>
-<pre class=""><code>miniwdl run wdl/metaMS_lcmsmetabolomics.wdl -i metams_input_lcms_metabolomics.json --verbose --no-cache --copy-input-files</code></pre>
+<pre><code>miniwdl run wdl/metaMS_lcmsmetabolomics.wdl -i metams_input_lcms_metabolomics.json --verbose --no-cache --copy-input-files</code></pre>
 <h2 id="inputs">Inputs</h2>
-<p>To use the wdl, inputs should be specified in a json file. See example input json file in wdl/metams_input_lcms_metabolomics.json.</p>
-<p>The following inputs are required (declared in the input json file):</p>
+<p>To use the wdl, inputs should be specified in a json file. See
+example input json file in wdl/metams_input_lcms_metabolomics.json.</p>
+<p>The following inputs are required (declared in the input json
+file):</p>
 <ul>
 <li><dl>
 <dt>LC-MS/MS data file locations in one of the following formats:</dt>
-<dd><ul>
+<dd>
+<ul>
 <li>ThermoFisher mass spectrometry data files (.raw)</li>
 <li>mzML mass spectrometry data files (.mzml)</li>
 </ul>
@@ -49,7 +88,8 @@
 </dl></li>
 <li><dl>
 <dt>Workflow inputs (all three required):</dt>
-<dd><ul>
+<dd>
+<ul>
 <li>CoreMS Parameter file (.toml)</li>
 <li>Scan Translator Parameter file (.toml)</li>
 <li>Path to local MetabRef database (.msp)</li>
@@ -58,7 +98,8 @@
 </dl></li>
 <li><dl>
 <dt>Cores (optional input):</dt>
-<dd><ul>
+<dd>
+<ul>
 <li>How many cores to use for processing. Default is 1.</li>
 </ul>
 </dd>
@@ -69,16 +110,21 @@
 <li>Metabolomics data
 <ul>
 <li>Peak data table with annotated metabolites (.csv)</li>
-<li>CoreMS HDF5 format of CoreMS LCMS object for further analysis and exploration (.hdf5)</li>
+<li>CoreMS HDF5 format of CoreMS LCMS object for further analysis and
+exploration (.hdf5)</li>
 </ul></li>
 <li>Workflow Metadata
 <ul>
-<li>The full set of CoreMS parameters used in the workflow, some of which are set dynamically within the workflow (.toml)</li>
+<li>The full set of CoreMS parameters used in the workflow, some of
+which are set dynamically within the workflow (.toml)</li>
 </ul></li>
 </ul>
 <h1 id="version-history">Version History</h1>
 <ul>
-<li>v1.0.0: Initial release of the LC/MS metabolomics workflow June 24, 2025</li>
+<li>v1.0.1: Current release</li>
+<li>v1.0.0: Initial release of the LC/MS metabolomics workflow June 24,
+2025</li>
 </ul>
 <h1 id="point-of-contact">Point of contact</h1>
-<p>Workflow maintainer: Katherine R. Heal &lt;<a href="mailto:katherine.heal@pnnl.gov">katherine.heal@pnnl.gov</a>&gt;</p>
+<p>Workflow maintainer: Katherine R. Heal &lt;<a
+href="mailto:katherine.heal@pnnl.gov">katherine.heal@pnnl.gov</a>&gt;</p>

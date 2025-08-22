@@ -43,7 +43,7 @@ jobs:
     - name: Run GCMS WDL with pushed Docker Image
       run: |
         miniwdl run wdl/metaMS_gcms.wdl -i wdl/metams_input_gcms.json --verbose --no-cache --copy-input-files
-  
+
     - name: Build Docker Image
       run: |
         docker build -t local-metams:latest .
