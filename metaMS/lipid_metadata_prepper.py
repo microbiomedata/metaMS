@@ -122,10 +122,11 @@ def _to_flashentropy(metabref_lib, normalize=True, fe_kwargs={}):
             spectrum["mz"], normalize=normalize
         )
 
-        # Cast "fragment_types" to a list (if present and not already a list)
+        # Cast "fragment_types" to a string of comma-separated values if a list
+        # For compliance with CoreMS 3.8
         if "fragment_types" in spectrum.keys():
-            if not isinstance(spectrum["fragment_types"], list):
-                spectrum["fragment_types"] = spectrum["fragment_types"].split(",")
+            if isinstance(spectrum["fragment_types"], list):
+                spectrum["fragment_types"] = ",".join(spectrum["fragment_types"])
 
         # Add spectrum to library
         fe_lib.append(spectrum)
