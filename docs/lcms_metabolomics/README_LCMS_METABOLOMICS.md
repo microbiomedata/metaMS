@@ -123,7 +123,8 @@ The following inputs are required (declared in the input json file):
 
 # Version History
 
--   v1.0.1: Initial release of the LC/MS metabolomics workflow June 24,
+-   v1.0.1: Current release
+-   v1.0.0: Initial release of the LC/MS metabolomics workflow June 24,
     2025
 
 # Point of contact

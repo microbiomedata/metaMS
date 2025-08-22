@@ -120,7 +120,8 @@ Outputs
 Version History
 ---------------
 
-- v1.2.1: Initial release of the lipidomics workflow Jan 9, 2025
+- v1.2.1: Current release
+- v1.0.0: Initial release of the lipidomics workflow Jan 9, 2025
 
 Point of contact
 ----------------
