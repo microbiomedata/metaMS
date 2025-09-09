@@ -32,6 +32,22 @@ jobs:
       run: |
         make get-test-data
 
+    - name: Build Docker Image
+      run: |
+        docker build -t local-metams:latest .
+    
+    - name: Run GCMS WDL with local Docker Image based on Dockerfile
+      run: |
+        miniwdl run wdl/metaMS_gcms.wdl -i wdl/metams_input_gcms_local_docker.json --verbose --no-cache --copy-input-files
+        
+    - name: Run LCMS metabolomics WDL with local Docker Image based on Dockerfile
+      run: |
+        miniwdl run wdl/metaMS_lcms_metabolomics.wdl -i wdl/metams_input_lcms_metabolomics_local_docker.json --verbose --no-cache --copy-input-files
+
+    - name: Run Lipidomics WDL with local Docker Image based on Dockerfile
+      run: |
+        miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics_local_docker.json --verbose --no-cache --copy-input-files
+
     - name: Run Lipidomics WDL with lipidomics test data and pushed Docker Image
       run: |
         miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics.json --verbose --no-cache --copy-input-files
@@ -43,22 +59,6 @@ jobs:
     - name: Run GCMS WDL with pushed Docker Image
       run: |
         miniwdl run wdl/metaMS_gcms.wdl -i wdl/metams_input_gcms.json --verbose --no-cache --copy-input-files
-
-    - name: Build Docker Image
-      run: |
-        docker build -t local-metams:latest .
-    
-    - name: Run GCMS WDL with local Docker Image based on Dockerfile
-      run: |
-        miniwdl run wdl/metaMS_gcms.wdl -i wdl/metams_input_gcms_local_docker.json --verbose --no-cache --copy-input-files
-    
-    - name: Run Lipidomics WDL with local Docker Image based on Dockerfile
-      run: |
-        miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics_local_docker.json --verbose --no-cache --copy-input-files
-    
-    - name: Run LCMS metabolomics WDL with local Docker Image based on Dockerfile
-      run: |
-        miniwdl run wdl/metaMS_lcms_metabolomics.wdl -i wdl/metams_input_lcms_metabolomics_local_docker.json --verbose --no-cache --copy-input-files
     
     - name: Remove test data
       run: |

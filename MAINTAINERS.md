@@ -45,9 +45,9 @@ To test a workflow before an associated docker image is pushed, you can run the 
 The following steps should be followed in order
 
 ### Bump Version Numbers
-The versioning of the repo, docker image and the GC/MS workflow are currently 3.2.1.
-The version of the lipid workflow is currently 1.2.1.
-The version of the LCMS metabolomics workflow is currently 1.0.1.
+The versioning of the repo, docker image and the GC/MS workflow are currently 3.2.2.
+The version of the lipid workflow is currently 1.2.2.
+The version of the LCMS metabolomics workflow is currently 1.0.2.
 
 To bump the repo *and all workflows*, run one of the following commands.  This will update the runtime version of all of the workflows, the version of the repo and the version of the docker image.
 
