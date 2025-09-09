@@ -2,7 +2,7 @@ github_url
 
 :   <https://github.com/microbiomedata/metaMS/blob/master/docs/index_lipid.rst>
 
-LC/MS Metabolomics Workflow (v1.0.1) ============================
+LC/MS Metabolomics Workflow (v1.0.2) ============================
 
 ![](lcms_metabolite_workflow.svg)
 
@@ -123,7 +123,7 @@ The following inputs are required (declared in the input json file):
 
 # Version History
 
--   v1.0.1: Current release
+-   v1.0.2: Current release
 -   v1.0.0: Initial release of the LC/MS metabolomics workflow June 24,
     2025
 

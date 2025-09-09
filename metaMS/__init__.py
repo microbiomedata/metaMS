@@ -1,5 +1,5 @@
 
-__version__ = '3.2.1'
+__version__ = '3.2.2'
 
 import os
 # Get the path to the README file
