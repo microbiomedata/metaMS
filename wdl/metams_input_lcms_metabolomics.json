@@ -7,6 +7,6 @@
     "lcmsMetabolomics.runMetaMSLCMSMetabolomics.output_directory": "output",
     "lcmsMetabolomics.runMetaMSLCMSMetabolomics.corems_toml_path": "./configuration/lcms_metab_configs/emsl_lcms_metab_corems_params.toml",
     "lcmsMetabolomics.runMetaMSLCMSMetabolomics.msp_file_path": "./test_data/test_lcms_metab_data/database.msp",
-    "lcmsMetabolomics.runMetaMSLCMSMetabolomics.scan_translator_path": "./configuration/lcms_metab_configs/emsl_lcms_metab_scan_translator.toml",
+    "lcmsMetabolomics.runMetaMSLCMSMetabolomics.scan_translator_path": "./configuration/lcms_metab_configs/mzml_centroid_scan_translator.toml",
     "lcmsMetabolomics.runMetaMSLCMSMetabolomics.cores": 1
 }
