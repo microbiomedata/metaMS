@@ -21,7 +21,7 @@ COPY metaMS/ /metams/metaMS/
 COPY README.md disclaimer.txt Makefile requirements.txt setup.py /metams/
 
 # Install the correct version of CoreMS from github
-RUN pip install git+https://github.com/EMSL-Computing/CoreMS.git@v3.8.1
+RUN pip install git+https://github.com/EMSL-Computing/CoreMS.git@v3.8.2
 
 # Install the MetaMS package in editable mode
 RUN pip3 install --editable .
