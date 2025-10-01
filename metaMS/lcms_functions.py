@@ -4,6 +4,9 @@ import toml
 from pathlib import Path
 import warnings
 import pandas as pd
+import time
+import sqlalchemy
+import sqlite3
 
 from corems.mass_spectra.input.mzml import MZMLSpectraParser
 from corems.molecular_id.search.molecularFormulaSearch import SearchMolecularFormulasLC
@@ -197,10 +200,16 @@ def molecular_formula_search(myLCMSobj):
 
     Returns
     -------
-    None, processes the LCMS object
     """
-    click.echo("...performing molecular search")
-    # Perform a molecular search on all of the mass features
-    mol_form_search = SearchMolecularFormulasLC(myLCMSobj)
-    mol_form_search.run_mass_feature_search()
+    while True:
+        try:
+
+            # Perform a molecular search on all of the mass features
+            mol_form_search = SearchMolecularFormulasLC(myLCMSobj)
+            mol_form_search.run_mass_feature_search()
+            break
+        except (sqlalchemy.exc.OperationalError, sqlite3.OperationalError) as e:
+            print(f"Database is locked, retrying in 1 second.")
+            time.sleep(2)
+            
     print("Finished molecular search")
