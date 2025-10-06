@@ -423,6 +423,10 @@ def run_lcms_lipidomics_workflow(
     params_toml = lipid_workflow_params.corems_toml_path
     scan_translator = lipid_workflow_params.scan_translator_path
 
+    # Limit cores to 1 if the file type is .raw
+    if any(".raw" in file for file in files_list):
+        cores = 1
+
     click.echo("Starting lipidomics workflow for " + str(len(files_list)) + " file(s), using " +  str(cores) + " core(s)")
     # Run signal processing, get associated ms1, add associated ms2, do ms1 molecular search, and export intermediate results
     if cores == 1 or len(files_list) == 1:

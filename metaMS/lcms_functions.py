@@ -13,6 +13,7 @@ from corems.molecular_id.search.molecularFormulaSearch import SearchMolecularFor
 from corems.encapsulation.input.parameter_from_json import (
     load_and_set_toml_parameters_lcms,
 )
+from corems.mass_spectra.input.rawFileReader import ImportMassSpectraThermoMSFileReader
 
 def instantiate_lcms_obj(file_in, spectra="ms1"):
     """Instantiate a corems LCMS object from a binary file.  Pull in ms1 spectra into dataframe (without storing as MassSpectrum objects to save memory)
@@ -31,7 +32,6 @@ def instantiate_lcms_obj(file_in, spectra="ms1"):
     """
     # Instantiate parser based on binary file type
     if ".raw" in str(file_in):
-        from corems.mass_spectra.input.rawFileReader import ImportMassSpectraThermoMSFileReader
         parser = ImportMassSpectraThermoMSFileReader(file_in)
 
     if ".mzML" in str(file_in):
@@ -39,7 +39,6 @@ def instantiate_lcms_obj(file_in, spectra="ms1"):
 
     # Instantiate lc-ms data object using parser and pull in ms1 spectra into dataframe (without storing as MassSpectrum objects to save memory)
     myLCMSobj = parser.get_lcms_obj(spectra=spectra)
-
     return myLCMSobj
 
 def set_params_on_lcms_obj(myLCMSobj, params_toml):
