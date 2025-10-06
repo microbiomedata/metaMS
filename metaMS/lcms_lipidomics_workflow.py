@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 import toml
 from pathlib import Path
-from multiprocessing import Pool
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor  # Changed from multiprocessing import Pool
 import click
 import warnings
 import pandas as pd
@@ -164,7 +163,6 @@ def run_lipid_sp_ms1(file_in, out_path, params_toml, scan_translator):
         )
     )
     mz_dict = {myLCMSobj.polarity: precursor_mz_list.copy()}
-    myLCMSobj.spectra_parser = None 
     del myLCMSobj
     gc.collect()
 
@@ -275,6 +273,7 @@ def process_ms2(myLCMSobj, metadata, scan_translator):
     -------
     None, processes the LCMS object
     """
+    click.echo("in process_ms2....")
     # Perform molecular search on ms2 spectra
     # Grab fe from metatdata associated with polarity (this is inherently high resolution as its from a in-silico high res library)
     fe_search = metadata["fe"][myLCMSobj.polarity]
@@ -353,16 +352,21 @@ def run_lipid_ms2(out_path, metadata, scan_translator=None):
     -------
     None, runs ms2 spectral search and exports final results
     """
+    click.echo("in run_lipid_ms2....")
     # Read in the intermediate results
     out_path_hdf5 = str(out_path) + ".corems/" + out_path.stem + ".hdf5"
     # Catch known UserWarning from corems and ignore it
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
+        click.echo("instantiating parser...")
         parser = ReadCoreMSHDFMassSpectra(out_path_hdf5)
+        click.echo("getting lcms obj...")
         myLCMSobj = parser.get_lcms_obj(load_raw=False)
 
     # Process ms2 spectra, perform spectral search, and export final results
+    click.echo("calling process_ms2...")
     process_ms2(myLCMSobj, metadata, scan_translator=scan_translator)
+    click.echo("calling export_results...")
     export_results(myLCMSobj, str(out_path), metadata["molecular_metadata"], final=True)
 
 def run_lcms_lipidomics_workflow(
@@ -428,12 +432,9 @@ def run_lcms_lipidomics_workflow(
     cores = lipid_workflow_params.cores
     params_toml = lipid_workflow_params.corems_toml_path
     scan_translator = lipid_workflow_params.scan_translator_path
-    use_threads = False
-    # Limit cores to 1 if the file type is .raw
-    if any(".raw" in file.name for file in files_list):
-        use_threads = True
 
     click.echo("Starting lipidomics workflow for " + str(len(files_list)) + " file(s), using " +  str(cores) + " core(s)")
+    
     # Run signal processing, get associated ms1, add associated ms2, do ms1 molecular search, and export intermediate results
     if cores == 1 or len(files_list) == 1:
         mz_dicts = []
@@ -447,34 +448,20 @@ def run_lcms_lipidomics_workflow(
             mz_dicts.append(mz_dict)
     elif cores > 1:
         click.echo("Entering multiple cores if condition....")
-        if use_threads:
-            click.echo("Using threads...")
-            with ThreadPoolExecutor(max_workers=cores) as executor:
-                click.echo("In with executor...")
-                args = [
-                    (
-                        str(file_in),
-                        str(file_out),
-                        params_toml,
-                        scan_translator,
-                    )
-                    for file_in, file_out in zip(files_list, out_paths_list)
-                ]
-                mz_dicts = list(executor.map(lambda arg: run_lipid_sp_ms1(*arg), args))
-                click.echo("Out with executor...")
-        else:
-            with Pool(cores) as pool:
-                click.echo("In with processing pool...")
-                args = [
-                    (
-                        str(file_in),
-                        str(file_out),
-                        params_toml,
-                        scan_translator,
-                    )
-                    for file_in, file_out in zip(files_list, out_paths_list)
-                ]
-                mz_dicts = pool.starmap(run_lipid_sp_ms1, args)
+        click.echo("Using ThreadPoolExecutor...")
+        with ThreadPoolExecutor(max_workers=cores) as executor:
+            click.echo("In with executor...")
+            args = [
+                (
+                    str(file_in),
+                    str(file_out),
+                    params_toml,
+                    scan_translator,
+                )
+                for file_in, file_out in zip(files_list, out_paths_list)
+            ]
+            mz_dicts = list(executor.map(lambda arg: run_lipid_sp_ms1(*arg), args))
+            click.echo("Out with executor...")
 
     # Prepare metadata for searching
     click.echo("Preparing metadata for ms2 spectral search")
@@ -489,8 +476,8 @@ def run_lcms_lipidomics_workflow(
                 file_out, metadata, scan_translator=scan_translator
             )
     elif cores > 1:
-        with Pool(cores) as pool:
+        with ThreadPoolExecutor(max_workers=cores) as executor:
             args = [(file_out, metadata, scan_translator) for file_out in out_paths_list]
-            pool.starmap(run_lipid_ms2, args)
+            list(executor.map(lambda arg: run_lipid_ms2(*arg), args))
 
     click.echo("Lipidomics workflow complete")
