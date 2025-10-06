@@ -30,10 +30,11 @@ def instantiate_lcms_obj(file_in, spectra="ms1"):
     myLCMSobj : corems LCMS object
         LCMS object with unprocessed ms1 spectra included as an attribute
     """
+    click.echo("within instantiate_lcms_obj")
     # Instantiate parser based on binary file type
     if ".raw" in str(file_in):
         parser = ImportMassSpectraThermoMSFileReader(file_in)
-
+        click.echo("returning parser from corems")
     if ".mzML" in str(file_in):
         parser = MZMLSpectraParser(file_in)
 
