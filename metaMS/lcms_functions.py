@@ -160,6 +160,10 @@ def add_mass_features(myLCMSobj, scan_translator):
     click.echo("...finding mass features")
     myLCMSobj.find_mass_features()
 
+    click.echo("...integrating mass features")
+    myLCMSobj.integrate_mass_features(drop_if_fail=True)
+    myLCMSobj.add_peak_metrics()
+
     ms1_scan_df = myLCMSobj.scan_df[myLCMSobj.scan_df.ms_level == 1]
     
     click.echo("...adding ms1 spectra")
@@ -167,18 +171,22 @@ def add_mass_features(myLCMSobj, scan_translator):
         myLCMSobj.add_associated_ms1(
             auto_process=True, use_parser=False, spectrum_mode="profile"
         )
+    # If the ms1 data are centroided and the parser if MZMLSpectraParser, set spectrum_mode to centroided but use_parser to False (mzml doesn't have resolving power info)
+    elif isinstance(myLCMSobj.spectra_parser, MZMLSpectraParser) and all(
+        x == "centroid" for x in ms1_scan_df.ms_format.to_list()
+    ):
+        myLCMSobj.add_associated_ms1(
+         auto_process=True, use_parser=False, spectrum_mode="centroid"
+        )
     elif all(x == "centroid" for x in ms1_scan_df.ms_format.to_list()):
         myLCMSobj.add_associated_ms1(
             auto_process=True, use_parser=True, spectrum_mode="centroid"
         )
 
-    click.echo("...integrating mass features")
-    myLCMSobj.integrate_mass_features(drop_if_fail=True)
     # Count and report how many mass features are left after integration
     print("Number of mass features after integration: ", len(myLCMSobj.mass_features))
     myLCMSobj.find_c13_mass_features()
     myLCMSobj.deconvolute_ms1_mass_features()
-    myLCMSobj.add_peak_metrics()
 
     # Add associated ms2 spectra to mass features
     scan_dictionary = load_scan_translator(scan_translator=scan_translator)
