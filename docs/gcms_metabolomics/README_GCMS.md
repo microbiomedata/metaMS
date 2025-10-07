@@ -20,7 +20,7 @@
 
 ## Current Version
 
-### `3.2.3`
+### `3.3.0`
 
 ### Data input formats
 

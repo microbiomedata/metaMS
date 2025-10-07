@@ -438,8 +438,6 @@ def run_lcms_lipidomics_workflow(
             )
             mz_dicts.append(mz_dict)
     elif cores > 1:
-        click.echo("Entering multiple cores if condition....")
-        click.echo("Using ThreadPoolExecutor...")
         with Pool(cores) as pool:
             args = [
                 (
@@ -451,7 +449,6 @@ def run_lcms_lipidomics_workflow(
                 for file_in, file_out in zip(files_list, out_paths_list)
             ]
             mz_dicts = pool.starmap(run_lipid_sp_ms1, args)
-            click.echo("Out with executor...")
 
     # Prepare metadata for searching
     click.echo("Preparing metadata for ms2 spectral search")
