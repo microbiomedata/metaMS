@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import toml
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor  # Changed from multiprocessing import Pool
+from multiprocessing import Pool
 import click
 import warnings
 import pandas as pd
@@ -432,7 +432,9 @@ def run_lcms_lipidomics_workflow(
     cores = lipid_workflow_params.cores
     params_toml = lipid_workflow_params.corems_toml_path
     scan_translator = lipid_workflow_params.scan_translator_path
-
+    # check if any files are raw - they will not be able to run on multiprocesses - they need threading. 
+    cores = 1 if any(".raw" in file.name for file in files_list) else cores
+    
     click.echo("Starting lipidomics workflow for " + str(len(files_list)) + " file(s), using " +  str(cores) + " core(s)")
     
     # Run signal processing, get associated ms1, add associated ms2, do ms1 molecular search, and export intermediate results
@@ -449,8 +451,7 @@ def run_lcms_lipidomics_workflow(
     elif cores > 1:
         click.echo("Entering multiple cores if condition....")
         click.echo("Using ThreadPoolExecutor...")
-        with ThreadPoolExecutor(max_workers=cores) as executor:
-            click.echo("In with executor...")
+        with Pool(cores) as pool:
             args = [
                 (
                     str(file_in),
@@ -460,7 +461,7 @@ def run_lcms_lipidomics_workflow(
                 )
                 for file_in, file_out in zip(files_list, out_paths_list)
             ]
-            mz_dicts = list(executor.map(lambda arg: run_lipid_sp_ms1(*arg), args))
+            mz_dicts = pool.starmap(run_lipid_sp_ms1, args)
             click.echo("Out with executor...")
 
     # Prepare metadata for searching
@@ -476,8 +477,8 @@ def run_lcms_lipidomics_workflow(
                 file_out, metadata, scan_translator=scan_translator
             )
     elif cores > 1:
-        with ThreadPoolExecutor(max_workers=cores) as executor:
+        with Pool(cores) as pool:
             args = [(file_out, metadata, scan_translator) for file_out in out_paths_list]
-            list(executor.map(lambda arg: run_lipid_ms2(*arg), args))
+            pool.starmap(run_lipid_ms2, args)
 
     click.echo("Lipidomics workflow complete")

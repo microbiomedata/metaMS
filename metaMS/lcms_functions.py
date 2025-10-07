@@ -203,7 +203,6 @@ def molecular_formula_search(myLCMSobj):
     """
     while True:
         try:
-
             # Perform a molecular search on all of the mass features
             mol_form_search = SearchMolecularFormulasLC(myLCMSobj)
             mol_form_search.run_mass_feature_search()
