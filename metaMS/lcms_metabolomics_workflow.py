@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import toml
 from pathlib import Path
-from multiprocessing import Pool
+from concurrent.futures import ThreadPoolExecutor  # Changed from multiprocessing import Pool
 import click
 import warnings
 import pandas as pd
@@ -499,7 +499,6 @@ def run_lcms_metabolomics_workflow(
         click.echo(f"Processing {len(files_list_positive)} positive polarity samples")
         
         # Prepare metadata for searching
-        # Check the scan translator, if there are only high resolution scans, then do not make low resolution metadata
         click.echo("Preparing metadata for ms2 spectral search for positive samples")
         prepare_metadata(lcmetab_workflow_params.msp_file_path, generate_lr_metadata=generate_lr_metadata, polarity="positive")
         click.echo("Metadata preparation complete for positive samples")
@@ -510,14 +509,13 @@ def run_lcms_metabolomics_workflow(
             for file_in, output_path in zip(files_list_positive, out_paths_list_positive):
                 args = (file_in, output_path, params_toml, scan_translator, None)
                 process_complete_workflow(args)
-
         elif cores > 1:
-            with Pool(cores) as pool:
+            with ThreadPoolExecutor(max_workers=cores) as executor:
                 args = [
-                    (str(file_in), str(file_out), params_toml, scan_translator, None)
-                    for file_in, file_out in zip(files_list_positive, out_paths_list_positive)
+                    (str(file_in), str(output_path), params_toml, scan_translator, None)
+                    for file_in, output_path in zip(files_list_positive, out_paths_list_positive)
                 ]
-                pool.map(process_complete_workflow, args)
+                list(executor.map(lambda arg: process_complete_workflow(arg), args))
         gc.collect()
     
     # RUN THE NEGATIVE SAMPLES ================
@@ -530,28 +528,22 @@ def run_lcms_metabolomics_workflow(
     if len(files_list_negative) > 0:
         click.echo(f"Processing {len(files_list_negative)} negative polarity samples")
         click.echo("Preparing metadata for ms2 spectral search for negative samples")
-        metadata = prepare_metadata(lcmetab_workflow_params.msp_file_path, generate_lr_metadata=generate_lr_metadata, polarity="negative")
+        prepare_metadata(lcmetab_workflow_params.msp_file_path, generate_lr_metadata=generate_lr_metadata, polarity="negative")
         click.echo("Metadata preparation complete for negative samples")
 
         # Run signal processing, get associated ms1, add associated ms2, do ms1 molecular search, and export intermediate results
-        # for positive polarity samples
+        # for negative polarity samples
         if cores == 1 or len(files_list_negative) == 1:
             for file_in, output_path in zip(files_list_negative, out_paths_list_negative):
-                args = (file_in, output_path, params_toml, scan_translator, metadata)
+                args = (file_in, output_path, params_toml, scan_translator, None)
                 process_complete_workflow(args)
-
         elif cores > 1:
-            with Pool(cores) as pool:
+            with ThreadPoolExecutor(max_workers=cores) as executor:
                 args = [
-                    (str(file_in), str(file_out), params_toml, scan_translator, metadata)
-                    for file_in, file_out in zip(files_list_negative, out_paths_list_negative)
+                    (str(file_in), str(output_path), params_toml, scan_translator, None)
+                    for file_in, output_path in zip(files_list_negative, out_paths_list_negative)
                 ]
-                pool.map(process_complete_workflow, args)
-        del metadata
+                list(executor.map(lambda arg: process_complete_workflow(arg), args))
         gc.collect()
-        
-        # Prepare metadata for searching
-        # Check the scan translator, if there are only high resolution scans, then do not make low resolution metadata
-
 
     click.echo("LC metabolomics workflow complete")
