@@ -485,7 +485,10 @@ def run_lcms_metabolomics_workflow(
     else:
         click.echo("Low resolution scans found, generating low resolution metadata")
         generate_lr_metadata = True
-
+    
+    # check if any files are raw - they will not be able to run on multiprocesses - they need threading. 
+    cores = 1 if any(".raw" in file.name for file in files_list) else cores
+    
     click.echo("Starting LC metabolomics workflow for " + str(len(files_list)) + " file(s), using " +  str(cores) + " core(s)")
 
     # RUN THE POSITIVE SAMPLES ================
@@ -534,24 +537,20 @@ def run_lcms_metabolomics_workflow(
         click.echo("Metadata preparation complete for negative samples")
 
         # Run signal processing, get associated ms1, add associated ms2, do ms1 molecular search, and export intermediate results
-        # for positive polarity samples
+         # for negative polarity samples
         if cores == 1 or len(files_list_negative) == 1:
             for file_in, output_path in zip(files_list_negative, out_paths_list_negative):
-                args = (file_in, output_path, params_toml, scan_translator, metadata)
+                args = (file_in, output_path, params_toml, scan_translator, None)
                 process_complete_workflow(args)
 
         elif cores > 1:
             with Pool(cores) as pool:
                 args = [
-                    (str(file_in), str(file_out), params_toml, scan_translator, metadata)
+                    (str(file_in), str(file_out), params_toml, scan_translator, None)
                     for file_in, file_out in zip(files_list_negative, out_paths_list_negative)
                 ]
                 pool.map(process_complete_workflow, args)
-        del metadata
         gc.collect()
-        
-        # Prepare metadata for searching
-        # Check the scan translator, if there are only high resolution scans, then do not make low resolution metadata
 
 
     click.echo("LC metabolomics workflow complete")

@@ -61,6 +61,6 @@ task runMetaMSLCMSMetabolomics {
     }
 
     runtime {
-        docker: "~{if defined(docker_image) then docker_image else 'microbiomedata/metams:3.2.2'}"
+        docker: "~{if defined(docker_image) then docker_image else 'microbiomedata/metams:3.3.0'}"
     }
 }

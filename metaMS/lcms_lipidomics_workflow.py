@@ -10,6 +10,7 @@ import gc
 from corems.mass_spectra.input.corems_hdf5 import ReadCoreMSHDFMassSpectra
 from corems.mass_spectra.output.export import LipidomicsExport
 
+
 from metaMS.lipid_metadata_prepper import get_lipid_library, _to_flashentropy
 from metaMS.lcms_functions import (
     instantiate_lcms_obj,
@@ -139,13 +140,12 @@ def run_lipid_sp_ms1(file_in, out_path, params_toml, scan_translator):
     mz_dict : dict
         Dict with keys "positive" and "negative" and values of lists of precursor mzs
     """  
-
-    myLCMSobj = instantiate_lcms_obj(file_in)           
+    myLCMSobj = instantiate_lcms_obj(file_in)   
     set_params_on_lcms_obj(myLCMSobj, params_toml)
     check_scan_translator(myLCMSobj, scan_translator)
     add_mass_features(myLCMSobj, scan_translator)
     myLCMSobj.remove_unprocessed_data()
-    #Finally, perform molecular formula search on all ms1 spectra associated with mass features
+    # Finally, perform molecular formula search on all ms1 spectra associated with mass features
     molecular_formula_search(myLCMSobj)
     export_results(myLCMSobj, out_path=out_path, final=False)
     precursor_mz_list = list(
@@ -158,7 +158,6 @@ def run_lipid_sp_ms1(file_in, out_path, params_toml, scan_translator):
         )
     )
     mz_dict = {myLCMSobj.polarity: precursor_mz_list.copy()}
-    myLCMSobj.spectra_parser = None 
     del myLCMSobj
     gc.collect()
 
@@ -422,8 +421,11 @@ def run_lcms_lipidomics_workflow(
     cores = lipid_workflow_params.cores
     params_toml = lipid_workflow_params.corems_toml_path
     scan_translator = lipid_workflow_params.scan_translator_path
-
+    # check if any files are raw - they will not be able to run on multiprocesses - they need threading. 
+    cores = 1 if any(".raw" in file.name for file in files_list) else cores
+    
     click.echo("Starting lipidomics workflow for " + str(len(files_list)) + " file(s), using " +  str(cores) + " core(s)")
+    
     # Run signal processing, get associated ms1, add associated ms2, do ms1 molecular search, and export intermediate results
     if cores == 1 or len(files_list) == 1:
         mz_dicts = []
