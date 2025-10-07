@@ -1,9 +1,6 @@
-from dataclasses import dataclass
 import click
 import toml
 from pathlib import Path
-import warnings
-import pandas as pd
 import time
 import sqlalchemy
 import sqlite3
@@ -30,11 +27,9 @@ def instantiate_lcms_obj(file_in, spectra="ms1"):
     myLCMSobj : corems LCMS object
         LCMS object with unprocessed ms1 spectra included as an attribute
     """
-    click.echo("within instantiate_lcms_obj")
     # Instantiate parser based on binary file type
     if ".raw" in str(file_in):
         parser = ImportMassSpectraThermoMSFileReader(file_in)
-        click.echo("returning parser from corems")
     if ".mzML" in str(file_in):
         parser = MZMLSpectraParser(file_in)
 
@@ -184,7 +179,7 @@ def add_mass_features(myLCMSobj, scan_translator):
         )
 
     # Count and report how many mass features are left after integration
-    print("Number of mass features after integration: ", len(myLCMSobj.mass_features))
+    click.echo(f"Number of mass features after integration: {len(myLCMSobj.mass_features)}")
     myLCMSobj.find_c13_mass_features()
     myLCMSobj.deconvolute_ms1_mass_features()
 
@@ -216,7 +211,7 @@ def molecular_formula_search(myLCMSobj):
             mol_form_search.run_mass_feature_search()
             break
         except (sqlalchemy.exc.OperationalError, sqlite3.OperationalError) as e:
-            print(f"Database is locked, retrying in 1 second.")
+            click.echo("Database is locked, retrying in 1 second.")
             time.sleep(2)
-            
-    print("Finished molecular search")
+
+    click.echo("Finished molecular search")

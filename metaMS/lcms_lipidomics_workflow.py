@@ -140,15 +140,10 @@ def run_lipid_sp_ms1(file_in, out_path, params_toml, scan_translator):
     mz_dict : dict
         Dict with keys "positive" and "negative" and values of lists of precursor mzs
     """  
-    click.echo("in run_lipid_sp_ms1....")
     myLCMSobj = instantiate_lcms_obj(file_in)   
-    click.echo("calling set_params_on_lcms_obj")        
     set_params_on_lcms_obj(myLCMSobj, params_toml)
-    click.echo("calling check_scan_translator")
     check_scan_translator(myLCMSobj, scan_translator)
-    click.echo("calling add_mass_features")
     add_mass_features(myLCMSobj, scan_translator)
-    click.echo("calling remove_unprocessed_data")
     myLCMSobj.remove_unprocessed_data()
     # Finally, perform molecular formula search on all ms1 spectra associated with mass features
     molecular_formula_search(myLCMSobj)
@@ -273,7 +268,6 @@ def process_ms2(myLCMSobj, metadata, scan_translator):
     -------
     None, processes the LCMS object
     """
-    click.echo("in process_ms2....")
     # Perform molecular search on ms2 spectra
     # Grab fe from metatdata associated with polarity (this is inherently high resolution as its from a in-silico high res library)
     fe_search = metadata["fe"][myLCMSobj.polarity]
@@ -352,21 +346,16 @@ def run_lipid_ms2(out_path, metadata, scan_translator=None):
     -------
     None, runs ms2 spectral search and exports final results
     """
-    click.echo("in run_lipid_ms2....")
     # Read in the intermediate results
     out_path_hdf5 = str(out_path) + ".corems/" + out_path.stem + ".hdf5"
     # Catch known UserWarning from corems and ignore it
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        click.echo("instantiating parser...")
         parser = ReadCoreMSHDFMassSpectra(out_path_hdf5)
-        click.echo("getting lcms obj...")
         myLCMSobj = parser.get_lcms_obj(load_raw=False)
 
     # Process ms2 spectra, perform spectral search, and export final results
-    click.echo("calling process_ms2...")
     process_ms2(myLCMSobj, metadata, scan_translator=scan_translator)
-    click.echo("calling export_results...")
     export_results(myLCMSobj, str(out_path), metadata["molecular_metadata"], final=True)
 
 def run_lcms_lipidomics_workflow(
