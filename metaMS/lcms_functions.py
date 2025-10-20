@@ -177,7 +177,8 @@ def add_mass_features(myLCMSobj, scan_translator):
         myLCMSobj.add_associated_ms1(
             auto_process=True, use_parser=True, spectrum_mode="centroid"
         )
-
+    # Recluster after adding associated ms1 spectra - important for profile mode data
+    myLCMSobj.cluster_mass_features()
     # Count and report how many mass features are left after integration
     click.echo(f"Number of mass features after integration: {len(myLCMSobj.mass_features)}")
     myLCMSobj.find_c13_mass_features()
