@@ -166,6 +166,8 @@ def add_mass_features(myLCMSobj, scan_translator):
         myLCMSobj.add_associated_ms1(
             auto_process=True, use_parser=False, spectrum_mode="profile"
         )
+        # Recluster after adding associated ms1 spectra - important for profile mode data
+        myLCMSobj.cluster_mass_features()
     # If the ms1 data are centroided and the parser if MZMLSpectraParser, set spectrum_mode to centroided but use_parser to False (mzml doesn't have resolving power info)
     elif isinstance(myLCMSobj.spectra_parser, MZMLSpectraParser) and all(
         x == "centroid" for x in ms1_scan_df.ms_format.to_list()
@@ -177,8 +179,7 @@ def add_mass_features(myLCMSobj, scan_translator):
         myLCMSobj.add_associated_ms1(
             auto_process=True, use_parser=True, spectrum_mode="centroid"
         )
-    # Recluster after adding associated ms1 spectra - important for profile mode data
-    myLCMSobj.cluster_mass_features()
+    
     # Count and report how many mass features are left after integration
     click.echo(f"Number of mass features after integration: {len(myLCMSobj.mass_features)}")
     myLCMSobj.find_c13_mass_features()
