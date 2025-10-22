@@ -6,7 +6,7 @@
          site the file is incorporated into. You can learn more about the `github_url` field at:
          https://sphinx-rtd-theme.readthedocs.io/en/stable/configuring.html#confval-github_url
 
-LC/MS Metabolomics Workflow (v1.1.1)
+LC/MS Metabolomics Workflow (v1.1.2)
 ============================
 
 .. figure:: lcms_metabolite_workflow.svg
@@ -112,7 +112,7 @@ Outputs
 Version History
 ---------------
 
-- v1.1.1: Current release
+- v1.1.2: Current release
 - v1.0.0: Initial release of the LC/MS metabolomics workflow June 24, 2025
 
 Point of contact
