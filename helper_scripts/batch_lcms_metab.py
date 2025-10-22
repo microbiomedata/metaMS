@@ -93,11 +93,11 @@ def batch_lcms_metabolomics():
     overall_start = time.time()
     
     # Parameters
-    input_directory = "/Users/heal742/LOCAL/staging_test"
-    output_directory = "/Users/heal742/LOCAL/staging_processed/processed_EMP500_b2_test"
-    corems_toml_path = "/Users/heal742/LOCAL/05_NMDC/02_MetaMS/data_processing/_emp_500_lcms_metabolomics/metadata/emp_lcms_metab_corems_params.toml"
+    input_directory = "/Users/heal742/LOCAL/staging"
+    output_directory = "/Users/heal742/LOCAL/staging_processed/processed_ecofab"
+    corems_toml_path = "/Users/heal742/LOCAL/05_NMDC/02_MetaMS/data_processing/_bioscales_lcms_metabolomics/metadata/bioscales_hilic_corems.toml"
     msp_file_path = "/Users/heal742/LOCAL/05_NMDC/02_MetaMS/metams/test_data/test_lcms_metab_data/20250407_database.msp"
-    scan_translator_path = "/Users/heal742/LOCAL/05_NMDC/02_MetaMS/data_processing/_emp_500_lcms_metabolomics/metadata/emp500_scan_translator.toml"
+    scan_translator_path = "/Users/heal742/LOCAL/05_NMDC/02_MetaMS/data_processing/_bioscales_lcms_metabolomics/metadata/bioscales_scan_translator.toml"
     cores = 5
     
     print("=" * 80)
