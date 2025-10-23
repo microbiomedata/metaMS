@@ -129,7 +129,7 @@ get-lipid-test-data:
 	@echo "Downloading test data for lipidomics"
 	@mkdir -p test_data
 	@mkdir -p test_data/test_lipid_data
-	@curl --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 300 -L -o test_data/test_lipid_data.zip https://nmdcdemo.emsl.pnnl.gov/lipidomics/test_data/metams_lipid_test_data/test_lipid_data.zip
+	@curl --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 600 -L -o test_data/test_lipid_data.zip https://nmdcdemo.emsl.pnnl.gov/lipidomics/test_data/metams_lipid_test_data/test_lipid_data.zip
 	@unzip test_data/test_lipid_data.zip -d test_data/test_lipid_data/
 	@rm test_data/test_lipid_data.zip
 	@echo "Test data downloaded and unzipped"
@@ -138,9 +138,9 @@ get-lcms-metab-test-data:
 	@echo "Downloading test data for LC-MS metabolomics"
 	@mkdir -p test_data
 	@mkdir -p test_data/test_lcms_metab_data
-	@curl --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 300 -L -o test_data/test_lcms_metab_data/lcms_test_data1.mzML https://nmdcdemo.emsl.pnnl.gov/metabolomics/test_data/metams_lcms_metab_test_data/lcms_test_data1.mzML
-	@curl --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 300 -L -o test_data/test_lcms_metab_data/lcms_test_data2.mzML https://nmdcdemo.emsl.pnnl.gov/metabolomics/test_data/metams_lcms_metab_test_data/lcms_test_data2.mzML
-	@curl --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 300 -L -o test_data/test_lcms_metab_data/lcms_test_data3.mzML https://nmdcdemo.emsl.pnnl.gov/metabolomics/test_data/metams_lcms_metab_test_data/lcms_test_data3.mzML
+	@curl --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 600 -L -o test_data/test_lcms_metab_data/lcms_test_data1.mzML https://nmdcdemo.emsl.pnnl.gov/metabolomics/test_data/metams_lcms_metab_test_data/lcms_test_data1.mzML
+	@curl --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 600 -L -o test_data/test_lcms_metab_data/lcms_test_data2.mzML https://nmdcdemo.emsl.pnnl.gov/metabolomics/test_data/metams_lcms_metab_test_data/lcms_test_data2.mzML
+	@curl --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 600 -L -o test_data/test_lcms_metab_data/lcms_test_data3.mzML https://nmdcdemo.emsl.pnnl.gov/metabolomics/test_data/metams_lcms_metab_test_data/lcms_test_data3.mzML
 	@echo "LCMS test data downloaded"
 
 wdl-run-lipid :

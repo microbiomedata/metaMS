@@ -96,7 +96,7 @@ Outputs
 Version History
 ---------------
 
-- Current version is 3.3.2
+- Current version is 3.3.3
 
 Point of contact
 ----------------

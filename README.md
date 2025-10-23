@@ -10,7 +10,7 @@
 
 ## Current Version
 
-### `3.3.2`
+### `3.3.3`
 
 ## Available Workflows
 
