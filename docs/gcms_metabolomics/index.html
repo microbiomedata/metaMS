@@ -1,0 +1,125 @@
+<dl>
+<dt>github_url</dt>
+<dd>
+<p><a
+href="https://github.com/microbiomedata/metaMS/blob/master/docs/index.rst">https://github.com/microbiomedata/metaMS/blob/master/docs/index.rst</a></p>
+</dd>
+</dl>
+<h1 id="metabolomics-workflow">Metabolomics Workflow</h1>
+<p><img src="metams_workflow2024.svg" alt="image" /></p>
+<p>Workflow Overview -------</p>
+<p>The gas chromatography-mass spectrometry (GC-MS) based metabolomics
+workflow (metaMS) has been developed by leveraging PNNL's CoreMS
+software framework. The current software design allows for the
+orchestration of the metabolite characterization pipeline, i.e., signal
+noise reduction, m/z based Chromatogram Peak Deconvolution, abundance
+threshold calculation, peak picking, spectral similarity calculation and
+molecular search, similarity score calculation, and confidence
+filtering, all in a single step.</p>
+<h2 id="workflow-availability">Workflow Availability</h2>
+<p>The workflow is available in GitHub: <a
+href="https://github.com/microbiomedata/metaMS">https://github.com/microbiomedata/metaMS</a></p>
+<p>The container is available at Docker Hub (microbiomedata/metaMS): <a
+href="https://hub.docker.com/r/microbiomedata/metams">https://hub.docker.com/r/microbiomedata/metams</a></p>
+<p>The python package is available on PyPi: <a
+href="https://pypi.org/project/metaMS/">https://pypi.org/project/metaMS/</a></p>
+<p>The databases are available by request. Please contact NMDC (<a
+href="mailto:support@microbiomedata.org">support@microbiomedata.org</a>)
+for access.</p>
+<h2 id="requirements-for-execution">Requirements for Execution</h2>
+<ul>
+<li><p>Docker Container Runtime</p>
+<p>or</p></li>
+<li><p>Python Environment &gt;= 3.10</p></li>
+<li><p>Python Dependencies are listed on requirements.txt</p></li>
+</ul>
+<p>Execution Details ~~~~~~~~~~~~~~~~</p>
+<p>Please refer to:</p>
+<p><a
+href="https://github.com/microbiomedata/metaMS#metams-installation">https://github.com/microbiomedata/metaMS#metams-installation</a></p>
+<h2 id="hardware-requirements">Hardware Requirements</h2>
+<ul>
+<li>To run this application, you need a processor with at least 2.0 GHz
+speed, 8GB of RAM, 10GB of free hard disk space</li>
+</ul>
+<h2 id="workflow-dependencies">Workflow Dependencies</h2>
+<h3 id="software">Software</h3>
+<ul>
+<li>CoreMS (2-clause BSD)</li>
+<li>Click (BSD 3-Clause "New" or "Revised" License)</li>
+</ul>
+<h3 id="database">Database</h3>
+<ul>
+<li>Bundled with CoreMS as local MSP libraries (GCMS compound library
+and FAMES calibration library)</li>
+<li><dl>
+<dt>Optional custom libraries can be provided with environment
+variables:</dt>
+<dd>
+<ul>
+<li><code>GCMS_LIBRARY_PATH</code> for GCMS compound MSP library</li>
+<li><code>FAMES_LIBRARY_PATH</code> for FAMES calibration MSP
+library</li>
+</ul>
+</dd>
+</dl></li>
+</ul>
+<h2 id="test-datasets">Test datasets</h2>
+<p><a
+href="https://github.com/microbiomedata/metaMS/tree/master/data/raw_data/GCMS_FAMES_01_GCMS-01_20191023.cdf">https://github.com/microbiomedata/metaMS/tree/master/data/raw_data/GCMS_FAMES_01_GCMS-01_20191023.cdf</a></p>
+<h3 id="inputs">Inputs</h3>
+<ul>
+<li><dl>
+<dt>Supported format for low resolution GC-MS data:</dt>
+<dd>
+<ul>
+<li>ANDI NetCDF for GC-MS (.cdf)</li>
+</ul>
+</dd>
+</dl></li>
+<li><dl>
+<dt>Fatty Acid Methyl Esters Calibration File:</dt>
+<dd>
+<ul>
+<li>ANDI NetCDF for GC-MS (.cdf) - C8 to C30</li>
+</ul>
+</dd>
+</dl></li>
+<li><dl>
+<dt>Parameters:</dt>
+<dd>
+<ul>
+<li>CoreMS Parameter File (.toml)</li>
+<li>MetaMS Parameter File (.toml)</li>
+</ul>
+</dd>
+</dl></li>
+</ul>
+<h3 id="outputs">Outputs</h3>
+<ul>
+<li><dl>
+<dt>Metabolites data-table</dt>
+<dd>
+<ul>
+<li>CSV, TAB-SEPARATED TXT</li>
+<li>HDF: CoreMS HDF5 format</li>
+<li>XLSX : Microsoft Excel</li>
+</ul>
+</dd>
+</dl></li>
+<li><dl>
+<dt>Workflow Metadata:</dt>
+<dd>
+<ul>
+<li>JSON</li>
+</ul>
+</dd>
+</dl></li>
+</ul>
+<h2 id="version-history">Version History</h2>
+<ul>
+<li>Current version is 3.3.1</li>
+</ul>
+<h2 id="point-of-contact">Point of contact</h2>
+<p>Package maintainer: Yuri E. Corilo &lt;<a
+href="mailto:corilo@pnnl.gov">corilo@pnnl.gov</a>&gt;</p>

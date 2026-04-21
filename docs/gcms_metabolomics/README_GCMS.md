@@ -1,182 +1,121 @@
-# Table of Contents  
-- Introduction
-  - [MetaMS's GC/MS Metabolomics Workflow](#metamss-gcms-metabolomics-workflow)  
-    - [Version](#current-version)  
-    - [Data Input](#data-input-formats)  
-    - [Data Output](#data-output-formats)  
-    - [Data Structure](#data-structure-types)  
-    - [Features](#available-features)  
-    - [Code Documentation](https://emsl-computing.github.io/MetaMS/)  
+github_url
 
-- Installation
-  - [PyPi](#metams-installation)  
+:   <https://github.com/microbiomedata/metaMS/blob/master/docs/index.rst>
 
-- Execution:  
-  - [CLI](#execution)  
-  - [MiniWDL](#miniwdl)  
-  - [Docker Container](#metams-docker-container)  
+# Metabolomics Workflow
 
-# MetaMS's GC/MS Metabolomics Workflow
+![image](metams_workflow2024.svg)
 
-## Current Version
+Workflow Overview \-\-\-\-\-\--
 
-### `3.3.1`
+The gas chromatography-mass spectrometry (GC-MS) based metabolomics
+workflow (metaMS) has been developed by leveraging PNNL\'s CoreMS
+software framework. The current software design allows for the
+orchestration of the metabolite characterization pipeline, i.e., signal
+noise reduction, m/z based Chromatogram Peak Deconvolution, abundance
+threshold calculation, peak picking, spectral similarity calculation and
+molecular search, similarity score calculation, and confidence
+filtering, all in a single step.
 
-### Data input formats
+## Workflow Availability
 
-- ANDI NetCDF for GC-MS (.cdf)
-- CoreMS self-containing Hierarchical Data Format (.hdf5)
-- ChemStation Agilent (Ongoing)
+The workflow is available in GitHub:
+<https://github.com/microbiomedata/metaMS>
 
-### Data output formats
+The container is available at Docker Hub (microbiomedata/metaMS):
+<https://hub.docker.com/r/microbiomedata/metams>
 
-- Pandas data frame (can be saved using pickle, h5, etc)
-- Text Files (.csv, tab separated .txt, etc)
-- Microsoft Excel (xlsx)
-- JSON for workflow metadata
-- Self-containing Hierarchical Data Format (.hdf5) including raw data and ime-series data-point for processed data-sets with all associated metadata stored as json attributes
+The python package is available on PyPi:
+<https://pypi.org/project/metaMS/>
 
-### Data structure types
+The databases are available by request. Please contact NMDC
+(<support@microbiomedata.org>) for access.
 
-- GC-MS
+## Requirements for Execution
 
-## Available features
+-   Docker Container Runtime
 
-### Signal Processing
+    or
 
-- Baseline detection, subtraction, smoothing 
-- m/z based Chromatogram Peak Deconvolution,
-- Manual and automatic noise threshold calculation
-- First and second derivatives peak picking methods
-- Peak Area Calculation
+-   Python Environment \>= 3.10
 
+-   Python Dependencies are listed on requirements.txt
 
-### Calibration
+Execution Details \~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~
 
-- Retention Index Linear XXX method 
+Please refer to:
 
-### Compound Identification
+<https://github.com/microbiomedata/metaMS#metams-installation>
 
-- Automatic local (SQLite) or external (MongoDB or PostgreSQL) database check, generation, and search
-- Automatic molecular match algorithm with all spectral similarity methods 
+## Hardware Requirements
 
-## MetaMS Installation
+-   To run this application, you need a processor with at least 2.0 GHz
+    speed, 8GB of RAM, 10GB of free hard disk space
 
-Make sure you have python 3.9.13 installed before continue
+## Workflow Dependencies
 
-- PyPi:     
-```bash
-pip3 install metams
-```
+### Software
 
-- From source:
- ```bash
-pip3 install --editable .
-```
+-   CoreMS (2-clause BSD)
+-   Click (BSD 3-Clause \"New\" or \"Revised\" License)
 
-To be able to open chemstation files a installation of pythonnet is needed:
-- Windows: 
-    ```bash
-    pip3 install pythonnet
-    ```
+### Database
 
-- Mac and Linux:
-    ```bash
-    brew install mono
-    pip3 install pythonnet   
-    ```
+-   Bundled with CoreMS as local MSP libraries (GCMS compound library
+    and FAMES calibration library)
 
-## Execution
+-   
 
-```bash
-metaMS dump-gcms-toml-template gcms_metams.toml
-```
-```bash
-metaMS dump-gcms-corems-toml-template gcms_corems.toml
-```
+    Optional custom libraries can be provided with environment variables:
 
- Modify the gcms_metams.toml and gcms_corems.toml accordingly to your dataset and workflow parameters
-make sure to include gcms_corems.json path inside the gcms_metams.toml: "corems_toml_path": "path_to_corems.toml" 
+    :   -   `GCMS_LIBRARY_PATH` for GCMS compound MSP library
+        -   `FAMES_LIBRARY_PATH` for FAMES calibration MSP library
 
-```bash
-metaMS run-gcms-workflow path_to_gcms_metams.toml
-```
+## Test datasets
 
-## MiniWDL 
+<https://github.com/microbiomedata/metaMS/tree/master/data/raw_data/GCMS_FAMES_01_GCMS-01_20191023.cdf>
 
-Make sure you have python 3.9.13 installed before continue
+### Inputs
 
-MiniWDL uses the microbiome/metaMS image so there is not need to install metaMS
+-   
 
-- Change wdl/gcms_metams_input.json to specify the data location
+    Supported format for low resolution GC-MS data:
 
-- Change data/gcms_corems.toml to specify the workflow parameters
+    :   -   ANDI NetCDF for GC-MS (.cdf)
 
-Install miniWDL:
-```bash
-pip3 install miniwdl
-```
+-   
 
-Call:
-```bash
-miniwdl run wdl/metaMS_gcms.wdl -i wdl/metams_input_gcms.json --verbose --no-cache --copy-input-files
-```
-## MetaMS Docker Container
+    Fatty Acid Methyl Esters Calibration File:
 
-You will need docker and docker compose: 
+    :   -   ANDI NetCDF for GC-MS (.cdf) - C8 to C30
 
-If you don't have it installed, the easiest way is to [install docker for desktop](https://www.docker.com/products/docker-desktop/)
+-   
 
-- Pull from Docker Registry:
+    Parameters:
 
-    ```bash
-    docker pull microbiomedata/metams:latest
-    
-    ```
-- or Build the image from source:
+    :   -   CoreMS Parameter File (.toml)
+        -   MetaMS Parameter File (.toml)
 
-    ```bash
-    docker build -t microbiomedata/metams:latest .
-    ```
-- Run Workflow from Container:
+### Outputs
 
-    $(data_dir) = full path of directory containing the gcms data
-    $(config_dir) = full path of directory containing configuration and parameters metams.toml and corems.toml
-    ```bash
-    docker run -v $(data_dir):/metaB/data -v $(config_dir):/metaB/configuration microbiomedata/metams:latest metaMS run-gcms-workflow /metaB/configuration/metams.toml
-    ```
+-   
 
-- Getting the parameters templates:
-    
-    ```bash
-    docker run -v $(config_dir):/metaB/configuration microbiomedata/metams:latest metaMS dump-json-template /metaB/configuration/metams.toml
-    ```
-    
-    ```bash
-    docker run -v $(config_dir):/metaB/configuration microbiomedata/metams:latest metaMS dump-corems-json-template /metaB/configuration/corems.toml
-    ```
+    Metabolites data-table
 
-## Disclaimer
+    :   -   CSV, TAB-SEPARATED TXT
+        -   HDF: CoreMS HDF5 format
+        -   XLSX : Microsoft Excel
 
-This material was prepared as an account of work sponsored by an agency of the
-United States Government.  Neither the United States Government nor the United
-States Department of Energy, nor Battelle, nor any of their employees, nor any
-jurisdiction or organization that has cooperated in the development of these
-materials, makes any warranty, express or implied, or assumes any legal
-liability or responsibility for the accuracy, completeness, or usefulness or
-any information, apparatus, product, software, or process disclosed, or
-represents that its use would not infringe privately owned rights.
+-   
 
-Reference herein to any specific commercial product, process, or service by
-trade name, trademark, manufacturer, or otherwise does not necessarily
-constitute or imply its endorsement, recommendation, or favoring by the United
-States Government or any agency thereof, or Battelle Memorial Institute. The
-views and opinions of authors expressed herein do not necessarily state or
-reflect those of the United States Government or any agency thereof.
+    Workflow Metadata:
 
-                 PACIFIC NORTHWEST NATIONAL LABORATORY
-                              operated by
-                                BATTELLE
-                                for the
-                   UNITED STATES DEPARTMENT OF ENERGY
-                    under Contract DE-AC05-76RL01830
+    :   -   JSON
+
+## Version History
+
+-   Current version is 3.3.1
+
+## Point of contact
+
+Package maintainer: Yuri E. Corilo \<<corilo@pnnl.gov>\>
