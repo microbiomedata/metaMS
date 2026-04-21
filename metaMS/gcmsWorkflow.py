@@ -8,7 +8,7 @@ from corems.encapsulation.input import parameter_from_json
 from corems.mass_spectra.calc.GC_RI_Calibration import get_rt_ri_pairs
 from corems.mass_spectra.input.andiNetCDF import ReadAndiNetCDF
 from corems.molecular_id.search.compoundSearch import LowResMassSpectralMatch
-from corems.molecular_id.search.database_interfaces import MetabRefGCInterface
+from corems.molecular_id.search.database_interfaces import GCMSLibraryInterface
 
 
 @dataclass
@@ -53,7 +53,7 @@ class WorkflowParameters:
     output_filename: str = "data/..."
     output_type: str = "csv"
 
-    # Token
+    # Deprecated, retained for backward compatibility with existing configs
     metabref_token_path: str = "configuration/..."
 
 
@@ -95,7 +95,7 @@ def run_gcms_metabolomics_workflow_wdl(
     corems_toml_path : str
         CoreMS configuration.
     metabref_token_path : str
-        Token to authenticate MetabRef database access.
+        Deprecated and unused. Retained for backward compatibility.
     jobs : int
         Number of concurrent jobs.
     [unused] db_path : str
@@ -122,18 +122,13 @@ def run_gcms_metabolomics_workflow_wdl(
     dirloc = Path(workflow_params.output_directory)
     dirloc.mkdir(exist_ok=True)
 
-    # Determine output filepath
-    output_path = (
-        Path(workflow_params.output_directory) / workflow_params.output_filename
-    )
-
     # Load FAMEs calibration data
     gcms_cal_obj = get_gcms(
         workflow_params.calibration_file_path, workflow_params.corems_toml_path
     )
 
-    # Load FAMEs calibration reference
-    fames_ref_sql = MetabRefGCInterface().get_fames(format="sql")
+    # Load bundled/local FAMEs calibration reference library
+    fames_ref_sql = GCMSLibraryInterface().get_fames(format="sql")
 
     # Compute RT:RI pairs
     rt_ri_pairs = get_rt_ri_pairs(gcms_cal_obj, sql_obj=fames_ref_sql)
@@ -186,19 +181,13 @@ def run_gcms_metabolomics_workflow(workflow_params_file, jobs):
     dirloc = Path(workflow_params.output_directory)
     dirloc.mkdir(exist_ok=True)
 
-    # Determine output filepath
-    output_path = (
-        Path(workflow_params.output_directory) / workflow_params.output_filename
-    )
-
     # Load FAMEs calibration data
     gcms_cal_obj = get_gcms(
         workflow_params.calibration_file_path, workflow_params.corems_toml_path
     )
 
-    # Load FAMEs calibration reference
-    MetabRefGCInterface().set_token(workflow_params.metabref_token_path)
-    fames_ref_sql = MetabRefGCInterface().get_fames(format="sql")
+    # Load bundled/local FAMEs calibration reference library
+    fames_ref_sql = GCMSLibraryInterface().get_fames(format="sql")
 
     # Compute RT:RI pairs
     rt_ri_pairs = get_rt_ri_pairs(gcms_cal_obj, sql_obj=fames_ref_sql)
@@ -318,7 +307,8 @@ def run_workflow_worker_and_write(
     # if output_directory doesn't exist, create it
     Path(output_directory).mkdir(parents=True, exist_ok=True)
     output_path = Path(output_directory) / input_path.name
-    eval("gcms.to_" + output_type + "(output_path)")
+    export_func = getattr(gcms, f"to_{output_type}")
+    export_func(output_path)
 
 
 def workflow_worker(args):
@@ -347,8 +337,8 @@ def workflow_worker(args):
     # Calibrate retention indices
     gcms.calibrate_ri(ref_dict, cal_file_path)
 
-    # Load reference database
-    ref_db_sql = MetabRefGCInterface().get_library(format="sql")
+    # Load bundled/local GCMS reference library
+    ref_db_sql = GCMSLibraryInterface().get_library(format="sql")
 
     # Perform search
     lowResSearch = LowResMassSpectralMatch(gcms, sql_obj=ref_db_sql)
