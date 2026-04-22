@@ -10,18 +10,21 @@ github_url
 
 The liquid chromatography-mass spectrometry (LC-MS)-based lipidomics
 workflow (part of MetaMS) is built using PNNL's CoreMS software
-framework. The workflow leverages many features of CoreMS as well as
-PNNL's MetabRef LC-MS database to process LC-MS/MS data and identify
-lipids. The initial signal processing includes peak picking, integration
-of mass features, deconvolution of MS1 spectra, and calculation of peak
-shape metrics. The workflow associates MS1 spectra with their
-corresponding MS2 spectra. It uses the MS2 spectra to search an
-in-silico spectra database for lipids and uses the deconvoluted MS1
-spectra to assign a molecular formula. Each candidate lipid assignment
-is given two confidence scores: one for its match to the predicted
-molecular formula based on the mass accuracy and fine isotopic structure
-and a second for the MS2 spectral matching for filtering and selecting
-the best match.
+framework. The workflow leverages CoreMS signal processing and lipid
+library interfaces to process LC-MS/MS data and identify lipids. The
+initial signal processing includes peak picking, integration of mass
+features, deconvolution of MS1 spectra, and calculation of peak shape
+metrics. The workflow associates MS1 spectra with their corresponding
+MS2 spectra. It uses the MS2 spectra to search an in-silico spectra
+database for lipids and uses the deconvoluted MS1 spectra to assign a
+molecular formula. Each candidate lipid assignment is given two
+confidence scores: one for its match to the predicted molecular formula
+based on the mass accuracy and fine isotopic structure and a second for
+the MS2 spectral matching for filtering and selecting the best match.
+
+In the current implementation, lipid library retrieval and Flash Entropy
+database construction are handled directly through CoreMS
+`LCLipidLibraryInterface`.
 
 Note that only data collected in profile mode for MS1 and data-dependent
 acquisition for MS2 is supported at this time.
@@ -57,16 +60,16 @@ with the required workflow dependencies.*
 
 ### Database
 
--   A local copy of the in silico lipid spectra. See PNNL Metabref
-    Database (<https://metabref.emsl.pnnl.gov/>).
+-   A local sqlite copy of the in silico lipid spectra library
+    (.sqlite), passed to the workflow as `db_location`.
 
-The in-silico lipid spectra in PNNL\'s Metaref database are generated
+The in-silico lipid spectra in PNNL\'s MetabRef database are generated
 from the LipidBlast database (v68), found at
 <https://systemsomicslab.github.io/compms/msdial/main.html>. Note that
 there is no retention time in the PNNL version of the database and the
 workflow does not use retention time scoring. Currently the workflow
 uses a local copy of the database, and the database is available by
-request.
+request through NMDC support (<support@microbiomedata.org>).
 
 ## Sample datasets
 
@@ -80,18 +83,18 @@ request.
 ## Execution Details
 
 This workflow should be executed using the wdl file provided in the
-MetaMS package (wdl/metaMS_lipidomics.wdl).
+MetaMS package (wdl/metaMS_lcmslipidomics.wdl).
 
 Example command to run the workflow:
 
 ``` 
-miniwdl run wdl/metaMS_lipidomics.wdl -i metams_input_lipidomics.json --verbose --no-cache --copy-input-files
+miniwdl run wdl/metaMS_lcmslipidomics.wdl -i wdl/metams_input_lipidomics.json --verbose --no-cache --copy-input-files
 ```
 
 ### Inputs
 
 To use the wdl, inputs should be specified in a json file. See example
-input json file in wdl/metaMS_lipidomics.wdl.
+input json file in wdl/metams_input_lipidomics.json.
 
 The following inputs are required (declared in the input json file):
 
@@ -108,7 +111,7 @@ The following inputs are required (declared in the input json file):
 
     :   -   CoreMS Parameter file (.toml)
         -   Scan Translator Parameter file (.toml)
-        -   Path to local MetabRef database (.sqlite)
+        -   Path to local lipid spectra library database (.sqlite)
 
 -   
 
