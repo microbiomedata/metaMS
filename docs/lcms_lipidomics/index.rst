@@ -46,8 +46,7 @@ https://github.com/microbiomedata/metaMS/blob/master/wdl/metaMS_lcmslipidomics.w
 The container is available at Docker Hub (microbiomedata/metaMS):
 https://hub.docker.com/r/microbiomedata/metams
 
-The database is available by request. Please contact NMDC
-(support@microbiomedata.org) for access.
+The database is available at https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/202412_lipid_ref.sqlite.
 
 Requirements for Execution
 --------------------------
@@ -71,9 +70,9 @@ Database
 -  A local sqlite copy of the in silico lipid spectra library (.sqlite),
    passed to the workflow as ``db_location``.
 
-The in-silico lipid spectra in PNNL's MetabRef database are generated from the LipidBlast database (v68), found at https://systemsomicslab.github.io/compms/msdial/main.html.
+The in-silico lipid spectra in PNNL's database are generated from the LipidBlast database (v68), found at https://systemsomicslab.github.io/compms/msdial/main.html.
 Note that there is no retention time in the PNNL version of the database and the workflow does not use retention time scoring.  
-Currently the workflow uses a local copy of the database, and the database is available by request through NMDC support (support@microbiomedata.org).
+Currently the workflow uses a local copy of the database, and the database is available at https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/202412_lipid_ref.sqlite.
 
 Sample datasets
 ---------------

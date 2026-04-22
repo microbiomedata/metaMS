@@ -34,9 +34,8 @@ data-dependent acquisition for MS2 is supported at this time.</p>
 href="https://github.com/microbiomedata/metaMS/blob/master/wdl/metaMS_lcmslipidomics.wdl">https://github.com/microbiomedata/metaMS/blob/master/wdl/metaMS_lcmslipidomics.wdl</a></p>
 <p>The container is available at Docker Hub (microbiomedata/metaMS): <a
 href="https://hub.docker.com/r/microbiomedata/metams">https://hub.docker.com/r/microbiomedata/metams</a></p>
-<p>The database is available by request. Please contact NMDC (<a
-href="mailto:support@microbiomedata.org">support@microbiomedata.org</a>)
-for access.</p>
+<p>The database is available at <a
+href="https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/202412_lipid_ref.sqlite">https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/202412_lipid_ref.sqlite</a>.</p>
 <h2 id="requirements-for-execution">Requirements for Execution</h2>
 <p>The recommended way to run the workflow is via the provided wdl file
 and the miniwdl package. Using the wdl file requires the following:</p>
@@ -56,14 +55,14 @@ docker with the required workflow dependencies.</em></p>
 <li>A local sqlite copy of the in silico lipid spectra library
 (.sqlite), passed to the workflow as <code>db_location</code>.</li>
 </ul>
-<p>The in-silico lipid spectra in PNNL's MetabRef database are generated
-from the LipidBlast database (v68), found at <a
+<p>The in-silico lipid spectra in PNNL's database are generated from the
+LipidBlast database (v68), found at <a
 href="https://systemsomicslab.github.io/compms/msdial/main.html">https://systemsomicslab.github.io/compms/msdial/main.html</a>.
 Note that there is no retention time in the PNNL version of the database
 and the workflow does not use retention time scoring. Currently the
 workflow uses a local copy of the database, and the database is
-available by request through NMDC support (<a
-href="mailto:support@microbiomedata.org">support@microbiomedata.org</a>).</p>
+available at <a
+href="https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/202412_lipid_ref.sqlite">https://nmdcdemo.emsl.pnnl.gov/lipidomics/parameter_files/202412_lipid_ref.sqlite</a>.</p>
 <h2 id="sample-datasets">Sample datasets</h2>
 <ul>
 <li>An example dataset can be downloaded from here: <a

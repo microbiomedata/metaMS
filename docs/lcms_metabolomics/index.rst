@@ -96,7 +96,7 @@ The following inputs are required (declared in the input json file):
 - Workflow inputs (all three required):
    - CoreMS Parameter file (.toml)
    - Scan Translator Parameter file (.toml)
-   - Path to local MetabRef database (.msp)
+   - Path to local database (.msp)
 - Cores (optional input):
     - How many cores to use for processing. Default is 1.
 
