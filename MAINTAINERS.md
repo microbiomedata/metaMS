@@ -70,17 +70,8 @@ Use the github action to push a docker image to the appropriate dockerhub reposi
 **This happens automatically with bumping versions if using the `make major` commands (or similar) above.**
 Overview documentation of the two workflows can be found the docs folder of this repo.
 
-For the lipidomics workflow, edit only the `docs/lcms_lipidomics/index.rst` file.  Once changes are made there, re-render the `docs/lcms_lipidomics/index.html` and the `docs/lcms_lipidomics/README_LCMS_LIPID.md` with the following command.  
-
-    ```sh
-    make convert_lipid_rst_to_md
-    ```
-
-For the LCMS metabolomics workflow, edit the `index.rst` file within the `docs/lcms_metabolomics` subfolder.  Once changes are made there, re-render the `docs/lcms_metabolomics/index.html` and the `docs/lcms_metabolomics/README_LCMS_METABO.md` with the following command for lcms metabolomics:
-
-    ```sh
-    make convert_lcmsmetab_rst_to_md
-    ```
+For the workflow overview documentation, edit only the corresponding index.rst files in the docs folder.  For example, to edit the documentation for the GC/MS workflow, edit the index.rst file in the docs/gcms folder.  To edit the documentation for the lipidomics workflow, edit the index.rst file in the docs/lipidomics folder.  To edit the documentation for the LCMS metabolomics workflow, edit the index.rst file in the docs/lcmsmetabolomics folder.
+The html versions of the overview documentation is generated with the same makefile command as the API documentation, which is `make docu`.  This will generate the html versions of the overview documentation in the docs/_build/html folder.  The html versions of the overview documentation are used in the github pages site for this repo.
 
 API documentation can be found in the docs/metaMS file. We use [pdoc](https://github.com/mitmproxy/pdoc) to generate the API documentation.  To regenerate the API documentation, run the following command.  Note that **this happens automatically with bumping versions if using the `make major` commands (or similar) above.**
 

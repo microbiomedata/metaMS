@@ -19,8 +19,6 @@ major:
 	@bumpversion major --allow-dirty
 	@make bump_lipid_major
 	@make bump_lcmsmetab_major
-	@make convert_lipid_rst_to_md
-	@make convert_lcmsmetab_rst_to_md
 	@make docu
 
 minor:
@@ -28,8 +26,6 @@ minor:
 	@bumpversion minor --allow-dirty
 	@make bump_lipid_minor
 	@make bump_lcmsmetab_minor
-	@make convert_lipid_rst_to_md
-	@make convert_lcmsmetab_rst_to_md
 	@make docu
 
 patch:
@@ -37,8 +33,6 @@ patch:
 	@bumpversion patch --allow-dirty
 	@make bump_lipid_patch
 	@make bump_lcmsmetab_patch
-	@make convert_lipid_rst_to_md
-	@make convert_lcmsmetab_rst_to_md
 	@make docu
 
 bump_lipid_major:
@@ -162,16 +156,11 @@ wdl-run-lcms-metab-local:
 	@make docker-build-local
 	miniwdl run wdl/metaMS_lcms_metabolomics.wdl -i wdl/metams_input_lcms_metabolomics_local_docker.json --verbose --no-cache --copy-input-files
 
-convert_lipid_rst_to_md:
-    # convert the lipid documentation from rst to md and render it into html
-	pandoc -f rst -t markdown -o docs/lcms_lipidomics/README_LCMS_LIPID.md docs/lcms_lipidomics/index.rst
-	pandoc -f rst -t html -o docs/lcms_lipidomics/index.html docs/lcms_lipidomics/index.rst
-
-convert_lcmsmetab_rst_to_md:
-    # convert the lcms metabolomics documentation from rst to md and render it into html
-	pandoc -f rst -t markdown -o docs/lcms_metabolomics/README_LCMS_METABOLOMICS.md docs/lcms_metabolomics/index.rst
-	pandoc -f rst -t html -o docs/lcms_metabolomics/index.html docs/lcms_metabolomics/index.rst
-
 docu:
-	# Generate the documentation
+	# Generate the documentation for the workflows
+	pandoc -f rst -t html -o docs/lcms_lipidomics/index.html docs/lcms_lipidomics/index.rst
+	pandoc -f rst -t html -o docs/lcms_metabolomics/index.html docs/lcms_metabolomics/index.rst
+	pandoc -f rst -t html -o docs/gcms_metabolomics/index.html docs/gcms_metabolomics/index.rst
+
+	# Generate the documentation using pdoc
 	pdoc --output-dir docs --docformat numpy metaMS
