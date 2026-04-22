@@ -99,7 +99,7 @@ Outputs
 Version History
 ---------------
 
-- Current version is 3.3.1
+- Current version is 3.4.0
 
 Point of contact
 ----------------
