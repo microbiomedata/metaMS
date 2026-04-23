@@ -6,7 +6,7 @@
 
 # MetaMS
 
-**MetaMS** is a repository of workflows for metabolomics data processing and annotation in association with the NMDC ([National Microbiome Data Collaborative](https://microbiomedata.org/))
+**MetaMS** is a repository of workflows for metabolomics data processing and annotation in association with the NMDC ([National Microbiome Data Collaborative](https://microbiomedata.org/)) 
 
 ## Current Version
 
