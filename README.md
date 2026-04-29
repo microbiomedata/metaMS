@@ -6,17 +6,17 @@
 
 # MetaMS
 
-**MetaMS** is a repository of workflows for metabolomics data processing and annotation in association with the NMDC ([National Microbiome Data Collaborative](https://microbiomedata.org/))
+**MetaMS** is a repository of workflows for metabolomics data processing and annotation in association with the NMDC ([National Microbiome Data Collaborative](https://microbiomedata.org/)) 
 
 ## Current Version
 
-### `3.3.1`
+### `3.4.0`
 
 ## Available Workflows
 
-- [GC/MS metabolomics workflow](docs/gcms_metabolomics/README_GCMS.md)
-- [LC/MS lipidomics workflow](docs/lcms_lipidomics/README_LCMS_LIPID.md)
-- [LC/MS metabolomics workflow](docs/lcms_metabolomics/README_LCMS_METABOLOMICS.md)
+- [GC/MS metabolomics workflow](docs/gcms_metabolomics/index.rst)
+- [LC/MS lipidomics workflow](docs/lcms_lipidomics/index.rst)
+- [LC/MS metabolomics workflow](docs/lcms_metabolomics/index.rst)
 
 For information about data input, output, and execution for the individual workflows, follow the linked readmes above.
 

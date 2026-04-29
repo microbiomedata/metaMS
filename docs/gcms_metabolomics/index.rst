@@ -65,7 +65,10 @@ Software
 
 Database
 ~~~~~~~~~~~~~~~~
-- Available at https://metabref.emsl.pnnl.gov/
+- Bundled with CoreMS as local MSP libraries (GCMS compound library and FAMES calibration library)
+- Optional custom libraries can be provided with environment variables:
+    - ``GCMS_LIBRARY_PATH`` for GCMS compound MSP library
+    - ``FAMES_LIBRARY_PATH`` for FAMES calibration MSP library
 
 Test datasets
 -------------
@@ -80,8 +83,8 @@ Inputs
 - Fatty Acid Methyl Esters Calibration File:
    - ANDI NetCDF for GC-MS (.cdf) - C8 to C30
 - Parameters:
-    - CoreMS Parameter File (.json)
-    - MetaMS Parameter File (.json)
+    - CoreMS Parameter File (.toml)
+    - MetaMS Parameter File (.toml)
 
 Outputs
 ~~~~~~~~
@@ -96,7 +99,7 @@ Outputs
 Version History
 ---------------
 
-- Current version is 3.3.1
+- Current version is 3.4.0
 
 Point of contact
 ----------------

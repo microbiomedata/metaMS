@@ -6,7 +6,7 @@
          site the file is incorporated into. You can learn more about the `github_url` field at:
          https://sphinx-rtd-theme.readthedocs.io/en/stable/configuring.html#confval-github_url
 
-LC/MS Metabolomics Workflow (v1.1.1)
+LC/MS Metabolomics Workflow (v1.2.0)
 ============================
 
 .. figure:: lcms_metabolite_workflow.svg
@@ -96,7 +96,7 @@ The following inputs are required (declared in the input json file):
 - Workflow inputs (all three required):
    - CoreMS Parameter file (.toml)
    - Scan Translator Parameter file (.toml)
-   - Path to local MetabRef database (.msp)
+   - Path to local database (.msp)
 - Cores (optional input):
     - How many cores to use for processing. Default is 1.
 
@@ -112,7 +112,7 @@ Outputs
 Version History
 ---------------
 
-- v1.1.1: Current release
+- v1.2.0: Current release
 - v1.0.0: Initial release of the LC/MS metabolomics workflow June 24, 2025
 
 Point of contact
