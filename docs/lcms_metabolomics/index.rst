@@ -1,4 +1,4 @@
-:github_url: https://github.com/microbiomedata/metaMS/blob/master/docs/index_lipid.rst
+:github_url: https://github.com/microbiomedata/metaMS/blob/master/docs/lcms_metabolomics/index.rst
 
 ..
    Note: The above `github_url` field is used to force the target of the "Edit on GitHub" link
