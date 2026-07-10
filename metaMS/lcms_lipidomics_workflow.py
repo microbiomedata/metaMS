@@ -422,7 +422,8 @@ def run_lcms_lipidomics_workflow(
     params_toml = lipid_workflow_params.corems_toml_path
     scan_translator = lipid_workflow_params.scan_translator_path
     # check if any files are raw - they will not be able to run on multiprocesses - they need threading. 
-    cores = 1 if any(".raw" in file.name for file in files_list) else cores
+    cores = 1 
+    #if any(".raw" in file.name for file in files_list) else cores
     
     click.echo("Starting lipidomics workflow for " + str(len(files_list)) + " file(s), using " +  str(cores) + " core(s)")
     
