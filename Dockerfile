@@ -1,27 +1,28 @@
-# Python base image
-FROM python:3.11.1-bullseye
+FROM python:3.13-slim AS base
 
-# Mono: 6.12
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF \
-  && echo "deb http://download.mono-project.com/repo/debian buster/snapshots/6.12 main" > /etc/apt/sources.list.d/mono-official.list \
-  && apt-get update \
-  && apt-get install -y clang \
-  && apt-get install -y mono-devel=6.12\* \
-  && rm -rf /var/lib/apt/lists/* /tmp/*
-
-
-# Pythonnet: 3.0.1 (from PyPI)
-# Note: pycparser must be installed before pythonnet can be built
-RUN pip install pycparser \
-  && pip install pythonnet==3.0.1
-  
-# Copy MetaMS contents
 WORKDIR /metams
+
+# Install .NET runtime via official script to avoid legacy Mono repo issues on arm64.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        curl ca-certificates libssl3 libkrb5-3 zlib1g gcc python3-dev && \
+    curl -sSL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh && \
+    chmod +x /tmp/dotnet-install.sh && \
+    /tmp/dotnet-install.sh --runtime dotnet --channel 8.0 --install-dir /usr/local/dotnet && \
+    rm /tmp/dotnet-install.sh
+
+ENV DOTNET_ROOT=/usr/local/dotnet
+ENV PATH="${PATH}:/usr/local/dotnet"
+ENV PYTHONNET_RUNTIME=coreclr
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+
+# Copy MetaMS package sources and metadata.
 COPY metaMS/ /metams/metaMS/
 COPY README.md disclaimer.txt Makefile requirements.txt setup.py /metams/
 
-# Install the correct version of CoreMS from github
-RUN pip install corems==4.0.0
-
-# Install the MetaMS package in editable mode
-RUN pip install --editable .
+# Keep existing package behavior while using coreclr runtime.
+RUN python -m pip install --upgrade pip && \
+    python -m pip install --no-cache-dir pycparser && \
+    python -m pip install --no-cache-dir corems==4.0.0 && \
+    python -m pip install --no-cache-dir --editable . && \
+    apt-get purge -y gcc python3-dev && apt-get autoremove -y && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/*
