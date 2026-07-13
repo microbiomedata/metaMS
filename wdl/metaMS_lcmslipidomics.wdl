@@ -61,6 +61,6 @@ task runMetaMSLCMSLipidomics {
     }
 
     runtime {
-        docker: "~{if defined(docker_image) then docker_image else 'microbiomedata/metams:3.5.1'}"
+        docker: "~{if defined(docker_image) then docker_image else 'microbiomedata/metams:3.5.2'}"
     }
 }
