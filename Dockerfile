@@ -22,7 +22,6 @@ COPY README.md disclaimer.txt Makefile requirements.txt setup.py /metams/
 # Keep existing package behavior while using coreclr runtime.
 RUN python -m pip install --upgrade pip && \
     python -m pip install --no-cache-dir pycparser && \
-    python -m pip install --no-cache-dir corems==4.0.0 && \
     python -m pip install --no-cache-dir --editable . && \
     apt-get purge -y gcc python3-dev && apt-get autoremove -y && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/*
