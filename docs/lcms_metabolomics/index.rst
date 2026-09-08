@@ -21,8 +21,8 @@ framework. The workflow leverages many features of CoreMS to process LC-MS/MS da
 metabolites. The initial signal processing includes peak picking, integration
 of mass features, deconvolution of MS1 spectra, and calculation of
 peak shape metrics. The workflow associates MS1 spectra with their
-corresponding MS2 spectra. It uses the MS2 spectra to search a subset of the GNPS's (Global Natural Products Social Molecular Networking)
-`library of tandem mass spectra <https://gnps-external.ucsd.edu/gnpslibrary>`_ to identify metabolites. The workflow also
+corresponding MS2 spectra. It uses the MS2 spectra to search a subset of the GNPS2's (Global Natural Products Social Molecular Networking)
+`library of tandem mass spectra <https://library.gnps2.org/>`_ to identify metabolites. The workflow also
 uses the deconvoluted MS1 spectra
 to assign a molecular formula. Each candidate metabolite assignment is given
 two confidence scores: one for its match to the predicted molecular
@@ -34,7 +34,7 @@ Workflow Availability
 ---------------------
 
 The workflow is available in GitHub:
-https://github.com/microbiomedata/metaMS/blob/master/wdl/metaMS_lcmsmetabolomics.wdl
+https://github.com/microbiomedata/metaMS/blob/master/wdl/metaMS_lcms_metabolomics.wdl
 
 The container is available at Docker Hub (microbiomedata/metaMS):
 https://hub.docker.com/r/microbiomedata/metams
@@ -60,7 +60,7 @@ Software Requirements
 Database
 ~~~~~~~~
 
--  A local copy of a msp database.  The workflow uses a subset of databases available through GNPS (https://gnps-external.ucsd.edu/gnpslibrary) that 
+-  A local copy of a msp database.  The workflow uses a subset of databases available through GNPS2 (https://library.gnps2.org/) that 
 has been filtered to include only compounds with high quality metadata and with high resolution MS2 spectra. 
 The curated database can be downloaded `here <https://nmdcdemo.emsl.pnnl.gov/metabolomics/databases/20250407_gnps_curated.msp>`_.
 
